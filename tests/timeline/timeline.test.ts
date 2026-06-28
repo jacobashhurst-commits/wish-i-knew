@@ -17,6 +17,7 @@ function card(overrides: Partial<TimelineCard>): TimelineCard {
     pregnancy_week_start: null,
     pregnancy_week_end: null,
     priority: 0,
+    time_critical: false,
     short_summary: "A useful short summary.",
     wish_i_knew: "A useful insight.",
     why_it_matters: null,

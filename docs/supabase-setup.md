@@ -1,4 +1,4 @@
-# Supabase setup (Milestone 1)
+# Supabase setup
 
 Apply this once to your Supabase project before testing auth and persistence.
 
@@ -20,7 +20,10 @@ In the Supabase SQL editor (or Supabase CLI), run in order:
 
 1. `supabase/migrations/001_initial_schema.sql`
 2. `supabase/migrations/002_auth_profile_trigger.sql`
-3. `supabase/seed.sql` (optional — loads six published demo cards)
+3. `supabase/migrations/003_off_ramp_suggestions_overdue.sql` — journey status, card suggestions, `time_critical` flag
+4. `supabase/seed.sql` (optional — loads six published demo cards)
+
+Re-running a migration that already applied will error (e.g. `type "user_role" already exists` on 001). That is expected — each file runs once only.
 
 ## 3. Auth redirect URLs
 
@@ -53,4 +56,4 @@ Run as an authenticated user in the SQL editor (or via two test accounts):
 | Any signed-in user reads `timeline_cards` where `status = 'published'` | Allowed |
 | Normal user inserts into `timeline_cards` | Denied |
 
-Policies are defined in `001_initial_schema.sql`. The trigger in `002_auth_profile_trigger.sql` creates a `profiles` row on signup.
+Policies are defined in `001_initial_schema.sql`. The trigger in `002_auth_profile_trigger.sql` creates a `profiles` row on signup. Migration `003` adds `card_suggestions` RLS and journey fields on `children`.

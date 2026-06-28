@@ -1,4 +1,10 @@
-import type { AustralianState, TimelineCard, UserCardState, UserCardStatus } from "@/types/content";
+import type {
+  AustralianState,
+  ChildJourneyStatus,
+  TimelineCard,
+  UserCardState,
+  UserCardStatus,
+} from "@/types/content";
 
 export type LookaheadDay =
   | "monday"
@@ -28,6 +34,7 @@ export type AppInitialData = {
   userEmail: string | null;
   profileId: string | null;
   childId: string | null;
+  childStatus: ChildJourneyStatus;
   form: OnboardingState;
   hasOnboarded: boolean;
   cardStates: Record<string, UserCardState>;

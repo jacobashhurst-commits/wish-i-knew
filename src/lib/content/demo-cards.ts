@@ -14,6 +14,7 @@ export const demoCards: TimelineCard[] = [
     pregnancy_week_start: 6,
     pregnancy_week_end: 8,
     priority: 100,
+    time_critical: false,
     short_summary:
       "Book a GP appointment to confirm pregnancy, organise early bloods, discuss supplements and plan the next steps.",
     wish_i_knew:
@@ -65,6 +66,7 @@ export const demoCards: TimelineCard[] = [
     pregnancy_week_start: 24,
     pregnancy_week_end: 40,
     priority: 90,
+    time_critical: false,
     short_summary:
       "If you might need childcare, start researching and joining waitlists earlier than feels reasonable.",
     wish_i_knew: "Childcare planning starts before you feel ready to think about childcare.",
@@ -116,6 +118,7 @@ export const demoCards: TimelineCard[] = [
     pregnancy_week_start: null,
     pregnancy_week_end: null,
     priority: 100,
+    time_critical: true,
     short_summary:
       "The first major post-birth immunisation appointment comes around quickly.",
     wish_i_knew:
@@ -169,6 +172,7 @@ export const demoCards: TimelineCard[] = [
     pregnancy_week_start: null,
     pregnancy_week_end: null,
     priority: 95,
+    time_critical: false,
     short_summary:
       "Solids are about more than purees. You will be thinking about readiness, iron, allergens, textures, mess and routine.",
     wish_i_knew:
@@ -223,6 +227,7 @@ export const demoCards: TimelineCard[] = [
     pregnancy_week_start: null,
     pregnancy_week_end: null,
     priority: 70,
+    time_critical: false,
     short_summary:
       "Your baby may be ready for more normal toddler spoons as they eat thicker food and practise self-feeding.",
     wish_i_knew:
@@ -274,6 +279,7 @@ export const demoCards: TimelineCard[] = [
     pregnancy_week_start: null,
     pregnancy_week_end: null,
     priority: 80,
+    time_critical: false,
     short_summary:
       "Starting daycare often means more bugs. It helps to have a basic illness setup before everyone is tired and covered in snot.",
     wish_i_knew: "Daycare sickness is not one cold. It is a season of life.",

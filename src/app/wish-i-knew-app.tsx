@@ -5,7 +5,9 @@ import { useEffect, useMemo, useState, useTransition } from "react";
 import { saveOnboarding } from "@/app/actions/onboarding";
 import { upsertCardState } from "@/app/actions/card-states";
 import { signOut } from "@/app/actions/auth";
+import { updateChildJourneyStatus } from "@/app/actions/journey";
 import { AuthGate } from "@/components/auth-gate";
+import { SuggestCardForm } from "@/components/suggest-card-form";
 import clsx from "@/lib/clsx";
 import { validateCardForPublish } from "@/lib/content/validation";
 import { calculateAgeInDays, calculatePregnancyWeek } from "@/lib/timeline/dates";
@@ -21,6 +23,7 @@ import { defaultOnboarding } from "@/types/app";
 import type {
   AustralianState,
   ChildcareIntention,
+  ChildJourneyStatus,
   TimelineCard,
   UserCardState,
   UserCardStatus,
@@ -437,6 +440,21 @@ function Onboarding({
               />
             </label>
 
+            {form.isBorn ? (
+              <label>
+                <span className="text-sm font-semibold text-[#172033]">Original due date (optional)</span>
+                <input
+                  className="mt-1.5 w-full rounded-xl border border-[#0d1b2a]/15 bg-[#FFFDF7] px-4 py-3 outline-none focus:border-[#1D809F]"
+                  onChange={(event) => setForm({ ...form, dueDate: event.target.value })}
+                  type="date"
+                  value={form.dueDate}
+                />
+                <p className="mt-1 text-xs text-[#172033]/60">
+                  Helps us show pregnancy-era cards you might still find useful.
+                </p>
+              </label>
+            ) : null}
+
             <label>
               <span className="text-sm font-semibold text-[#172033]">State or territory</span>
               <select
@@ -545,6 +563,7 @@ export default function WishIKnewApp({ initialData }: { initialData: AppInitialD
   const [mode] = useState<AppMode>(initialData.mode);
   const [userEmail] = useState(initialData.userEmail);
   const [childId, setChildId] = useState(initialData.childId);
+  const [childStatus, setChildStatus] = useState<ChildJourneyStatus>(initialData.childStatus);
   const [form, setForm] = useState(initialClient.form);
   const [hasOnboarded, setHasOnboarded] = useState(initialClient.hasOnboarded);
   const [cardStates, setCardStates] = useState(initialClient.cardStates);
@@ -746,8 +765,11 @@ export default function WishIKnewApp({ initialData }: { initialData: AppInitialD
 
         {activeView === "settings" ? (
           <SettingsView
+            childId={childId}
+            childStatus={childStatus}
             form={form}
             mode={mode}
+            onJourneyStatusChange={setChildStatus}
             onResetPreview={resetPreview}
             userEmail={userEmail}
           />
@@ -1169,16 +1191,46 @@ function SavedView({
 }
 
 function SettingsView({
+  childId,
+  childStatus,
   form,
   mode,
+  onJourneyStatusChange,
   userEmail,
   onResetPreview,
 }: {
+  childId: string | null;
+  childStatus: ChildJourneyStatus;
   form: OnboardingState;
   mode: AppMode;
+  onJourneyStatusChange: (status: ChildJourneyStatus) => void;
   userEmail: string | null;
   onResetPreview: () => void;
 }) {
+  const router = useRouter();
+  const [journeyError, setJourneyError] = useState<string | null>(null);
+  const [isUpdatingJourney, startJourneyTransition] = useTransition();
+
+  function handleJourneyChange(status: ChildJourneyStatus) {
+    if (!childId) return;
+
+    setJourneyError(null);
+    startJourneyTransition(async () => {
+      const result = await updateChildJourneyStatus(childId, status);
+
+      if (result.error) {
+        setJourneyError(result.error);
+        return;
+      }
+
+      onJourneyStatusChange(status);
+      router.refresh();
+    });
+  }
+
+  const journeyLabel =
+    childStatus === "active" ? "Active" : childStatus === "paused" ? "Paused" : "Ended";
+
   return (
     <section className="mt-6 grid gap-5 lg:grid-cols-2">
       <div className="wik-shell-card p-6">
@@ -1198,8 +1250,65 @@ function SettingsView({
           <SettingRow label="First child" value={form.firstChild ? "Yes" : "No"} />
           <SettingRow label="Childcare" value={sentenceCase(form.childcareIntention)} />
           <SettingRow label="Lookahead" value={`${sentenceCase(form.lookaheadDay)} at ${form.lookaheadTime}`} />
+          {mode === "authenticated" && childId ? (
+            <SettingRow label="Journey" value={journeyLabel} />
+          ) : null}
         </dl>
       </div>
+
+      {mode === "authenticated" && childId ? (
+        <div className="wik-shell-card p-6">
+          <SectionHeading
+            eyebrow="Journey"
+            title="Pause or end your timeline"
+            subtitle="Life changes. You can pause reminders or end this journey anytime — no guilt, no perfect-parent energy."
+          />
+          <div className="mt-5 flex flex-wrap gap-2">
+            {childStatus !== "active" ? (
+              <button
+                className="wik-button wik-button-sun"
+                disabled={isUpdatingJourney}
+                onClick={() => handleJourneyChange("active")}
+                type="button"
+              >
+                Resume timeline
+              </button>
+            ) : null}
+            {childStatus !== "paused" ? (
+              <button
+                className="wik-button border border-[#0d1b2a]/15 bg-white text-[#172033] hover:border-[#0d1b2a]/40"
+                disabled={isUpdatingJourney}
+                onClick={() => handleJourneyChange("paused")}
+                type="button"
+              >
+                Pause timeline
+              </button>
+            ) : null}
+            {childStatus !== "ended" ? (
+              <button
+                className="wik-button border border-[#FF6B6B]/30 bg-[#FFF5F5] text-[#FF6B6B] hover:border-[#FF6B6B]/60"
+                disabled={isUpdatingJourney}
+                onClick={() => handleJourneyChange("ended")}
+                type="button"
+              >
+                End journey
+              </button>
+            ) : null}
+          </div>
+          {journeyError ? <p className="mt-3 text-sm font-medium text-[#FF6B6B]">{journeyError}</p> : null}
+        </div>
+      ) : null}
+
+      {mode === "authenticated" ? (
+        <div className="wik-shell-card p-6 lg:col-span-2">
+          <SectionHeading
+            eyebrow="Suggest a card"
+            title="Something you wish you'd known?"
+            subtitle="Tell us what would have helped. We read every suggestion."
+          />
+          <SuggestCardForm />
+        </div>
+      ) : null}
 
       <div className="relative isolate overflow-hidden rounded-[1.75rem] bg-[#0d1b2a] p-6 text-white shadow-sm">
         {mode === "authenticated" ? (

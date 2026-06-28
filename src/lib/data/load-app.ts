@@ -4,7 +4,7 @@ import { createClient } from "@/lib/supabase/server";
 import { isSupabaseConfigured } from "@/lib/supabase/config";
 import type { AppInitialData, LookaheadDay, OnboardingState } from "@/types/app";
 import { cardStateFromRow, defaultOnboarding, emptyCardStates } from "@/types/app";
-import type { UserCardStatus } from "@/types/content";
+import type { UserCardStatus, ChildJourneyStatus } from "@/types/content";
 
 function lookaheadDayFromDb(value: string | null | undefined): LookaheadDay {
   const days: LookaheadDay[] = [
@@ -36,6 +36,7 @@ function previewInitialData(): AppInitialData {
     userEmail: null,
     profileId: null,
     childId: null,
+    childStatus: "active",
     form: defaultOnboarding,
     hasOnboarded: false,
     cardStates: emptyCardStates(),
@@ -110,6 +111,7 @@ async function loadAuthenticatedAppData(): Promise<AppInitialData> {
       userEmail: user.email ?? null,
       profileId: null,
       childId: null,
+      childStatus: "active",
       form: defaultOnboarding,
       hasOnboarded: false,
       cardStates: emptyCardStates(),
@@ -136,6 +138,7 @@ async function loadAuthenticatedAppData(): Promise<AppInitialData> {
       userEmail: user.email ?? profile.email,
       profileId: profile.id,
       childId: null,
+      childStatus: "active",
       form: {
         ...defaultOnboarding,
         state: profile.state ?? defaultOnboarding.state,
@@ -191,6 +194,7 @@ async function loadAuthenticatedAppData(): Promise<AppInitialData> {
     userEmail: user.email ?? profile.email,
     profileId: profile.id,
     childId: child.id,
+    childStatus: (child.status ?? "active") as ChildJourneyStatus,
     form,
     hasOnboarded: true,
     cardStates,

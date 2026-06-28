@@ -25,6 +25,7 @@ export type TimelineCardRow = {
   pregnancy_week_start: number | null;
   pregnancy_week_end: number | null;
   priority: number;
+  time_critical?: boolean;
   short_summary: string;
   wish_i_knew: string;
   why_it_matters: string | null;
@@ -68,6 +69,7 @@ export function mapTimelineCard(row: TimelineCardRow): TimelineCard {
     pregnancy_week_start: row.pregnancy_week_start,
     pregnancy_week_end: row.pregnancy_week_end,
     priority: row.priority,
+    time_critical: row.time_critical ?? false,
     short_summary: row.short_summary,
     wish_i_knew: row.wish_i_knew,
     why_it_matters: row.why_it_matters,

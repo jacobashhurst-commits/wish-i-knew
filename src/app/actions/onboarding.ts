@@ -86,7 +86,7 @@ export async function saveOnboarding(form: OnboardingState, childId?: string | n
     nickname: form.childName.trim(),
     is_born: form.isBorn,
     birth_date: form.isBorn ? form.birthDate : null,
-    due_date: form.isBorn ? null : form.dueDate,
+    due_date: form.isBorn ? form.dueDate || null : form.dueDate,
     state: form.state,
     first_child: form.firstChild,
     childcare_intention: form.childcareIntention,

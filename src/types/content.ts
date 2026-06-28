@@ -38,6 +38,10 @@ export type UserCardStatus =
   | "dismissed"
   | "not_relevant";
 
+export type ChildJourneyStatus = "active" | "paused" | "ended";
+
+export type SuggestionStatus = "new" | "reviewed" | "accepted" | "declined";
+
 export type TimelineCard = {
   id: string;
   slug: string;
@@ -51,6 +55,7 @@ export type TimelineCard = {
   pregnancy_week_start: number | null;
   pregnancy_week_end: number | null;
   priority: number;
+  time_critical: boolean;
   short_summary: string;
   wish_i_knew: string;
   why_it_matters: string | null;
@@ -84,4 +89,14 @@ export type UserCardState = {
   card_id: string;
   status: UserCardStatus;
   snoozed_until: string | null;
+};
+
+export type CardSuggestion = {
+  id: string;
+  user_id: string;
+  title: string;
+  body: string;
+  suggested_timing: string | null;
+  status: SuggestionStatus;
+  created_at: string;
 };

@@ -276,3 +276,8 @@ on conflict (slug) do update set
   last_reviewed_at = excluded.last_reviewed_at,
   review_due_date = excluded.review_due_date,
   updated_at = now();
+
+-- Migration 003 adds time_critical; mark immunisation card as time-sensitive.
+update public.timeline_cards
+set time_critical = true
+where slug = 'two-month-immunisations';
