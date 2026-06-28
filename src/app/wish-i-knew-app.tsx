@@ -1,12 +1,23 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useRouter } from "next/navigation";
+import { useEffect, useMemo, useState, useTransition } from "react";
+import { saveOnboarding } from "@/app/actions/onboarding";
+import { upsertCardState } from "@/app/actions/card-states";
+import { signOut } from "@/app/actions/auth";
+import { AuthGate } from "@/components/auth-gate";
 import clsx from "@/lib/clsx";
-import { demoCards } from "@/lib/content/demo-cards";
 import { validateCardForPublish } from "@/lib/content/validation";
 import { calculateAgeInDays, calculatePregnancyWeek } from "@/lib/timeline/dates";
 import { buildTimeline } from "@/lib/timeline/matching";
 import type { MatchedCard, TimelineProfile, TimelineResult } from "@/lib/timeline/types";
+import type {
+  AppInitialData,
+  AppMode,
+  LookaheadDay,
+  OnboardingState,
+} from "@/types/app";
+import { defaultOnboarding } from "@/types/app";
 import type {
   AustralianState,
   ChildcareIntention,
@@ -15,54 +26,9 @@ import type {
   UserCardStatus,
 } from "@/types/content";
 
-type LookaheadDay =
-  | "monday"
-  | "tuesday"
-  | "wednesday"
-  | "thursday"
-  | "friday"
-  | "saturday"
-  | "sunday";
-
-type OnboardingState = {
-  childName: string;
-  isBorn: boolean;
-  birthDate: string;
-  dueDate: string;
-  state: AustralianState;
-  firstChild: boolean;
-  childcareIntention: ChildcareIntention;
-  lookaheadDay: LookaheadDay;
-  lookaheadTime: string;
-};
-
 type AppView = "home" | "timeline" | "saved" | "settings" | "admin";
 
-type DemoState = {
-  form: OnboardingState;
-  hasOnboarded: boolean;
-  cardStates: Record<string, UserCardState>;
-};
-
-const defaultOnboarding: OnboardingState = {
-  childName: "Audrey",
-  isBorn: true,
-  birthDate: "2025-07-25",
-  dueDate: "2026-10-08",
-  state: "NSW",
-  firstChild: true,
-  childcareIntention: "unsure",
-  lookaheadDay: "saturday",
-  lookaheadTime: "08:00",
-};
-
-const defaultDemoState: DemoState = {
-  form: defaultOnboarding,
-  hasOnboarded: false,
-  cardStates: {},
-};
-
-const states: AustralianState[] = ["ACT", "NSW", "NT", "QLD", "SA", "TAS", "VIC", "WA"];
+const demoStorageKey = "wish-i-knew-demo-state";
 
 const cardTypeStyles: Record<string, string> = {
   "Big Milestone": "bg-[#FFE3C2] text-[#5A3A14]",
@@ -74,13 +40,18 @@ const cardTypeStyles: Record<string, string> = {
   "Fun First": "bg-[#FFF0C7] text-[#6A4E12]",
 };
 
-const demoStorageKey = "wish-i-knew-demo-state";
+const states: AustralianState[] = ["ACT", "NSW", "NT", "QLD", "SA", "TAS", "VIC", "WA"];
 
-function isStoredDemoState(value: unknown): value is Partial<DemoState> {
+type PreviewState = {
+  form: OnboardingState;
+  hasOnboarded: boolean;
+  cardStates: Record<string, UserCardState>;
+};
+function isStoredPreviewState(value: unknown): value is Partial<PreviewState> {
   return typeof value === "object" && value !== null;
 }
 
-function readStoredDemoState(): Partial<DemoState> {
+function readStoredPreviewState(): Partial<PreviewState> {
   if (typeof window === "undefined") return {};
 
   const stored = window.localStorage.getItem(demoStorageKey);
@@ -89,7 +60,7 @@ function readStoredDemoState(): Partial<DemoState> {
   try {
     const parsed: unknown = JSON.parse(stored);
 
-    return isStoredDemoState(parsed) ? parsed : {};
+    return isStoredPreviewState(parsed) ? parsed : {};
   } catch {
     window.localStorage.removeItem(demoStorageKey);
 
@@ -354,10 +325,20 @@ function Onboarding({
   form,
   setForm,
   onSubmit,
+  mode,
+  userEmail,
+  isSubmitting,
+  submitError,
+  onPreviewContinue,
 }: {
   form: OnboardingState;
   setForm: (form: OnboardingState) => void;
   onSubmit: () => void;
+  mode: AppMode;
+  userEmail: string | null;
+  isSubmitting?: boolean;
+  submitError?: string | null;
+  onPreviewContinue?: () => void;
 }) {
   return (
     <main className="px-4 py-6 text-[#172033] sm:py-10">
@@ -386,6 +367,15 @@ function Onboarding({
             </div>
           </div>
         </div>
+
+        <div className="space-y-4">
+          {mode === "preview" ? (
+            <AuthGate onPreviewContinue={onPreviewContinue} userEmail={userEmail} />
+          ) : (
+            <div className="wik-shell-card p-4 text-sm text-[#697386]">
+              Signed in as <span className="font-semibold text-[#0d1b2a]">{userEmail}</span>
+            </div>
+          )}
 
         <form
           className="wik-shell-card p-5 sm:p-7"
@@ -513,39 +503,68 @@ function Onboarding({
             </label>
           </div>
 
-          <button className="wik-button wik-button-sun mt-6 w-full text-base" type="submit">
-            Show my timeline
+          {submitError ? <p className="mt-3 text-sm font-medium text-[#FF6B6B]">{submitError}</p> : null}
+
+          <button
+            className="wik-button wik-button-sun mt-6 w-full text-base"
+            disabled={isSubmitting}
+            type="submit"
+          >
+            {isSubmitting ? "Saving…" : "Show my timeline"}
           </button>
         </form>
+        </div>
       </section>
     </main>
   );
 }
 
-export default function WishIKnewApp() {
-  const [demo, setDemo] = useState<DemoState>(defaultDemoState);
-  const [hydrated, setHydrated] = useState(false);
+function getInitialClientState(initialData: AppInitialData) {
+  if (initialData.mode === "authenticated") {
+    return {
+      form: initialData.form,
+      hasOnboarded: initialData.hasOnboarded,
+      cardStates: initialData.cardStates,
+      previewReady: true,
+    };
+  }
+
+  const stored = readStoredPreviewState();
+
+  return {
+    form: stored.form ?? initialData.form,
+    hasOnboarded: stored.hasOnboarded ?? false,
+    cardStates: stored.cardStates ?? initialData.cardStates,
+    previewReady: Boolean(stored.hasOnboarded),
+  };
+}
+
+export default function WishIKnewApp({ initialData }: { initialData: AppInitialData }) {
+  const router = useRouter();
+  const initialClient = getInitialClientState(initialData);
+  const [mode] = useState<AppMode>(initialData.mode);
+  const [userEmail] = useState(initialData.userEmail);
+  const [childId, setChildId] = useState(initialData.childId);
+  const [form, setForm] = useState(initialClient.form);
+  const [hasOnboarded, setHasOnboarded] = useState(initialClient.hasOnboarded);
+  const [cardStates, setCardStates] = useState(initialClient.cardStates);
+  const [cards] = useState(initialData.cards);
+  const [previewReady, setPreviewReady] = useState(initialClient.previewReady);
   const [activeView, setActiveView] = useState<AppView>("home");
   const [selectedCard, setSelectedCard] = useState<TimelineCard | null>(null);
+  const [submitError, setSubmitError] = useState<string | null>(null);
   const [currentDate] = useState(() => todayIso());
-
-  const { form, hasOnboarded, cardStates } = demo;
-
-  useEffect(() => {
-    const stored = readStoredDemoState();
-    // eslint-disable-next-line react-hooks/set-state-in-effect
-    setDemo({
-      form: stored.form ?? defaultOnboarding,
-      hasOnboarded: stored.hasOnboarded ?? false,
-      cardStates: stored.cardStates ?? {},
-    });
-    setHydrated(true);
-  }, []);
+  const [isSubmitting, startSubmitTransition] = useTransition();
+  const [, startActionTransition] = useTransition();
 
   useEffect(() => {
-    if (!hydrated) return;
-    window.localStorage.setItem(demoStorageKey, JSON.stringify(demo));
-  }, [demo, hydrated]);
+    if (mode !== "preview" || !previewReady) return;
+
+    window.localStorage.setItem(
+      demoStorageKey,
+      JSON.stringify({ form, hasOnboarded, cardStates }),
+    );
+  }, [cardStates, form, hasOnboarded, mode, previewReady]);
 
   const profile = useMemo(() => makeProfile(form, currentDate), [form, currentDate]);
   const userCardStates = useMemo(() => Object.values(cardStates), [cardStates]);
@@ -553,47 +572,82 @@ export default function WishIKnewApp() {
     () =>
       buildTimeline({
         profile,
-        cards: demoCards,
+        cards,
         userCardStates,
         comingSoonDays: 45,
       }),
-    [profile, userCardStates],
+    [profile, userCardStates, cards],
   );
 
   const savedCards = useMemo(
-    () => demoCards.filter((card) => cardStates[card.id]?.status === "saved"),
-    [cardStates],
+    () => cards.filter((card) => cardStates[card.id]?.status === "saved"),
+    [cards, cardStates],
   );
   const doneCount = useMemo(
     () => Object.values(cardStates).filter((state) => state.status === "done").length,
     [cardStates],
   );
   const contentHealth = useMemo(
-    () => demoCards.map((card) => ({ card, errors: validateCardForPublish(card) })),
-    [],
+    () => cards.map((card) => ({ card, errors: validateCardForPublish(card) })),
+    [cards],
   );
 
-  function setForm(next: OnboardingState) {
-    setDemo((current) => ({ ...current, form: next }));
+  function handleOnboardingSubmit() {
+    setSubmitError(null);
+
+    if (mode === "preview") {
+      setPreviewReady(true);
+      setHasOnboarded(true);
+      return;
+    }
+
+    startSubmitTransition(async () => {
+      const result = await saveOnboarding(form, childId);
+
+      if (result.error) {
+        setSubmitError(result.error);
+        return;
+      }
+
+      if (result.childId) {
+        setChildId(result.childId);
+      }
+
+      setHasOnboarded(true);
+      router.refresh();
+    });
   }
 
   function handleAction(cardId: string, status: UserCardStatus) {
-    setDemo((current) => ({
-      ...current,
-      cardStates: {
-        ...current.cardStates,
-        [cardId]: {
-          card_id: cardId,
-          status,
-          snoozed_until: status === "snoozed" ? addDays(currentDate, 7) : null,
-        },
-      },
-    }));
+    const nextState: UserCardState = {
+      card_id: cardId,
+      status,
+      snoozed_until: status === "snoozed" ? addDays(currentDate, 7) : null,
+    };
+
+    setCardStates((current) => ({ ...current, [cardId]: nextState }));
+
+    if (mode !== "authenticated" || !childId) return;
+
+    startActionTransition(async () => {
+      const result = await upsertCardState({
+        childId,
+        cardId,
+        status,
+        snoozedUntil: nextState.snoozed_until,
+      });
+
+      if (result.error) {
+        router.refresh();
+      }
+    });
   }
 
-  function resetDemo() {
+  function resetPreview() {
     window.localStorage.removeItem(demoStorageKey);
-    setDemo(defaultDemoState);
+    setForm(defaultOnboarding);
+    setHasOnboarded(false);
+    setCardStates({});
     setActiveView("home");
   }
 
@@ -601,8 +655,13 @@ export default function WishIKnewApp() {
     return (
       <Onboarding
         form={form}
-        onSubmit={() => setDemo((current) => ({ ...current, hasOnboarded: true }))}
+        isSubmitting={isSubmitting}
+        mode={mode}
+        onPreviewContinue={() => setPreviewReady(true)}
+        onSubmit={handleOnboardingSubmit}
         setForm={setForm}
+        submitError={submitError}
+        userEmail={userEmail}
       />
     );
   }
@@ -628,9 +687,14 @@ export default function WishIKnewApp() {
                 Know what&apos;s coming next.
               </h1>
               <p className="mt-3 text-sm leading-6 text-white/75">{stageSummary}</p>
+              {mode === "authenticated" && userEmail ? (
+                <p className="mt-2 text-xs text-white/55">Signed in as {userEmail}</p>
+              ) : (
+                <p className="mt-2 text-xs text-white/55">Preview mode — sign in to save progress</p>
+              )}
               <button
                 className="wik-button wik-button-sun mt-5"
-                onClick={() => setDemo((current) => ({ ...current, hasOnboarded: false }))}
+                onClick={() => setHasOnboarded(false)}
                 type="button"
               >
                 Edit setup
@@ -680,9 +744,16 @@ export default function WishIKnewApp() {
           />
         ) : null}
 
-        {activeView === "settings" ? <SettingsView form={form} onReset={resetDemo} /> : null}
+        {activeView === "settings" ? (
+          <SettingsView
+            form={form}
+            mode={mode}
+            onResetPreview={resetPreview}
+            userEmail={userEmail}
+          />
+        ) : null}
 
-        {activeView === "admin" ? (
+        {activeView === "admin" && initialData.isAdmin ? (
           <ContentStudioView contentHealth={contentHealth} onOpen={setSelectedCard} />
         ) : null}
       </div>
@@ -1097,16 +1168,31 @@ function SavedView({
   );
 }
 
-function SettingsView({ form, onReset }: { form: OnboardingState; onReset: () => void }) {
+function SettingsView({
+  form,
+  mode,
+  userEmail,
+  onResetPreview,
+}: {
+  form: OnboardingState;
+  mode: AppMode;
+  userEmail: string | null;
+  onResetPreview: () => void;
+}) {
   return (
     <section className="mt-6 grid gap-5 lg:grid-cols-2">
       <div className="wik-shell-card p-6">
         <SectionHeading
           eyebrow="Settings"
           title="Timeline setup"
-          subtitle="This is local demo state for now. Supabase persistence comes next."
+          subtitle={
+            mode === "authenticated"
+              ? "Your profile is saved in Supabase."
+              : "Preview mode — sign in to persist your timeline."
+          }
         />
         <dl className="mt-5 grid gap-2.5 text-sm">
+          {userEmail ? <SettingRow label="Email" value={userEmail} /> : null}
           <SettingRow label="Child" value={form.childName} />
           <SettingRow label="State" value={form.state} />
           <SettingRow label="First child" value={form.firstChild ? "Yes" : "No"} />
@@ -1116,14 +1202,31 @@ function SettingsView({ form, onReset }: { form: OnboardingState; onReset: () =>
       </div>
 
       <div className="relative isolate overflow-hidden rounded-[1.75rem] bg-[#0d1b2a] p-6 text-white shadow-sm">
-        <p className="wik-chip bg-white/15 text-[#FFD79A]">Demo controls</p>
-        <h2 className="font-display mt-3 text-2xl font-semibold">Reset and try another setup</h2>
-        <p className="mt-2 text-sm leading-6 text-white/75">
-          This clears local demo state only. It does not touch Supabase migrations or seed content.
-        </p>
-        <button className="wik-button wik-button-sun mt-5" onClick={onReset} type="button">
-          Reset demo
-        </button>
+        {mode === "authenticated" ? (
+          <>
+            <p className="wik-chip bg-white/15 text-[#FFD79A]">Account</p>
+            <h2 className="font-display mt-3 text-2xl font-semibold">Sign out</h2>
+            <p className="mt-2 text-sm leading-6 text-white/75">
+              Your timeline stays saved. You can sign back in with a magic link anytime.
+            </p>
+            <form action={signOut}>
+              <button className="wik-button wik-button-sun mt-5" type="submit">
+                Sign out
+              </button>
+            </form>
+          </>
+        ) : (
+          <>
+            <p className="wik-chip bg-white/15 text-[#FFD79A]">Preview controls</p>
+            <h2 className="font-display mt-3 text-2xl font-semibold">Reset preview</h2>
+            <p className="mt-2 text-sm leading-6 text-white/75">
+              Clears local preview data only. Nothing is stored on the server until you sign in.
+            </p>
+            <button className="wik-button wik-button-sun mt-5" onClick={onResetPreview} type="button">
+              Reset preview
+            </button>
+          </>
+        )}
       </div>
     </section>
   );

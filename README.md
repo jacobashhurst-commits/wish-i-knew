@@ -9,7 +9,7 @@ Wish I Knew is an Australian-first, mobile-first parenting timeline app for expe
 - **Next.js 16** app (TypeScript, Tailwind v4, App Router)
 - **Timeline engine** — age/pregnancy matching, overdue / current / coming soon / later buckets
 - **Demo app** — onboarding, Home, scrollable Timeline, Saved, Settings, Content Studio preview
-- **Supabase** — schema, RLS, seed cards, client setup (demo mode uses localStorage until linked)
+- **Supabase** — schema, RLS, magic-link auth, persisted child/card state (Milestone 1)
 - **Assets** — painterly hero + cute 8-bit pixel card art
 - **Tests** — Vitest for dates, matching and publish validation
 - **Docs** — product, architecture, integrations, content and design guides
@@ -23,12 +23,7 @@ npm run dev
 
 Open [http://127.0.0.1:3000](http://127.0.0.1:3000).
 
-Copy `.env.example` to `.env.local` and add Supabase credentials when you have a project:
-
-```bash
-NEXT_PUBLIC_SUPABASE_URL=
-NEXT_PUBLIC_SUPABASE_ANON_KEY=
-```
+Copy `.env.example` to `.env.local` and add Supabase credentials. Then follow **[Supabase setup](docs/supabase-setup.md)** to run migrations, configure auth redirects, and seed cards.
 
 ## Scripts
 
