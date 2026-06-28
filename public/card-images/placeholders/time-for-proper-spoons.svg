@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 420" role="img" aria-labelledby="title desc">
+  <title id="title">Proper spoons illustration</title>
+  <desc id="desc">A toddler spoon presented like a level-up item.</desc>
+  <rect width="640" height="420" rx="48" fill="#072F3A"/>
+  <path d="M74 98h492v246H74z" fill="#FFF6DF" stroke="#102A2F" stroke-width="8"/>
+  <path d="M100 124h440v194H100z" fill="#0E6B74" stroke="#102A2F" stroke-width="6"/>
+  <circle cx="320" cy="210" r="116" fill="#FFB867" opacity=".95"/>
+  <path d="M302 118c52-10 86 39 56 84-13 20-32 27-52 24l-68 100c-9 14-29 16-42 4-12-12-10-31 4-42l100-68c-16-22-21-51 2-102z" fill="#FFF6DF" stroke="#102A2F" stroke-width="9"/>
+  <path d="M279 82l9 35M363 82l-9 35M432 139l-31 19M208 139l31 19M320 64v38" stroke="#FFD36E" stroke-width="12" stroke-linecap="round"/>
+  <rect x="224" y="330" width="192" height="44" rx="22" fill="#F47B72" stroke="#102A2F" stroke-width="7"/>
+  <text x="266" y="360" font-family="Arial, sans-serif" font-size="24" font-weight="900" fill="#102A2F">LEVEL UP</text>
+</svg>

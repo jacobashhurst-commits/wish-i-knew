@@ -1,0 +1,105 @@
+@import "tailwindcss";
+
+:root {
+  --wik-navy: #0d1b2a;
+  --wik-deep-ocean: #145c72;
+  --wik-ocean: #1d809f;
+  --wik-aqua: #4ec6c1;
+  --wik-sky: #ddf6ff;
+  --wik-cream: #fff6e6;
+  --wik-cream-deep: #f6e7c8;
+  --wik-sand: #f4d6a0;
+  --wik-coral: #ff6b6b;
+  --wik-sun: #ffc857;
+  --wik-gum: #6faf8e;
+  --wik-jacaranda: #a78bfa;
+  --wik-ink: #172033;
+  --wik-muted: #697386;
+  --background: var(--wik-cream);
+  --foreground: var(--wik-ink);
+}
+
+html {
+  background: var(--background);
+}
+
+body {
+  min-height: 100vh;
+  background:
+    radial-gradient(circle at 12% -2%, rgba(78, 198, 193, 0.18), transparent 22rem),
+    radial-gradient(circle at 95% 4%, rgba(167, 139, 250, 0.16), transparent 20rem),
+    var(--wik-cream);
+  color: var(--foreground);
+  font-family: var(--font-body), -apple-system, "Segoe UI", Helvetica, Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+.font-display {
+  font-family: var(--font-display), Georgia, "Times New Roman", serif;
+}
+
+@layer components {
+  .wik-shell-card {
+    border: 1px solid rgba(23, 32, 51, 0.08);
+    border-radius: 1.75rem;
+    background: #ffffff;
+    box-shadow: 0 16px 40px rgba(13, 27, 42, 0.08);
+  }
+
+  .wik-game-card {
+    border: 1px solid rgba(23, 32, 51, 0.08);
+    border-radius: 1.75rem;
+    background: #ffffff;
+    box-shadow: 0 14px 34px rgba(13, 27, 42, 0.1);
+    transition:
+      transform 180ms ease,
+      box-shadow 180ms ease;
+  }
+
+  .wik-game-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 22px 44px rgba(13, 27, 42, 0.14);
+  }
+
+  .wik-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.4rem;
+    border-radius: 9999px;
+    background: var(--wik-navy);
+    padding: 0.8rem 1.4rem;
+    font-weight: 700;
+    color: var(--wik-cream);
+    transition:
+      transform 160ms ease,
+      box-shadow 160ms ease,
+      background 160ms ease;
+  }
+
+  .wik-button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 24px rgba(13, 27, 42, 0.22);
+  }
+
+  .wik-button-sun {
+    background: var(--wik-sun);
+    color: var(--wik-navy);
+  }
+
+  .wik-chip {
+    display: inline-flex;
+    align-items: center;
+    border-radius: 9999px;
+    padding: 0.3rem 0.75rem;
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+}

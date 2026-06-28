@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 420" role="img" aria-labelledby="title desc">
+  <title id="title">First GP appointment illustration</title>
+  <desc id="desc">A warm illustrated calendar with a positive pregnancy test and coffee cup.</desc>
+  <rect width="640" height="420" rx="48" fill="#072F3A"/>
+  <circle cx="98" cy="76" r="74" fill="#0F6D7A"/>
+  <circle cx="548" cy="346" r="106" fill="#FFB867"/>
+  <path d="M96 306c80-82 157-116 230-103 60 11 91 64 150 59 34-3 65-25 94-67v225H96z" fill="#0B4D5B"/>
+  <rect x="166" y="94" width="252" height="222" rx="28" fill="#FFF6DF" stroke="#102A2F" stroke-width="8"/>
+  <path d="M166 148h252" stroke="#102A2F" stroke-width="8"/>
+  <rect x="208" y="182" width="46" height="38" rx="10" fill="#F47B72"/>
+  <rect x="274" y="182" width="46" height="38" rx="10" fill="#8FD1C7"/>
+  <rect x="340" y="182" width="46" height="38" rx="10" fill="#FFD36E"/>
+  <rect x="208" y="238" width="46" height="38" rx="10" fill="#8FD1C7"/>
+  <rect x="274" y="238" width="46" height="38" rx="10" fill="#F47B72"/>
+  <path d="M210 86v44M374 86v44" stroke="#FFB867" stroke-width="16" stroke-linecap="round"/>
+  <rect x="396" y="250" width="126" height="32" rx="16" fill="#FFFFFF" stroke="#102A2F" stroke-width="7"/>
+  <circle cx="430" cy="266" r="10" fill="#F47B72"/>
+  <path d="M470 266h28" stroke="#8FD1C7" stroke-width="8" stroke-linecap="round"/>
+  <path d="M474 329c40 0 76-10 76-48h34c0 54-49 82-110 82z" fill="#FFF6DF" stroke="#102A2F" stroke-width="7"/>
+  <path d="M550 280c30 0 31 44 0 44" fill="none" stroke="#102A2F" stroke-width="7"/>
+</svg>

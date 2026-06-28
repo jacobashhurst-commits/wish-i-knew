@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 420" role="img" aria-labelledby="title desc">
+  <title id="title">Starting solids illustration</title>
+  <desc id="desc">A messy high chair with pumpkin, spoon and bib.</desc>
+  <rect width="640" height="420" rx="48" fill="#0A3442"/>
+  <path d="M0 315c88-65 185-82 292-51 80 23 155 6 226-52 43-35 83-46 122-33v241H0z" fill="#0E6B74"/>
+  <rect x="214" y="112" width="210" height="168" rx="42" fill="#FFF6DF" stroke="#102A2F" stroke-width="8"/>
+  <rect x="166" y="242" width="304" height="48" rx="24" fill="#FFB867" stroke="#102A2F" stroke-width="8"/>
+  <path d="M230 288l-34 80M410 288l34 80" stroke="#102A2F" stroke-width="12" stroke-linecap="round"/>
+  <circle cx="292" cy="190" r="11" fill="#102A2F"/>
+  <circle cx="356" cy="190" r="11" fill="#102A2F"/>
+  <path d="M286 226c29 20 61 20 89 0" stroke="#102A2F" stroke-width="8" stroke-linecap="round"/>
+  <path d="M268 252c34 30 72 30 110 0v50H268z" fill="#8FD1C7" stroke="#102A2F" stroke-width="7"/>
+  <circle cx="220" cy="314" r="28" fill="#F47B72" stroke="#102A2F" stroke-width="7"/>
+  <path d="M464 160c44 48 4 103-43 83" fill="#FFD36E" stroke="#102A2F" stroke-width="7"/>
+  <path d="M486 272l72-34" stroke="#FFF6DF" stroke-width="16" stroke-linecap="round"/>
+  <circle cx="562" cy="236" r="16" fill="#FFF6DF"/>
+  <circle cx="150" cy="174" r="10" fill="#F47B72"/>
+  <circle cx="514" cy="112" r="12" fill="#FFD36E"/>
+</svg>

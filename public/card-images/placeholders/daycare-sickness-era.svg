@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 420" role="img" aria-labelledby="title desc">
+  <title id="title">Daycare sickness era illustration</title>
+  <desc id="desc">A tissue box, thermometer and tiny socks in a warm illustrated style.</desc>
+  <rect width="640" height="420" rx="48" fill="#0A3442"/>
+  <circle cx="544" cy="88" r="94" fill="#8FD1C7"/>
+  <circle cx="98" cy="324" r="100" fill="#FFB867"/>
+  <rect x="164" y="206" width="236" height="112" rx="24" fill="#FFF6DF" stroke="#102A2F" stroke-width="8"/>
+  <path d="M212 204c6-54 56-83 98-54 34 24 21 66-9 79" fill="#D9EBF7" stroke="#102A2F" stroke-width="8"/>
+  <path d="M204 246h154" stroke="#102A2F" stroke-width="8" stroke-linecap="round"/>
+  <rect x="418" y="128" width="50" height="174" rx="25" fill="#FFF6DF" stroke="#102A2F" stroke-width="8" transform="rotate(20 443 215)"/>
+  <circle cx="421" cy="277" r="28" fill="#F47B72" stroke="#102A2F" stroke-width="8"/>
+  <path d="M448 166l30 11" stroke="#8FD1C7" stroke-width="10" stroke-linecap="round"/>
+  <path d="M170 342c36-12 64 0 84 34" fill="#8FD1C7" stroke="#102A2F" stroke-width="7"/>
+  <path d="M276 342c36-12 64 0 84 34" fill="#F47B72" stroke="#102A2F" stroke-width="7"/>
+  <circle cx="508" cy="318" r="12" fill="#FFD36E"/>
+  <circle cx="130" cy="128" r="14" fill="#F47B72"/>
+  <path d="M494 240c28-16 48-14 60 6" stroke="#FFD36E" stroke-width="12" stroke-linecap="round"/>
+</svg>

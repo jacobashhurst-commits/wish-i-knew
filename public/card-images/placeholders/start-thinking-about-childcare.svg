@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 420" role="img" aria-labelledby="title desc">
+  <title id="title">Childcare planning illustration</title>
+  <desc id="desc">A playful childcare planning clipboard with blocks, a dummy and calendar.</desc>
+  <rect width="640" height="420" rx="48" fill="#123B4A"/>
+  <path d="M0 288c86-58 166-77 240-58 86 22 151 13 220-34 58-40 119-48 180-23v247H0z" fill="#0C6674"/>
+  <rect x="178" y="66" width="284" height="304" rx="34" fill="#FFF6DF" stroke="#102A2F" stroke-width="8"/>
+  <rect x="252" y="44" width="136" height="54" rx="24" fill="#FFB867" stroke="#102A2F" stroke-width="8"/>
+  <path d="M228 152h184M228 204h132M228 256h166" stroke="#102A2F" stroke-width="12" stroke-linecap="round"/>
+  <circle cx="414" cy="204" r="24" fill="#F47B72" stroke="#102A2F" stroke-width="7"/>
+  <path d="M402 204l10 10 20-25" stroke="#FFF6DF" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/>
+  <rect x="100" y="268" width="64" height="64" rx="14" fill="#FFD36E" stroke="#102A2F" stroke-width="7"/>
+  <rect x="142" y="222" width="64" height="64" rx="14" fill="#8FD1C7" stroke="#102A2F" stroke-width="7"/>
+  <text x="121" y="310" font-family="Arial, sans-serif" font-size="34" font-weight="900" fill="#102A2F">A</text>
+  <text x="163" y="264" font-family="Arial, sans-serif" font-size="34" font-weight="900" fill="#102A2F">B</text>
+  <path d="M500 294c28-32 82-11 80 32-2 42-56 58-83 24l-20 13-24-28z" fill="#F47B72" stroke="#102A2F" stroke-width="7"/>
+  <circle cx="532" cy="324" r="18" fill="#FFF6DF" stroke="#102A2F" stroke-width="6"/>
+</svg>
