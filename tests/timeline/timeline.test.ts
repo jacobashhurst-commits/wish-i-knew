@@ -281,6 +281,30 @@ describe("quiet week fallback", () => {
   });
 });
 
+describe("recent past window", () => {
+  it("surfaces non-time-critical cards whose window ended within the last month", () => {
+    const result = buildTimeline({
+      profile: bornProfile,
+      cards: [card({ start_age_days: 0, end_age_days: 10, time_critical: false })],
+      recentPastDays: 30,
+    });
+
+    expect(result.recentPastCards).toHaveLength(1);
+    expect(result.overdueCards).toHaveLength(0);
+  });
+
+  it("does not duplicate time-critical past cards in recent past", () => {
+    const result = buildTimeline({
+      profile: bornProfile,
+      cards: [card({ start_age_days: 0, end_age_days: 10, time_critical: true })],
+      recentPastDays: 30,
+    });
+
+    expect(result.recentPastCards).toHaveLength(0);
+    expect(result.overdueCards).toHaveLength(1);
+  });
+});
+
 describe("journey off-ramp", () => {
   it("returns empty buckets for a paused journey", () => {
     const result = buildTimeline({

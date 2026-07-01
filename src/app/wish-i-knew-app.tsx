@@ -9,6 +9,7 @@ import { updateChildJourneyStatus } from "@/app/actions/journey";
 import { AuthGate } from "@/components/auth-gate";
 import { SuggestCardForm } from "@/components/suggest-card-form";
 import clsx from "@/lib/clsx";
+import { timelineHorizonDays } from "@/lib/content/bundled-cards";
 import { validateCardForPublish } from "@/lib/content/validation";
 import { calculateAgeInDays, calculatePregnancyWeek } from "@/lib/timeline/dates";
 import { buildTimeline } from "@/lib/timeline/matching";
@@ -621,7 +622,8 @@ export default function WishIKnewApp({ initialData }: { initialData: AppInitialD
         profile,
         cards,
         userCardStates,
-        comingSoonDays: 45,
+        comingSoonDays: timelineHorizonDays,
+        recentPastDays: timelineHorizonDays,
       }),
     [profile, userCardStates, cards],
   );
@@ -777,6 +779,7 @@ export default function WishIKnewApp({ initialData }: { initialData: AppInitialD
           <TimelineView
             cardStates={cardStates}
             childName={form.childName || "Your child"}
+            libraryCount={cards.length}
             onOpen={setSelectedCard}
             timeline={timeline}
           />
@@ -1107,30 +1110,36 @@ function TimelineSegment({
 function TimelineView({
   cardStates,
   childName,
+  libraryCount,
   onOpen,
   timeline,
 }: {
   cardStates: Record<string, UserCardState>;
   childName: string;
+  libraryCount: number;
   onOpen: (card: TimelineCard) => void;
   timeline: TimelineResult;
 }) {
   const sortCards = (matched: MatchedCard[]) =>
     matched.map(({ card }) => card).sort((a, b) => cardSortValue(a) - cardSortValue(b));
 
-  const overdue = sortCards(timeline.overdueCards);
+  const missed = sortCards([...timeline.overdueCards, ...timeline.recentPastCards]);
   const now = sortCards([...timeline.currentCards, ...timeline.snoozedCardsDue]);
   const soon = sortCards(timeline.comingSoonCards);
   const later = sortCards(timeline.laterCards);
-  const total = overdue.length + now.length + soon.length + later.length;
+  const total = missed.length + now.length + soon.length + later.length;
 
   return (
     <section className="mt-6">
       <SectionHeading
         eyebrow="Journey map"
         title="Your timeline"
-        subtitle={`Scroll from what you may have missed, through this week, to what's coming for ${childName}.`}
+        subtitle={`About ${timelineHorizonDays} days behind and ahead — scroll from what you may have missed, through this week, to what's coming for ${childName}.`}
       />
+
+      <p className="mt-2 text-sm text-[#697386]">
+        Showing {total} card{total === 1 ? "" : "s"} for your profile · {libraryCount} in the library
+      </p>
 
       {total === 0 ? (
         <div className="mt-4">
@@ -1140,10 +1149,10 @@ function TimelineView({
         <div className="mt-5 space-y-8">
           <TimelineSegment
             cardStates={cardStates}
-            cards={overdue}
+            cards={missed}
             eyebrow="Heads up"
             onOpen={onOpen}
-            subtitle="Windows that have passed — worth a quick catch-up if you haven't already."
+            subtitle={`The last ${timelineHorizonDays} days — worth a quick catch-up if you haven't already.`}
             title="You may have missed"
             tone="overdue"
           />
@@ -1161,7 +1170,7 @@ function TimelineView({
             cards={soon}
             eyebrow="Coming soon"
             onOpen={onOpen}
-            subtitle="Get ahead of these before they sneak up."
+            subtitle={`The next ${timelineHorizonDays} days — get ahead before these sneak up.`}
             title="What's next"
             tone="soon"
           />

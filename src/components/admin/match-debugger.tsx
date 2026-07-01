@@ -3,6 +3,7 @@
 import { useMemo, useState } from "react";
 import { buildTimeline } from "@/lib/timeline/matching";
 import { calculateAgeInDays, calculatePregnancyWeek } from "@/lib/timeline/dates";
+import { timelineHorizonDays } from "@/lib/content/bundled-cards";
 import type { MatchedCard } from "@/lib/timeline/types";
 import type { AdminCardRow } from "@/types/admin";
 import type { AustralianState, ChildcareIntention, TimelineCard } from "@/types/content";
@@ -75,7 +76,8 @@ export function MatchDebugger({ cards }: { cards: AdminCardRow[] }) {
         childcareIntention: childcare,
       },
       cards: cards.map((card) => toEngineCard(card, includeUnpublished)),
-      comingSoonDays: 45,
+      comingSoonDays: timelineHorizonDays,
+      recentPastDays: timelineHorizonDays,
     });
   }, [anchorReady, currentDate, isBorn, birthDate, dueDate, state, firstChild, childcare, cards, includeUnpublished]);
 
@@ -168,9 +170,10 @@ export function MatchDebugger({ cards }: { cards: AdminCardRow[] }) {
       {result ? (
         <div className="mt-5 grid gap-4 lg:grid-cols-2">
           <Bucket cards={result.currentCards} empty="Nothing lands in this week." title="This week" />
-          <Bucket cards={result.comingSoonCards} empty="Nothing coming soon." title="Coming soon" />
+          <Bucket cards={result.comingSoonCards} empty="Nothing in the next month." title="Coming soon (~30 days)" />
+          <Bucket cards={result.recentPastCards} empty="Nothing in the past month." title="Recently passed (~30 days)" />
+          <Bucket cards={result.overdueCards} empty="Nothing overdue (time-critical only)." title="Overdue" />
           <Bucket cards={result.laterCards} empty="Nothing scheduled later." title="Later" />
-          <Bucket cards={result.overdueCards} empty="Nothing overdue (only time-critical cards can be)." title="Overdue" />
         </div>
       ) : null}
     </div>

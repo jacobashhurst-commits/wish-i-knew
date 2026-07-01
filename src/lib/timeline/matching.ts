@@ -8,7 +8,7 @@ import type {
   TimelineResult,
 } from "./types";
 
-const defaultComingSoonDays = 30;
+const defaultHorizonDays = 30;
 const maxOverdueCards = 3;
 
 const quietWeekCardType = "quiet_week";
@@ -234,11 +234,69 @@ function matchOverdueCard(card: TimelineCard, profile: TimelineProfile): Matched
   };
 }
 
+function matchRecentPastCard(
+  card: TimelineCard,
+  profile: TimelineProfile,
+  recentPastDays: number,
+): MatchedCard | null {
+  // Time-critical past cards belong in overdue, not here.
+  if (card.time_critical) {
+    return null;
+  }
+
+  const stateReason = matchesState(card, profile);
+  if (!stateReason) return null;
+
+  const conditionReasons = matchesSimpleConditions(card, profile);
+  if (!conditionReasons) return null;
+
+  if (profile.isBorn && profile.birthDate && card.end_age_days !== null) {
+    const ageInDays = calculateAgeInDays(profile.birthDate, profile.currentDate);
+    const daysSinceEnd = ageInDays - card.end_age_days;
+    if (daysSinceEnd > 0 && daysSinceEnd <= recentPastDays) {
+      return {
+        card,
+        reasons: [
+          stateReason,
+          ...conditionReasons,
+          { code: "recent_past_age", message: `Window ended ${daysSinceEnd} days ago.` },
+        ],
+      };
+    }
+  }
+
+  if (!profile.isBorn && profile.dueDate && card.pregnancy_week_end !== null) {
+    const recentPastWeeks = Math.max(1, Math.ceil(recentPastDays / 7));
+    const pregnancyWeek = calculatePregnancyWeek(profile.dueDate, profile.currentDate);
+    const weeksSinceEnd = pregnancyWeek - card.pregnancy_week_end;
+    if (weeksSinceEnd > 0 && weeksSinceEnd <= recentPastWeeks) {
+      return {
+        card,
+        reasons: [
+          stateReason,
+          ...conditionReasons,
+          {
+            code: "recent_past_pregnancy",
+            message: `Pregnancy window ended about ${weeksSinceEnd} weeks ago.`,
+          },
+        ],
+      };
+    }
+  }
+
+  return null;
+}
+
+function cardAlreadyMatched(cardId: string, buckets: MatchedCard[][]): boolean {
+  return buckets.some((bucket) => bucket.some((item) => item.card.id === cardId));
+}
+
 export function emptyTimeline(): TimelineResult {
   return {
     currentCards: [],
     comingSoonCards: [],
     laterCards: [],
+    recentPastCards: [],
     overdueCards: [],
     savedCards: [],
     snoozedCardsDue: [],
@@ -272,7 +330,8 @@ export function buildTimeline(input: TimelineEngineInput): TimelineResult {
     return emptyTimeline();
   }
 
-  const comingSoonDays = input.comingSoonDays ?? defaultComingSoonDays;
+  const comingSoonDays = input.comingSoonDays ?? defaultHorizonDays;
+  const recentPastDays = input.recentPastDays ?? defaultHorizonDays;
   const statesByCard = new Map(input.userCardStates?.map((state) => [state.card_id, state]));
   const visibleCards = input.cards.filter(isVisibleCard);
   const availableCards = visibleCards.filter((card) => {
@@ -303,6 +362,13 @@ export function buildTimeline(input: TimelineEngineInput): TimelineResult {
     .sort((a, b) => b.card.priority - a.card.priority)
     .slice(0, maxOverdueCards);
 
+  const priorBuckets = [currentCards, comingSoonCards, laterCards, overdueCards];
+
+  const recentPastCards = availableCards
+    .map((card) => matchRecentPastCard(card, input.profile, recentPastDays))
+    .filter((item): item is MatchedCard => Boolean(item))
+    .filter((item) => !cardAlreadyMatched(item.card.id, priorBuckets));
+
   const savedCards = visibleCards
     .filter((card) => statesByCard.get(card.id)?.status === "saved")
     .map((card) => ({ card, reasons: [{ code: "saved", message: "User saved this card." }] }));
@@ -323,6 +389,7 @@ export function buildTimeline(input: TimelineEngineInput): TimelineResult {
     currentCards,
     comingSoonCards,
     laterCards,
+    recentPastCards,
     overdueCards,
     savedCards,
     snoozedCardsDue,

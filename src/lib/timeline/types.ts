@@ -22,7 +22,10 @@ export type TimelineEngineInput = {
   profile: TimelineProfile;
   cards: TimelineCard[];
   userCardStates?: UserCardState[];
+  /** How far ahead (days) to surface coming-soon cards. Default 30. */
   comingSoonDays?: number;
+  /** How far back (days) to surface recently-passed windows. Default 30. */
+  recentPastDays?: number;
 };
 
 export type CardMatchReason = {
@@ -39,6 +42,8 @@ export type TimelineResult = {
   currentCards: MatchedCard[];
   comingSoonCards: MatchedCard[];
   laterCards: MatchedCard[];
+  /** Non-time-critical cards whose window ended within recentPastDays. */
+  recentPastCards: MatchedCard[];
   overdueCards: MatchedCard[];
   savedCards: MatchedCard[];
   snoozedCardsDue: MatchedCard[];

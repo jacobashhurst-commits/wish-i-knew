@@ -1,4 +1,4 @@
-import { demoCards } from "@/lib/content/demo-cards";
+import { mergePublishedCards } from "@/lib/content/bundled-cards";
 import { mapTimelineCard, type TimelineCardRow } from "@/lib/data/map-card";
 import { createClient } from "@/lib/supabase/server";
 import { isSupabaseConfigured } from "@/lib/supabase/config";
@@ -40,7 +40,7 @@ function previewInitialData(): AppInitialData {
     form: defaultOnboarding,
     hasOnboarded: false,
     cardStates: emptyCardStates(),
-    cards: demoCards,
+    cards: mergePublishedCards([]),
     isAdmin: false,
   };
 }
@@ -86,7 +86,7 @@ async function loadAuthenticatedAppData(): Promise<AppInitialData> {
     cards = [];
   }
 
-  const mappedCards = cards.length ? cards.map(mapTimelineCard) : demoCards;
+  const mappedCards = mergePublishedCards(cards.map(mapTimelineCard));
 
   if (!user) {
     return {
