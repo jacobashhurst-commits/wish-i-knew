@@ -1,5 +1,5 @@
 import type { TimelineCard, UserCardState } from "@/types/content";
-import { calculateAgeInDays, calculatePregnancyWeek } from "./dates";
+import { calculateAgeInDays, calculatePregnancyWeek, toUtcDateOnly } from "./dates";
 import type {
   CardMatchReason,
   MatchedCard,
@@ -9,9 +9,16 @@ import type {
 } from "./types";
 
 const defaultComingSoonDays = 30;
+const maxOverdueCards = 3;
+
+const quietWeekCardType = "quiet_week";
 
 function isVisibleCard(card: TimelineCard): boolean {
   return card.status === "published";
+}
+
+function isQuietWeekCard(card: TimelineCard): boolean {
+  return card.card_type === quietWeekCardType;
 }
 
 function hasUserHiddenCard(state?: UserCardState): boolean {
@@ -134,6 +141,25 @@ function matchComingSoonCard(
     }
   }
 
+  if (!profile.isBorn && profile.dueDate && card.pregnancy_week_start !== null) {
+    const comingSoonWeeks = Math.max(1, Math.ceil(comingSoonDays / 7));
+    const pregnancyWeek = calculatePregnancyWeek(profile.dueDate, profile.currentDate);
+    const weeksUntilStart = card.pregnancy_week_start - pregnancyWeek;
+    if (weeksUntilStart > 0 && weeksUntilStart <= comingSoonWeeks) {
+      return {
+        card,
+        reasons: [
+          stateReason,
+          ...conditionReasons,
+          {
+            code: "coming_soon_pregnancy",
+            message: `Card starts in about ${weeksUntilStart} weeks of pregnancy.`,
+          },
+        ],
+      };
+    }
+  }
+
   return null;
 }
 
@@ -164,9 +190,10 @@ function matchLaterCard(
   }
 
   if (!profile.isBorn && profile.dueDate && card.pregnancy_week_start !== null) {
+    const comingSoonWeeks = Math.max(1, Math.ceil(comingSoonDays / 7));
     const pregnancyWeek = calculatePregnancyWeek(profile.dueDate, profile.currentDate);
     const weeksUntilStart = card.pregnancy_week_start - pregnancyWeek;
-    if (weeksUntilStart > 0) {
+    if (weeksUntilStart > comingSoonWeeks) {
       return {
         card,
         reasons: [
@@ -182,6 +209,11 @@ function matchLaterCard(
 }
 
 function matchOverdueCard(card: TimelineCard, profile: TimelineProfile): MatchedCard | null {
+  // Only explicitly time-critical cards may nag; everything else quietly drops away.
+  if (!card.time_critical) {
+    return null;
+  }
+
   if (!profile.isBorn || !profile.birthDate || card.end_age_days === null) {
     return null;
   }
@@ -202,14 +234,55 @@ function matchOverdueCard(card: TimelineCard, profile: TimelineProfile): Matched
   };
 }
 
+export function emptyTimeline(): TimelineResult {
+  return {
+    currentCards: [],
+    comingSoonCards: [],
+    laterCards: [],
+    overdueCards: [],
+    savedCards: [],
+    snoozedCardsDue: [],
+  };
+}
+
+function pickQuietWeekCard(cards: TimelineCard[], currentDate: string): MatchedCard | null {
+  const pool = cards
+    .filter(isQuietWeekCard)
+    .sort((a, b) => a.slug.localeCompare(b.slug));
+
+  if (pool.length === 0) return null;
+
+  // Deterministic weekly rotation so the same card shows all week, then changes.
+  const weekIndex = Math.floor(toUtcDateOnly(currentDate).getTime() / (7 * 24 * 60 * 60 * 1000));
+  const card = pool[weekIndex % pool.length];
+
+  return {
+    card,
+    reasons: [
+      {
+        code: "quiet_week",
+        message: "Nothing scheduled this week, so here is a gentle quiet-week card.",
+      },
+    ],
+  };
+}
+
 export function buildTimeline(input: TimelineEngineInput): TimelineResult {
+  if ((input.profile.journeyStatus ?? "active") !== "active") {
+    return emptyTimeline();
+  }
+
   const comingSoonDays = input.comingSoonDays ?? defaultComingSoonDays;
   const statesByCard = new Map(input.userCardStates?.map((state) => [state.card_id, state]));
   const visibleCards = input.cards.filter(isVisibleCard);
   const availableCards = visibleCards.filter((card) => {
     const state = statesByCard.get(card.id);
 
-    return !hasUserHiddenCard(state) && !isSnoozedForLater(state, input.profile.currentDate);
+    return (
+      !isQuietWeekCard(card) &&
+      !hasUserHiddenCard(state) &&
+      !isSnoozedForLater(state, input.profile.currentDate)
+    );
   });
 
   const currentCards = availableCards
@@ -226,7 +299,9 @@ export function buildTimeline(input: TimelineEngineInput): TimelineResult {
 
   const overdueCards = availableCards
     .map((card) => matchOverdueCard(card, input.profile))
-    .filter((card): card is MatchedCard => Boolean(card));
+    .filter((card): card is MatchedCard => Boolean(card))
+    .sort((a, b) => b.card.priority - a.card.priority)
+    .slice(0, maxOverdueCards);
 
   const savedCards = visibleCards
     .filter((card) => statesByCard.get(card.id)?.status === "saved")
@@ -235,6 +310,14 @@ export function buildTimeline(input: TimelineEngineInput): TimelineResult {
   const snoozedCardsDue = visibleCards
     .filter((card) => isSnoozedDue(statesByCard.get(card.id), input.profile.currentDate))
     .map((card) => ({ card, reasons: [{ code: "snooze_due", message: "Snoozed card is due again." }] }));
+
+  // Quiet-week fallback: only when nothing real is current, never alongside real cards.
+  if (currentCards.length === 0) {
+    const quietWeekCard = pickQuietWeekCard(visibleCards, input.profile.currentDate);
+    if (quietWeekCard) {
+      currentCards.push(quietWeekCard);
+    }
+  }
 
   return {
     currentCards,

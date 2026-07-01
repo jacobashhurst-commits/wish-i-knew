@@ -106,7 +106,11 @@ function describeStage(profile: TimelineProfile, childName: string): string {
   return `${childName} is about ${Math.floor(months / 12)} years old.`;
 }
 
-function makeProfile(form: OnboardingState, currentDate: string): TimelineProfile {
+function makeProfile(
+  form: OnboardingState,
+  currentDate: string,
+  journeyStatus: ChildJourneyStatus = "active",
+): TimelineProfile {
   return {
     currentDate,
     birthDate: form.isBorn ? form.birthDate : null,
@@ -115,6 +119,7 @@ function makeProfile(form: OnboardingState, currentDate: string): TimelineProfil
     state: form.state,
     firstChild: form.firstChild,
     childcareIntention: form.childcareIntention,
+    journeyStatus,
   };
 }
 
@@ -585,7 +590,10 @@ export default function WishIKnewApp({ initialData }: { initialData: AppInitialD
     );
   }, [cardStates, form, hasOnboarded, mode, previewReady]);
 
-  const profile = useMemo(() => makeProfile(form, currentDate), [form, currentDate]);
+  const profile = useMemo(
+    () => makeProfile(form, currentDate, childStatus),
+    [form, currentDate, childStatus],
+  );
   const userCardStates = useMemo(() => Object.values(cardStates), [cardStates]);
   const timeline = useMemo(
     () =>

@@ -1,6 +1,7 @@
 import type {
   AustralianState,
   ChildcareIntention,
+  ChildJourneyStatus,
   TimelineCard,
   UserCardState,
 } from "@/types/content";
@@ -13,6 +14,8 @@ export type TimelineProfile = {
   state: AustralianState;
   firstChild: boolean;
   childcareIntention: ChildcareIntention;
+  /** Journey off-ramp. Anything other than "active" suppresses all buckets. Defaults to "active". */
+  journeyStatus?: ChildJourneyStatus;
 };
 
 export type TimelineEngineInput = {
