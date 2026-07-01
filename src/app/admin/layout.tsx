@@ -3,7 +3,7 @@ import { redirect } from "next/navigation";
 import { getAdminProfile } from "@/lib/data/admin";
 
 export const metadata = {
-  title: "Content Studio — Wish I Knew",
+  title: "Content Studio  -  Wish I Knew",
 };
 
 export default async function AdminLayout({ children }: { children: React.ReactNode }) {

@@ -59,7 +59,7 @@ function cardSectionHtml(item: MatchedCard, siteUrl: string): string {
 function cardSectionText(item: MatchedCard, siteUrl: string): string {
   const { card } = item;
   const lines = [
-    `— ${card.title} —`,
+    ` -  ${card.title}  - `,
     card.wish_i_knew,
     card.short_summary,
     card.what_to_do_now ? `If you do one thing: ${card.what_to_do_now}` : null,
@@ -78,8 +78,8 @@ export function renderLookaheadEmail(input: LookaheadEmailInput): {
   const { childName, cards, siteUrl, pauseUrl } = input;
   const heading = childName ? `Your week ahead with ${childName}` : "Your week ahead";
   const subject = cards.some((item) => item.card.card_type !== "quiet_week")
-    ? `${heading} — ${cards.length} thing${cards.length === 1 ? "" : "s"} worth knowing`
-    : `${heading} — a quiet one`;
+    ? `${heading}  -  ${cards.length} thing${cards.length === 1 ? "" : "s"} worth knowing`
+    : `${heading}  -  a quiet one`;
 
   const html = `<!doctype html>
 <html lang="en">
@@ -91,7 +91,7 @@ export function renderLookaheadEmail(input: LookaheadEmailInput): {
           <p style="margin:0;font-size:12px;letter-spacing:0.18em;text-transform:uppercase;color:#1D809F;font-weight:bold;">Wish I Knew</p>
           <h1 style="margin:8px 0 0 0;font-size:26px;color:#0d1b2a;">${escapeHtml(heading)}</h1>
           <p style="margin:8px 0 0 0;font-size:14px;line-height:1.6;color:#697386;">
-            Everything below is the whole update — no need to open the app unless something is useful.
+            Everything below is the whole update  -  no need to open the app unless something is useful.
           </p>
         </td></tr>
         <tr><td>
@@ -100,7 +100,7 @@ export function renderLookaheadEmail(input: LookaheadEmailInput): {
         <tr><td style="padding:8px 0 0 0;">
           <p style="margin:0;font-size:12px;line-height:1.6;color:#9aa1ad;">
             You chose to get this once a week. Life busy?
-            <a href="${pauseUrl}" style="color:#1D809F;">Pause these emails</a> anytime — your account and timeline stay exactly as they are.
+            <a href="${pauseUrl}" style="color:#1D809F;">Pause these emails</a> anytime  -  your account and timeline stay exactly as they are.
           </p>
         </td></tr>
       </table>

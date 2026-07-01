@@ -38,7 +38,7 @@ function Bucket({ title, cards, empty }: { title: string; cards: MatchedCard[]; 
               <ul className="mt-1.5 space-y-0.5 text-xs text-[#172033]/70">
                 {reasons.map((reason) => (
                   <li key={reason.code + reason.message}>
-                    <span className="font-mono text-[#1D809F]">{reason.code}</span> — {reason.message}
+                    <span className="font-mono text-[#1D809F]">{reason.code}</span>  -  {reason.message}
                   </li>
                 ))}
               </ul>

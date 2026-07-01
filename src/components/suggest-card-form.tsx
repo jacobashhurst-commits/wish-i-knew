@@ -31,7 +31,7 @@ export function SuggestCardForm() {
       setTitle("");
       setBody("");
       setTiming("");
-      setMessage("Thanks — we read every suggestion. No pressure, no perfect-parent energy.");
+      setMessage("Thanks  -  we read every suggestion. No pressure, no perfect-parent energy.");
     });
   }
 

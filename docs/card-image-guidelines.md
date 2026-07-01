@@ -95,7 +95,7 @@ Wish I Knew uses a deliberate two-tier visual system. Both tiers share the same 
 
 This is the default for card images, card thumbnails and Weekly Lookahead row art.
 
-Each card image is a **cute, fun 8-bit / 16-bit pixel-art "item"** — the kind of charming collectible object you'd pick up in a cosy modern pixel game. This is the look the founder asked for explicitly.
+Each card image is a **cute, fun 8-bit / 16-bit pixel-art "item"**  -  the kind of charming collectible object you'd pick up in a cosy modern pixel game. This is the look the founder asked for explicitly.
 
 Use:
 
@@ -116,7 +116,7 @@ Avoid:
 
 ### Tier 2: Hero and scene art (rich illustration)
 
-Hero images, landing/onboarding artwork and large emotional scenes stay in a **richer, painterly illustrated style** (warm, soft-edged, NSW coastal). The coastal hero is the reference. These are not pixel art — they give the brand its lush, calm anchor while the pixel item cards provide the playful, collectible delight.
+Hero images, landing/onboarding artwork and large emotional scenes stay in a **richer, painterly illustrated style** (warm, soft-edged, NSW coastal). The coastal hero is the reference. These are not pixel art  -  they give the brand its lush, calm anchor while the pixel item cards provide the playful, collectible delight.
 
 Shared rules for both tiers: rounded shapes, gentle shadows, warm light, clear silhouettes, bright but controlled colour, original artwork, polished enough for a paid app. Avoid hyper-realism, stock photography, sterile corporate visuals, anime, and Disney-like or Bluey-like styles.
 

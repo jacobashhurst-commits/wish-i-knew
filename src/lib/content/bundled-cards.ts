@@ -5,7 +5,7 @@ import { mapTimelineCard, type TimelineCardRow } from "@/lib/data/map-card";
 /** Default ±30 day horizon for the timeline journey map. */
 export const timelineHorizonDays = 30;
 
-/** Published cards bundled from seed SQL — used when Supabase is empty or unavailable. */
+/** Published cards bundled from seed SQL  -  used when Supabase is empty or unavailable. */
 export const bundledPublishedCards: TimelineCard[] = (libraryCards as TimelineCardRow[]).map(
   mapTimelineCard,
 );

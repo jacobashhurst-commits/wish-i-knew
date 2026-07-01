@@ -36,7 +36,7 @@ export function AuthGate({ userEmail, onPreviewContinue }: AuthGateProps) {
     <section className="wik-shell-card p-5 sm:p-6">
       <h2 className="font-display text-2xl font-semibold text-[#0d1b2a]">Save your timeline</h2>
       <p className="mt-2 text-sm leading-6 text-[#697386]">
-        Sign in with a magic link — no password. Your child profile and card actions stay synced across
+        Sign in with a magic link  -  no password. Your child profile and card actions stay synced across
         devices.
       </p>
 
@@ -67,7 +67,7 @@ export function AuthGate({ userEmail, onPreviewContinue }: AuthGateProps) {
           onClick={onPreviewContinue}
           type="button"
         >
-          Continue without an account (preview only — not saved)
+          Continue without an account (preview only  -  not saved)
         </button>
       ) : null}
     </section>

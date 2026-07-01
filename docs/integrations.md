@@ -1,4 +1,4 @@
-# Wish I Knew — Integrations
+# Wish I Knew  -  Integrations
 
 How Wish I Knew connects to external services. MVP uses Supabase only; other integrations are phased in without rewriting core architecture.
 
@@ -6,23 +6,23 @@ How Wish I Knew connects to external services. MVP uses Supabase only; other int
 
 ```mermaid
 flowchart TB
-  subgraph core [Core — MVP path]
+  subgraph core [Core  -  MVP path]
     Next[Next.js on Vercel]
     SB[Supabase]
   end
 
-  subgraph phase2 [Phase 2 — Notifications]
+  subgraph phase2 [Phase 2  -  Notifications]
     Email[Transactional Email]
     Cron[Scheduled Jobs]
   end
 
-  subgraph phase3 [Phase 3 — Growth & Ops]
+  subgraph phase3 [Phase 3  -  Growth & Ops]
     Analytics[Product Analytics]
     Error[Error Monitoring]
     AI[AI Content Assist]
   end
 
-  subgraph phase4 [Phase 4 — Monetisation & Mobile]
+  subgraph phase4 [Phase 4  -  Monetisation & Mobile]
     Pay[Payments]
     Push[Push Notifications]
     Store[App Store Wrapper]
@@ -105,7 +105,7 @@ illustrations/
 
 ## 3. Email (Weekly Lookahead)
 
-**Status:** Planned — highest priority notification channel (works on every phone, no app install).
+**Status:** Planned  -  highest priority notification channel (works on every phone, no app install).
 
 **Recommended providers:** [Resend](https://resend.com) or [Postmark](https://postmarkapp.com) (transactional, good deliverability, simple API).
 
@@ -131,9 +131,9 @@ sequenceDiagram
 
 ### Data already in schema
 
-- `weekly_lookahead_preferences` — day, time, timezone, channel
-- `reminders` — delivery log, status enum
-- `delivery_channel` enum — `in_app`, `email`, `push_later`, `manual_only`
+- `weekly_lookahead_preferences`  -  day, time, timezone, channel
+- `reminders`  -  delivery log, status enum
+- `delivery_channel` enum  -  `in_app`, `email`, `push_later`, `manual_only`
 
 ### Email content principles
 
@@ -151,7 +151,7 @@ WIK_FROM_EMAIL=lookahead@wishiknew.com.au
 
 ## 4. Web Push (PWA)
 
-**Status:** Later — after email proves the ritual.
+**Status:** Later  -  after email proves the ritual.
 
 - Service worker via Next.js PWA plugin or custom SW.
 - VAPID keys; store push subscriptions on `profiles` or new table.
@@ -161,7 +161,7 @@ Good for installed-home-screen mobile users in AU.
 
 ## 5. Native Push (iOS / Android)
 
-**Status:** Later — requires Capacitor, Expo, or React Native wrapper around web app.
+**Status:** Later  -  requires Capacitor, Expo, or React Native wrapper around web app.
 
 - Use native push (APNs / FCM) for reliable mobile nudges.
 - Same preference model; user picks email vs push vs both.
@@ -182,12 +182,12 @@ Track: onboarding completion, Lookahead open rate, card save/done/snooze, not pa
 
 **Status:** Not started.
 
-- **Sentry** — Next.js SDK, source maps on Vercel.
+- **Sentry**  -  Next.js SDK, source maps on Vercel.
 - Capture timeline engine errors separately from UI errors.
 
 ## 8. AI Content Assist (Future)
 
-**Status:** Not in MVP. Assists admins only — never diagnoses or replaces sources.
+**Status:** Not in MVP. Assists admins only  -  never diagnoses or replaces sources.
 
 | Use | Do not use |
 |-----|------------|
@@ -201,7 +201,7 @@ Track: onboarding completion, Lookahead open rate, card save/done/snooze, not pa
 
 **Status:** Deferred. No banner ads.
 
-Aligned with your Zuora background — entitlement-based freemium:
+Aligned with your Zuora background  -  entitlement-based freemium:
 
 - **Free:** Core timeline, limited lookahead history, basic cards.
 - **Paid:** Full timeline depth, partner mode, premium packs, earlier lookahead.
@@ -222,7 +222,7 @@ Not needed until content library and retention are proven.
 |----------|----------|-------|---------|
 | `NEXT_PUBLIC_SUPABASE_URL` | Yes (prod) | Client + server | Supabase project URL |
 | `NEXT_PUBLIC_SUPABASE_ANON_KEY` | Yes (prod) | Client + server | Public anon key (RLS protected) |
-| `SUPABASE_SERVICE_ROLE_KEY` | Server only | Edge Functions / admin scripts | Bypass RLS — never expose to browser |
+| `SUPABASE_SERVICE_ROLE_KEY` | Server only | Edge Functions / admin scripts | Bypass RLS  -  never expose to browser |
 | `RESEND_API_KEY` | Later | Edge Function | Send email |
 | `WIK_FROM_EMAIL` | Later | Edge Function | From address |
 | `OPENAI_API_KEY` | Later | Admin API | Draft assist |
@@ -230,13 +230,13 @@ Not needed until content library and retention are proven.
 
 ## Integration Build Order
 
-1. **Supabase** — auth, live cards, user state persistence
-2. **Vercel** — deploy from GitHub, staging env
-3. **Storage** — move card images off repo into bucket
-4. **Email** — Weekly Lookahead cron + Resend
-5. **Web push** — PWA install path
-6. **Analytics + Sentry** — when beta users exist
-7. **AI assist** — admin drafting only
-8. **Payments** — when freemium is defined
+1. **Supabase**  -  auth, live cards, user state persistence
+2. **Vercel**  -  deploy from GitHub, staging env
+3. **Storage**  -  move card images off repo into bucket
+4. **Email**  -  Weekly Lookahead cron + Resend
+5. **Web push**  -  PWA install path
+6. **Analytics + Sentry**  -  when beta users exist
+7. **AI assist**  -  admin drafting only
+8. **Payments**  -  when freemium is defined
 
 See `docs/build-roadmap.md` for product phasing alignment.

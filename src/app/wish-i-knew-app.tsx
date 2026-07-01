@@ -30,7 +30,7 @@ import type {
   UserCardStatus,
 } from "@/types/content";
 
-type AppView = "home" | "timeline" | "saved" | "settings" | "admin";
+type AppView = "home" | "timeline" | "library" | "saved" | "settings" | "admin";
 
 const demoStorageKey = "wish-i-knew-demo-state";
 
@@ -91,7 +91,7 @@ function describeStage(profile: TimelineProfile, childName: string): string {
   if (!profile.isBorn && profile.dueDate) {
     const week = calculatePregnancyWeek(profile.dueDate, profile.currentDate);
 
-    return `${childName} is due soon — around ${week} weeks along.`;
+    return `${childName} is due soon  -  around ${week} weeks along.`;
   }
 
   if (!profile.birthDate) {
@@ -371,7 +371,7 @@ function Onboarding({
             <div className="mt-6 rounded-2xl bg-white/10 p-4">
               <p className="text-sm font-semibold text-white">Your weekly Lookahead is the ritual.</p>
               <p className="mt-1 text-sm leading-6 text-white/75">
-                A calm Saturday-morning check-in with practical cards — not a guilt machine.
+                A calm Saturday-morning check-in with practical cards  -  not a guilt machine.
               </p>
             </div>
           </div>
@@ -739,7 +739,7 @@ export default function WishIKnewApp({ initialData }: { initialData: AppInitialD
               {mode === "authenticated" && userEmail ? (
                 <p className="mt-2 text-xs text-white/55">Signed in as {userEmail}</p>
               ) : (
-                <p className="mt-2 text-xs text-white/55">Preview mode — sign in to save progress</p>
+                <p className="mt-2 text-xs text-white/55">Preview mode  -  sign in to save progress</p>
               )}
               <button
                 className="wik-button wik-button-sun mt-5"
@@ -783,6 +783,10 @@ export default function WishIKnewApp({ initialData }: { initialData: AppInitialD
             onOpen={setSelectedCard}
             timeline={timeline}
           />
+        ) : null}
+
+        {activeView === "library" ? (
+          <LibraryView cards={cards} cardStates={cardStates} onOpen={setSelectedCard} />
         ) : null}
 
         {activeView === "saved" ? (
@@ -833,6 +837,7 @@ function AppNav({
   const items: { label: string; view: AppView }[] = [
     { label: "Home", view: "home" },
     { label: "Timeline", view: "timeline" },
+    { label: "Library", view: "library" },
     { label: "Saved", view: "saved" },
     { label: "Settings", view: "settings" },
     { label: "Content", view: "admin" },
@@ -1134,7 +1139,7 @@ function TimelineView({
       <SectionHeading
         eyebrow="Journey map"
         title="Your timeline"
-        subtitle={`About ${timelineHorizonDays} days behind and ahead — scroll from what you may have missed, through this week, to what's coming for ${childName}.`}
+        subtitle={`About ${timelineHorizonDays} days behind and ahead  -  scroll from what you may have missed, through this week, to what's coming for ${childName}.`}
       />
 
       <p className="mt-2 text-sm text-[#697386]">
@@ -1152,7 +1157,7 @@ function TimelineView({
             cards={missed}
             eyebrow="Heads up"
             onOpen={onOpen}
-            subtitle={`The last ${timelineHorizonDays} days — worth a quick catch-up if you haven't already.`}
+            subtitle={`The last ${timelineHorizonDays} days  -  worth a quick catch-up if you haven't already.`}
             title="You may have missed"
             tone="overdue"
           />
@@ -1170,7 +1175,7 @@ function TimelineView({
             cards={soon}
             eyebrow="Coming soon"
             onOpen={onOpen}
-            subtitle={`The next ${timelineHorizonDays} days — get ahead before these sneak up.`}
+            subtitle={`The next ${timelineHorizonDays} days  -  get ahead before these sneak up.`}
             title="What's next"
             tone="soon"
           />
@@ -1180,12 +1185,100 @@ function TimelineView({
             eyebrow="Later"
             faded
             onOpen={onOpen}
-            subtitle="Further down the track — no action needed yet."
+            subtitle="Further down the track  -  no action needed yet."
             title="Down the track"
             tone="later"
           />
         </div>
       )}
+    </section>
+  );
+}
+
+function LibraryView({
+  cards,
+  cardStates,
+  onOpen,
+}: {
+  cards: TimelineCard[];
+  cardStates: Record<string, UserCardState>;
+  onOpen: (card: TimelineCard) => void;
+}) {
+  const [query, setQuery] = useState("");
+  const [lifeStage, setLifeStage] = useState("all");
+
+  const lifeStages = useMemo(() => {
+    const stages = new Set(cards.map((card) => card.life_stage).filter(Boolean));
+    return ["all", ...[...stages].sort()];
+  }, [cards]);
+
+  const filtered = useMemo(() => {
+    const term = query.trim().toLowerCase();
+    return cards
+      .filter((card) => lifeStage === "all" || card.life_stage === lifeStage)
+      .filter(
+        (card) =>
+          !term ||
+          card.title.toLowerCase().includes(term) ||
+          card.slug.toLowerCase().includes(term) ||
+          card.category.toLowerCase().includes(term),
+      )
+      .sort((a, b) => cardSortValue(a) - cardSortValue(b));
+  }, [cards, lifeStage, query]);
+
+  return (
+    <section className="mt-6">
+      <SectionHeading
+        eyebrow="Full library"
+        title="All cards"
+        subtitle="Every card in the journey, regardless of where you are today. The Timeline tab shows what matches your dates."
+      />
+
+      <div className="mt-4 flex flex-wrap items-end gap-3 rounded-2xl border border-[#0d1b2a]/10 bg-white p-4 shadow-sm">
+        <label className="min-w-[12rem] flex-1 text-sm">
+          <span className="font-semibold text-[#172033]">Search</span>
+          <input
+            className="mt-1 w-full rounded-xl border border-[#0d1b2a]/15 bg-[#FFFDF7] px-3 py-2 outline-none focus:border-[#1D809F]"
+            onChange={(event) => setQuery(event.target.value)}
+            placeholder="Title, category, or slug"
+            value={query}
+          />
+        </label>
+        <label className="text-sm">
+          <span className="font-semibold text-[#172033]">Life stage</span>
+          <select
+            className="mt-1 block rounded-xl border border-[#0d1b2a]/15 bg-[#FFFDF7] px-3 py-2 outline-none focus:border-[#1D809F]"
+            onChange={(event) => setLifeStage(event.target.value)}
+            value={lifeStage}
+          >
+            {lifeStages.map((stage) => (
+              <option key={stage} value={stage}>
+                {stage === "all" ? "All stages" : stage}
+              </option>
+            ))}
+          </select>
+        </label>
+      </div>
+
+      <p className="mt-3 text-sm text-[#697386]">
+        {filtered.length} of {cards.length} cards
+      </p>
+
+      <div className="mt-4 space-y-3">
+        {filtered.length ? (
+          filtered.map((card) => (
+            <TimelineRow
+              card={card}
+              key={card.id}
+              onOpen={onOpen}
+              state={cardStates[card.id]}
+              tone="later"
+            />
+          ))
+        ) : (
+          <EmptyState message="No cards match that search." />
+        )}
+      </div>
     </section>
   );
 }
@@ -1277,7 +1370,7 @@ function SettingsView({
           subtitle={
             mode === "authenticated"
               ? "Your profile is saved in Supabase."
-              : "Preview mode — sign in to persist your timeline."
+              : "Preview mode  -  sign in to persist your timeline."
           }
         />
         <dl className="mt-5 grid gap-2.5 text-sm">
@@ -1298,7 +1391,7 @@ function SettingsView({
           <SectionHeading
             eyebrow="Journey"
             title="Pause or end your timeline"
-            subtitle="Life changes. You can pause reminders or end this journey anytime — no guilt, no perfect-parent energy."
+            subtitle="Life changes. You can pause reminders or end this journey anytime  -  no guilt, no perfect-parent energy."
           />
           <div className="mt-5 flex flex-wrap gap-2">
             {childStatus !== "active" ? (

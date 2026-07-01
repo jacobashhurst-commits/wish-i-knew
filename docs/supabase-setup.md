@@ -20,12 +20,12 @@ In the Supabase SQL editor (or Supabase CLI), run in order:
 
 1. `supabase/migrations/001_initial_schema.sql`
 2. `supabase/migrations/002_auth_profile_trigger.sql`
-3. `supabase/migrations/003_off_ramp_suggestions_overdue.sql` — journey status, card suggestions, `time_critical` flag
-4. `supabase/migrations/004_card_image_storage_policies.sql` — admin upload to the `card-images` bucket
-5. `supabase/seed.sql` (optional — loads the original six demo cards)
-6. `supabase/seed_content_library.sql` (optional — loads the full pregnancy → 24 months card library, ~30 cards including quiet-week fallbacks; safe to re-run, upserts by slug)
+3. `supabase/migrations/003_off_ramp_suggestions_overdue.sql`  -  journey status, card suggestions, `time_critical` flag
+4. `supabase/migrations/004_card_image_storage_policies.sql`  -  admin upload to the `card-images` bucket
+5. `supabase/seed.sql` (optional  -  loads the original six demo cards)
+6. `supabase/seed_content_library.sql` (optional  -  loads the full pregnancy → 24 months card library, ~30 cards including quiet-week fallbacks; safe to re-run, upserts by slug)
 
-Re-running a migration that already applied will error (e.g. `type "user_role" already exists` on 001). That is expected — each file runs once only.
+Re-running a migration that already applied will error (e.g. `type "user_role" already exists` on 001). That is expected  -  each file runs once only.
 
 ## 2b. Grant yourself admin (for the Content Studio)
 
@@ -72,7 +72,7 @@ Policies are defined in `001_initial_schema.sql`. The trigger in `002_auth_profi
 
 The weekly email is sent by a Vercel Cron job (`vercel.json` schedules `/api/cron/weekly-lookahead` hourly; each run only emails users whose chosen local day + hour matches).
 
-Extra environment variables (server-side only — set in Vercel, never exposed to the browser):
+Extra environment variables (server-side only  -  set in Vercel, never exposed to the browser):
 
 ```bash
 SUPABASE_SERVICE_ROLE_KEY=...   # Supabase Dashboard → Settings → API
@@ -102,13 +102,13 @@ Once migrations 001–004 and `seed_content_library.sql` are applied:
 
 | Feature | How to verify |
 |---------|----------------|
-| **Timeline engine** | Sign in, onboard with a due date or birth date, open Timeline — cards should appear in This week / Coming soon / Later buckets |
-| **Quiet week** | In `/admin/debugger`, set a profile date with no matching cards — exactly one quiet-week card should appear in This week |
-| **Overdue** | Set birth date so a `time_critical` immunisation window has passed — card appears in Overdue (max 3) |
+| **Timeline engine** | Sign in, onboard with a due date or birth date, open Timeline  -  cards should appear in This week / Coming soon / Later buckets |
+| **Quiet week** | In `/admin/debugger`, set a profile date with no matching cards  -  exactly one quiet-week card should appear in This week |
+| **Overdue** | Set birth date so a `time_critical` immunisation window has passed  -  card appears in Overdue (max 3) |
 | **Journey off-ramp** | Settings → Pause timeline → timeline empties; Resume brings cards back |
 | **Suggestions** | Settings → submit a suggestion; as admin, `/admin/suggestions` → Promote to draft |
 | **Content Studio** | `/admin` → filter cards → edit → publish (validation blocks bad cards) |
 | **Match debugger** | `/admin/debugger` → change profile → see bucket + match reasons |
 | **Weekly email** | Set `CRON_SECRET` + Resend keys, curl the cron route at your chosen lookahead hour |
 
-Card count after full seed: **~36 published cards** (6 from `seed.sql` + 30 from `seed_content_library.sql`, upserted by slug — safe overlap on the original six).
+Card count after full seed: **~36 published cards** (6 from `seed.sql` + 30 from `seed_content_library.sql`, upserted by slug  -  safe overlap on the original six).

@@ -230,7 +230,7 @@ for (const file of seedFiles) {
     try {
       const tokens = tokenizeTuple(tuple);
       if (!hasTimeCritical && tokens.length === insertColumns.length - 1) {
-        // seed.sql predates time_critical column in values — insert false after priority (index 10)
+        // seed.sql predates time_critical column in values  -  insert false after priority (index 10)
         tokens.splice(11, 0, false);
       }
       const card = rowToCard(tokens);

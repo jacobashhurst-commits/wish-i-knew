@@ -6,7 +6,7 @@ export function isSupabaseConfigured(): boolean {
 
 export function getSupabaseUrl(): string {
   const raw = process.env.NEXT_PUBLIC_SUPABASE_URL?.trim() ?? "";
-  // Allow pasting the REST URL by mistake — strip /rest/v1 suffix.
+  // Allow pasting the REST URL by mistake  -  strip /rest/v1 suffix.
   return raw.replace(/\/rest\/v1\/?$/, "");
 }
 

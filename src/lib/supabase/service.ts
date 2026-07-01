@@ -2,7 +2,7 @@ import { createClient as createSupabaseClient } from "@supabase/supabase-js";
 import { getSupabaseUrl } from "./config";
 
 /**
- * Service-role client for trusted server jobs (cron). Never import from client code —
+ * Service-role client for trusted server jobs (cron). Never import from client code  - 
  * the service key bypasses RLS.
  */
 export function createServiceClient() {

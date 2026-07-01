@@ -1,4 +1,4 @@
-# Wish I Knew — Architecture
+# Wish I Knew  -  Architecture
 
 This document describes the full-stack architecture for Wish I Knew: an Australian-first, mobile-first parenting timeline app. Content is data, not code. The timeline engine is pure TypeScript and testable. Supabase is the system of record.
 
@@ -45,12 +45,12 @@ flowchart TB
 
 ## Design Principles
 
-1. **Content as data** — Cards, images, sources and lifecycle live in Supabase. The app renders data; it does not hardcode parenting advice.
-2. **Timeline logic is portable** — Matching runs in `src/lib/timeline` with Vitest coverage. Same logic can power API routes, Edge Functions and admin debug tools.
-3. **Australian-first** — State, language, sources and imagery default to NSW/Australia. Not a US app repackaged.
-4. **Mobile-first** — Single-column layouts, touch targets, scrollable timeline journey, PWA-ready hosting on Vercel.
-5. **Security by default** — Row Level Security on all user data. Admin actions gated by `profiles.role`. Published cards enforced at DB level (image required).
-6. **MVP-first, not throwaway** — Demo mode uses localStorage today; every layer is shaped for Supabase persistence next.
+1. **Content as data**  -  Cards, images, sources and lifecycle live in Supabase. The app renders data; it does not hardcode parenting advice.
+2. **Timeline logic is portable**  -  Matching runs in `src/lib/timeline` with Vitest coverage. Same logic can power API routes, Edge Functions and admin debug tools.
+3. **Australian-first**  -  State, language, sources and imagery default to NSW/Australia. Not a US app repackaged.
+4. **Mobile-first**  -  Single-column layouts, touch targets, scrollable timeline journey, PWA-ready hosting on Vercel.
+5. **Security by default**  -  Row Level Security on all user data. Admin actions gated by `profiles.role`. Published cards enforced at DB level (image required).
+6. **MVP-first, not throwaway**  -  Demo mode uses localStorage today; every layer is shaped for Supabase persistence next.
 
 ## Technology Stack
 
@@ -90,12 +90,12 @@ wish-i-knew/
 
 ### 1. Presentation (`src/app`)
 
-- **`wish-i-knew-app.tsx`** — Client shell: onboarding, Home, Timeline, Saved, Settings, Content Studio preview.
-- **Demo persistence** — `localStorage` key `wish-i-knew-demo-state` until Supabase auth is wired.
+- **`wish-i-knew-app.tsx`**  -  Client shell: onboarding, Home, Timeline, Saved, Settings, Content Studio preview.
+- **Demo persistence**  -  `localStorage` key `wish-i-knew-demo-state` until Supabase auth is wired.
 - **Views**
-  - **Home** — Weekly Lookahead summary + current/coming-soon cards.
-  - **Timeline** — Continuous scroll: Heads up (overdue) → This week → Coming soon → Later.
-  - **Saved / Settings / Content Studio** — User actions and admin card-health preview.
+  - **Home**  -  Weekly Lookahead summary + current/coming-soon cards.
+  - **Timeline**  -  Continuous scroll: Heads up (overdue) → This week → Coming soon → Later.
+  - **Saved / Settings / Content Studio**  -  User actions and admin card-health preview.
 
 Card images render from `timeline_cards.image_url` (today: demo array; production: Supabase row).
 
@@ -109,11 +109,11 @@ Pure functions. No React, no Supabase imports.
 
 | Bucket | Meaning |
 |--------|---------|
-| `overdueCards` | Age/pregnancy window ended — "Heads up, you may have missed" |
-| `currentCards` | Active window now — "On for this week" |
-| `snoozedCardsDue` | Snooze expired — resurface |
-| `comingSoonCards` | Starts within N days — "What's next" |
-| `laterCards` | Starts after N days — "Down the track" |
+| `overdueCards` | Age/pregnancy window ended  -  "Heads up, you may have missed" |
+| `currentCards` | Active window now  -  "On for this week" |
+| `snoozedCardsDue` | Snooze expired  -  resurface |
+| `comingSoonCards` | Starts within N days  -  "What's next" |
+| `laterCards` | Starts after N days  -  "Down the track" |
 | `savedCards` | User saved for later |
 
 **User state filtering:** `done`, `dismissed`, `not_relevant` hidden; `snoozed` hidden until due date.
@@ -122,8 +122,8 @@ See `docs/timeline-engine.md` for matching rules and match-reason codes (for fut
 
 ### 3. Content Layer (`src/lib/content`)
 
-- **`validation.ts`** — Publish rules: mandatory image, sources for sensitive cards, review dates.
-- **`demo-cards.ts`** — Six cards mirroring `supabase/seed.sql` for offline demo.
+- **`validation.ts`**  -  Publish rules: mandatory image, sources for sensitive cards, review dates.
+- **`demo-cards.ts`**  -  Six cards mirroring `supabase/seed.sql` for offline demo.
 
 Production path: fetch `timeline_cards` where `status = 'published'` via Supabase client.
 
@@ -171,8 +171,8 @@ sequenceDiagram
 
 Two-tier visual system (see `docs/card-image-guidelines.md`):
 
-1. **Card items** — Cute 8-bit pixel collectibles (`public/card-images/pixel/` in MVP; Supabase Storage in production).
-2. **Hero / scenes** — Painterly NSW coastal illustration (`public/illustrations/`).
+1. **Card items**  -  Cute 8-bit pixel collectibles (`public/card-images/pixel/` in MVP; Supabase Storage in production).
+2. **Hero / scenes**  -  Painterly NSW coastal illustration (`public/illustrations/`).
 
 **Production path:** Admin uploads to Supabase Storage → `image_url` on card → CDN URL. Publish validation blocks cards without approved images.
 
@@ -217,7 +217,7 @@ flowchart LR
 - **Admin** via `is_admin()` SQL helper + policies.
 - **Published content** readable by authenticated users only (adjust for marketing site later if needed).
 - **Sensitive cards** require `source_urls` and review dates at DB + validation layer.
-- **No medical diagnosis** — content is practical guidance with Australian sources; AI assists drafting only (future).
+- **No medical diagnosis**  -  content is practical guidance with Australian sources; AI assists drafting only (future).
 
 ## Current State vs Next
 
@@ -234,9 +234,9 @@ See `docs/build-roadmap.md` for phased delivery.
 
 ## Related Docs
 
-- `docs/integrations.md` — External services and wiring detail
-- `docs/content-model.md` — Card lifecycle and tables
-- `docs/timeline-engine.md` — Matching rules
-- `docs/product-brief.md` — MVP promise and audience
-- `docs/design-direction.md` — Visual identity
-- `docs/safety-and-sources.md` — Sensitive content rules
+- `docs/integrations.md`  -  External services and wiring detail
+- `docs/content-model.md`  -  Card lifecycle and tables
+- `docs/timeline-engine.md`  -  Matching rules
+- `docs/product-brief.md`  -  MVP promise and audience
+- `docs/design-direction.md`  -  Visual identity
+- `docs/safety-and-sources.md`  -  Sensitive content rules

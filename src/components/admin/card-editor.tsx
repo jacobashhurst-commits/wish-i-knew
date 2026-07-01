@@ -305,7 +305,7 @@ export function CardEditor({ card }: { card: AdminCardRow | null }) {
           </label>
           {form.card_type === "quiet_week" ? (
             <p className="text-xs text-[#172033]/60 sm:col-span-2">
-              Quiet-week cards need no window — they are served as a fallback when a week has nothing scheduled.
+              Quiet-week cards need no window  -  they are served as a fallback when a week has nothing scheduled.
             </p>
           ) : null}
         </Section>
