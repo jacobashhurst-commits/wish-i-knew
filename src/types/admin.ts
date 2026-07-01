@@ -78,13 +78,10 @@ export const cardTypes = [
   "Big Milestone",
   "Heads Up",
   "Admin Trap",
-  "Gear & Setup",
-  "Health & Development",
-  "Feeding",
-  "Sleep",
-  "Money & Entitlements",
-  "Childcare & Work",
-  "Just Reassurance",
+  "Tiny Gear Shift",
+  "Parent Sanity",
+  "Aussie System",
+  "Fun First",
   "quiet_week",
 ] as const;
 
@@ -110,8 +107,8 @@ export const imageStatuses: ImageStatus[] = [
 export const lifeStages = [
   "Pregnancy",
   "Pregnancy or early baby",
-  "Newborn (0–3 months)",
-  "Baby (3–12 months)",
-  "Toddler (12–24 months)",
+  "Newborn",
+  "Baby",
+  "Toddler",
   "Any",
 ] as const;

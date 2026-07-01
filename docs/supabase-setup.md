@@ -22,7 +22,8 @@ In the Supabase SQL editor (or Supabase CLI), run in order:
 2. `supabase/migrations/002_auth_profile_trigger.sql`
 3. `supabase/migrations/003_off_ramp_suggestions_overdue.sql` — journey status, card suggestions, `time_critical` flag
 4. `supabase/migrations/004_card_image_storage_policies.sql` — admin upload to the `card-images` bucket
-5. `supabase/seed.sql` (optional — loads the published demo cards)
+5. `supabase/seed.sql` (optional — loads the original six demo cards)
+6. `supabase/seed_content_library.sql` (optional — loads the full pregnancy → 24 months card library, ~30 cards including quiet-week fallbacks; safe to re-run, upserts by slug)
 
 Re-running a migration that already applied will error (e.g. `type "user_role" already exists` on 001). That is expected — each file runs once only.
 
