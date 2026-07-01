@@ -95,3 +95,20 @@ curl -H "Authorization: Bearer $CRON_SECRET" http://127.0.0.1:3000/api/cron/week
 ```
 
 (Your lookahead preference day/time must match the current local hour to trigger a send.)
+
+## 7. Full-stack smoke test (after loading content)
+
+Once migrations 001–004 and `seed_content_library.sql` are applied:
+
+| Feature | How to verify |
+|---------|----------------|
+| **Timeline engine** | Sign in, onboard with a due date or birth date, open Timeline — cards should appear in This week / Coming soon / Later buckets |
+| **Quiet week** | In `/admin/debugger`, set a profile date with no matching cards — exactly one quiet-week card should appear in This week |
+| **Overdue** | Set birth date so a `time_critical` immunisation window has passed — card appears in Overdue (max 3) |
+| **Journey off-ramp** | Settings → Pause timeline → timeline empties; Resume brings cards back |
+| **Suggestions** | Settings → submit a suggestion; as admin, `/admin/suggestions` → Promote to draft |
+| **Content Studio** | `/admin` → filter cards → edit → publish (validation blocks bad cards) |
+| **Match debugger** | `/admin/debugger` → change profile → see bucket + match reasons |
+| **Weekly email** | Set `CRON_SECRET` + Resend keys, curl the cron route at your chosen lookahead hour |
+
+Card count after full seed: **~36 published cards** (6 from `seed.sql` + 30 from `seed_content_library.sql`, upserted by slug — safe overlap on the original six).
