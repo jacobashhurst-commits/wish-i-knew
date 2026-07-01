@@ -66,3 +66,31 @@ Run as an authenticated user in the SQL editor (or via two test accounts):
 | Normal user inserts into `timeline_cards` | Denied |
 
 Policies are defined in `001_initial_schema.sql`. The trigger in `002_auth_profile_trigger.sql` creates a `profiles` row on signup. Migration `003` adds `card_suggestions` RLS and journey fields on `children`.
+
+## 6. Weekly Lookahead email (Milestone 6)
+
+The weekly email is sent by a Vercel Cron job (`vercel.json` schedules `/api/cron/weekly-lookahead` hourly; each run only emails users whose chosen local day + hour matches).
+
+Extra environment variables (server-side only — set in Vercel, never exposed to the browser):
+
+```bash
+SUPABASE_SERVICE_ROLE_KEY=...   # Supabase Dashboard → Settings → API
+RESEND_API_KEY=...              # resend.com
+WIK_FROM_EMAIL="Wish I Knew <hello@yourdomain.com>"
+CRON_SECRET=any_long_random_string
+```
+
+Notes:
+
+- Vercel automatically sends `Authorization: Bearer $CRON_SECRET` to cron routes when `CRON_SECRET` is set in the project.
+- The email contains the actual card content plus a one-tap pause link (`/api/lookahead/pause`) that sets `enabled = false` without touching the account.
+- One send per child per local day is enforced via the `reminders` table.
+- TODO: set up SPF/DKIM for the sending domain in Resend before real users receive these.
+
+To test locally:
+
+```bash
+curl -H "Authorization: Bearer $CRON_SECRET" http://127.0.0.1:3000/api/cron/weekly-lookahead
+```
+
+(Your lookahead preference day/time must match the current local hour to trigger a send.)

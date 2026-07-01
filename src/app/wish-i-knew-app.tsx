@@ -590,6 +590,26 @@ export default function WishIKnewApp({ initialData }: { initialData: AppInitialD
     );
   }, [cardStates, form, hasOnboarded, mode, previewReady]);
 
+  // Deep links from the weekly email: /?card=slug or /?card=slug&action=save
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const slug = params.get("card");
+    if (!slug) return;
+
+    const target = cards.find((item) => item.slug === slug);
+    if (!target) return;
+
+    // Synchronizing state from the URL (external system) on first mount only.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setSelectedCard(target);
+    if (params.get("action") === "save") {
+      handleAction(target.id, "saved");
+    }
+
+    window.history.replaceState(null, "", window.location.pathname);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   const profile = useMemo(
     () => makeProfile(form, currentDate, childStatus),
     [form, currentDate, childStatus],

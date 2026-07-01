@@ -1,0 +1,8 @@
+{
+  "crons": [
+    {
+      "path": "/api/cron/weekly-lookahead",
+      "schedule": "0 * * * *"
+    }
+  ]
+}
