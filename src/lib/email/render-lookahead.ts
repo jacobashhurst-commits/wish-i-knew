@@ -101,6 +101,13 @@ export function renderLookaheadEmail(input: LookaheadEmailInput): {
           <p style="margin:0;font-size:12px;line-height:1.6;color:#9aa1ad;">
             You chose to get this once a week. Life busy?
             <a href="${pauseUrl}" style="color:#1D809F;">Pause these emails</a> anytime  -  your account and timeline stay exactly as they are.
+            You can turn emails back on in Settings.
+          </p>
+          <p style="margin:12px 0 0 0;font-size:11px;line-height:1.6;color:#9aa1ad;">
+            Practical guidance for Australian parents, not medical advice.
+            <a href="${siteUrl}/privacy" style="color:#1D809F;">Privacy</a> ·
+            <a href="${siteUrl}/terms" style="color:#1D809F;">Terms</a> ·
+            <a href="${siteUrl}/disclaimer" style="color:#1D809F;">Disclaimer</a>
           </p>
         </td></tr>
       </table>

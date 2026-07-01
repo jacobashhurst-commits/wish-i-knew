@@ -1,15 +1,18 @@
 "use client";
 
+import Link from "next/link";
 import { useState, useTransition } from "react";
 import { signInWithMagicLink } from "@/app/actions/auth";
 
 type AuthGateProps = {
-  userEmail: string | null;
-  onPreviewContinue?: () => void;
+  userEmail?: string | null;
+  requireConsent?: boolean;
+  showBetaNote?: boolean;
 };
 
-export function AuthGate({ userEmail, onPreviewContinue }: AuthGateProps) {
+export function AuthGate({ userEmail, requireConsent = false, showBetaNote = false }: AuthGateProps) {
   const [email, setEmail] = useState(userEmail ?? "");
+  const [consent, setConsent] = useState(false);
   const [message, setMessage] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
@@ -19,12 +22,16 @@ export function AuthGate({ userEmail, onPreviewContinue }: AuthGateProps) {
     setMessage(null);
     setError(null);
 
+    if (requireConsent && !consent) {
+      setError("Please agree to the Privacy Policy and Terms before continuing.");
+      return;
+    }
+
     startTransition(async () => {
       const result = await signInWithMagicLink(email);
 
       if (result.error) {
         setError(result.error);
-
         return;
       }
 
@@ -34,11 +41,16 @@ export function AuthGate({ userEmail, onPreviewContinue }: AuthGateProps) {
 
   return (
     <section className="wik-shell-card p-5 sm:p-6">
-      <h2 className="font-display text-2xl font-semibold text-[#0d1b2a]">Save your timeline</h2>
+      <h2 className="font-display text-2xl font-semibold text-[#0d1b2a]">Email me a magic link</h2>
       <p className="mt-2 text-sm leading-6 text-[#697386]">
-        Sign in with a magic link  -  no password. Your child profile and card actions stay synced across
-        devices.
+        Sign in with a magic link. No password. Your child profile and card actions stay synced across devices.
       </p>
+
+      {showBetaNote ? (
+        <p className="mt-3 rounded-xl bg-[#FFF6E6] px-4 py-3 text-sm leading-6 text-[#172033]">
+          This is a private friends-and-family beta. Only invited emails can create an account right now.
+        </p>
+      ) : null}
 
       <form className="mt-5 space-y-3" onSubmit={handleSubmit}>
         <label>
@@ -53,6 +65,28 @@ export function AuthGate({ userEmail, onPreviewContinue }: AuthGateProps) {
           />
         </label>
 
+        {requireConsent ? (
+          <label className="flex items-start gap-3 text-sm leading-6 text-[#697386]">
+            <input
+              checked={consent}
+              className="mt-1"
+              onChange={(event) => setConsent(event.target.checked)}
+              type="checkbox"
+            />
+            <span>
+              I agree to the{" "}
+              <Link className="font-semibold text-[#1D809F] underline-offset-2 hover:underline" href="/privacy">
+                Privacy Policy
+              </Link>{" "}
+              and{" "}
+              <Link className="font-semibold text-[#1D809F] underline-offset-2 hover:underline" href="/terms">
+                Terms of Use
+              </Link>
+              .
+            </span>
+          </label>
+        ) : null}
+
         {error ? <p className="text-sm font-medium text-[#FF6B6B]">{error}</p> : null}
         {message ? <p className="text-sm font-medium text-[#1D809F]">{message}</p> : null}
 
@@ -60,16 +94,6 @@ export function AuthGate({ userEmail, onPreviewContinue }: AuthGateProps) {
           {isPending ? "Sending link…" : "Email me a magic link"}
         </button>
       </form>
-
-      {onPreviewContinue ? (
-        <button
-          className="mt-4 w-full text-sm font-semibold text-[#697386] underline-offset-2 hover:underline"
-          onClick={onPreviewContinue}
-          type="button"
-        >
-          Continue without an account (preview only  -  not saved)
-        </button>
-      ) : null}
     </section>
   );
 }

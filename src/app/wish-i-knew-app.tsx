@@ -2,12 +2,14 @@
 
 import { useRouter } from "next/navigation";
 import { useEffect, useMemo, useState, useTransition } from "react";
-import { saveOnboarding } from "@/app/actions/onboarding";
+import { saveOnboarding, updateLookaheadSettings } from "@/app/actions/onboarding";
 import { upsertCardState } from "@/app/actions/card-states";
 import { signOut } from "@/app/actions/auth";
 import { updateChildJourneyStatus } from "@/app/actions/journey";
 import { AuthGate } from "@/components/auth-gate";
+import { SiteFooter } from "@/components/site-footer";
 import { SuggestCardForm } from "@/components/suggest-card-form";
+import { resolveBrowserTimezone } from "@/lib/launch/timezone";
 import clsx from "@/lib/clsx";
 import { timelineHorizonDays } from "@/lib/content/bundled-cards";
 import { validateCardForPublish } from "@/lib/content/validation";
@@ -257,9 +259,37 @@ function CardDetail({
   onAction: (cardId: string, status: UserCardStatus) => void;
   onClose: () => void;
 }) {
+  const isSensitive =
+    card.medical_sensitivity ||
+    card.government_sensitivity ||
+    card.safety_sensitivity ||
+    card.allergy_sensitivity ||
+    card.feeding_sensitivity;
+
+  useEffect(() => {
+    function onKeyDown(event: KeyboardEvent) {
+      if (event.key === "Escape") {
+        onClose();
+      }
+    }
+
+    window.addEventListener("keydown", onKeyDown);
+    return () => window.removeEventListener("keydown", onKeyDown);
+  }, [onClose]);
+
   return (
-    <div className="fixed inset-0 z-50 flex justify-end bg-[#0d1b2a]/40 p-3 backdrop-blur-sm sm:p-6">
-      <section className="flex h-full w-full max-w-xl flex-col overflow-hidden rounded-[2rem] bg-[#FFF6E6] shadow-2xl">
+    <div
+      className="fixed inset-0 z-50 flex justify-end bg-[#0d1b2a]/40 p-3 backdrop-blur-sm sm:p-6"
+      onClick={onClose}
+      role="presentation"
+    >
+      <section
+        aria-labelledby="card-detail-title"
+        aria-modal="true"
+        className="flex h-full w-full max-w-xl flex-col overflow-hidden rounded-[2rem] bg-[#FFF6E6] shadow-2xl"
+        onClick={(event) => event.stopPropagation()}
+        role="dialog"
+      >
         <div className="overflow-y-auto p-5 sm:p-7">
           <button
             className="mb-4 rounded-full bg-white px-4 py-2 text-sm font-bold text-[#172033] shadow-sm"
@@ -273,8 +303,20 @@ function CardDetail({
             <StatusPill tone={cardTypeStyles[card.card_type]}>{card.card_type}</StatusPill>
             <StatusPill tone="bg-white text-[#697386]">{card.category}</StatusPill>
           </div>
-          <h2 className="font-display mt-4 text-3xl font-semibold leading-tight text-[#0d1b2a]">{card.title}</h2>
+          <h2 className="font-display mt-4 text-3xl font-semibold leading-tight text-[#0d1b2a]" id="card-detail-title">
+            {card.title}
+          </h2>
           {card.subtitle ? <p className="mt-1 text-lg font-medium text-[#697386]">{card.subtitle}</p> : null}
+
+          {isSensitive ? (
+            <p className="mt-4 rounded-xl bg-[#FFF6E6] px-4 py-3 text-sm leading-6 text-[#697386]">
+              Practical guidance only, not medical or legal advice. Check official Australian sources and talk to
+              your GP, midwife, or child health nurse if you are unsure.{" "}
+              <a className="font-semibold text-[#1D809F] underline-offset-2 hover:underline" href="/disclaimer">
+                Read disclaimer
+              </a>
+            </p>
+          ) : null}
 
           <div className="mt-6 rounded-[1.5rem] bg-white p-5 shadow-sm ring-1 ring-[#0d1b2a]/5">
             <p className="text-xs font-bold uppercase tracking-[0.18em] text-[#FF6B6B]">Wish I knew</p>
@@ -338,7 +380,7 @@ function Onboarding({
   userEmail,
   isSubmitting,
   submitError,
-  onPreviewContinue,
+  requireAuth,
 }: {
   form: OnboardingState;
   setForm: (form: OnboardingState) => void;
@@ -347,8 +389,18 @@ function Onboarding({
   userEmail: string | null;
   isSubmitting?: boolean;
   submitError?: string | null;
-  onPreviewContinue?: () => void;
+  requireAuth?: boolean;
 }) {
+  useEffect(() => {
+    if (!form.timezone || form.timezone === "Australia/Sydney") {
+      setForm({ ...form, timezone: resolveBrowserTimezone() });
+    }
+    // Capture browser timezone once on first mount.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  const showPreviewGate = mode === "preview" && !requireAuth;
+
   return (
     <main className="px-4 py-6 text-[#172033] sm:py-10">
       <section className="mx-auto grid max-w-6xl gap-6 lg:grid-cols-[1fr_1fr]">
@@ -378,13 +430,13 @@ function Onboarding({
         </div>
 
         <div className="space-y-4">
-          {mode === "preview" ? (
-            <AuthGate onPreviewContinue={onPreviewContinue} userEmail={userEmail} />
-          ) : (
+          {showPreviewGate ? (
+            <AuthGate userEmail={userEmail} />
+          ) : mode === "authenticated" ? (
             <div className="wik-shell-card p-4 text-sm text-[#697386]">
               Signed in as <span className="font-semibold text-[#0d1b2a]">{userEmail}</span>
             </div>
-          )}
+          ) : null}
 
         <form
           className="wik-shell-card p-5 sm:p-7"
@@ -517,13 +569,30 @@ function Onboarding({
             </label>
 
             <label>
-              <span className="text-sm font-semibold text-[#172033]">Time</span>
+              <span className="text-sm font-semibold text-[#172033]">Weekly email time</span>
               <input
                 className="mt-1.5 w-full rounded-xl border border-[#0d1b2a]/15 bg-[#FFFDF7] px-4 py-3 outline-none focus:border-[#1D809F]"
                 onChange={(event) => setForm({ ...form, lookaheadTime: event.target.value })}
                 type="time"
                 value={form.lookaheadTime}
               />
+              <p className="mt-1 text-xs text-[#172033]/60">
+                Emails send on the hour in your local timezone ({form.timezone}).
+              </p>
+            </label>
+
+            <label className="sm:col-span-2 flex items-start gap-3 rounded-xl bg-[#FFF6E6] px-4 py-3">
+              <input
+                checked={form.weeklyEmailEnabled}
+                className="mt-1"
+                onChange={(event) => setForm({ ...form, weeklyEmailEnabled: event.target.checked })}
+                type="checkbox"
+              />
+              <span className="text-sm leading-6 text-[#172033]">
+                <span className="font-semibold">Email my weekly Lookahead</span>
+                <br />
+                One calm email with your cards for the week. Pause anytime from the email or Settings.
+              </span>
             </label>
           </div>
 
@@ -581,6 +650,13 @@ export default function WishIKnewApp({ initialData }: { initialData: AppInitialD
   const [currentDate] = useState(() => todayIso());
   const [isSubmitting, startSubmitTransition] = useTransition();
   const [, startActionTransition] = useTransition();
+  const requireAuth = initialData.requireAuth;
+
+  useEffect(() => {
+    if (requireAuth && mode === "preview") {
+      router.replace("/login");
+    }
+  }, [requireAuth, mode, router]);
 
   useEffect(() => {
     if (mode !== "preview" || !previewReady) return;
@@ -644,7 +720,7 @@ export default function WishIKnewApp({ initialData }: { initialData: AppInitialD
   function handleOnboardingSubmit() {
     setSubmitError(null);
 
-    if (mode === "preview") {
+    if (mode === "preview" && !requireAuth) {
       setPreviewReady(true);
       setHasOnboarded(true);
       return;
@@ -706,8 +782,8 @@ export default function WishIKnewApp({ initialData }: { initialData: AppInitialD
         form={form}
         isSubmitting={isSubmitting}
         mode={mode}
-        onPreviewContinue={() => setPreviewReady(true)}
         onSubmit={handleOnboardingSubmit}
+        requireAuth={requireAuth}
         setForm={setForm}
         submitError={submitError}
         userEmail={userEmail}
@@ -738,7 +814,7 @@ export default function WishIKnewApp({ initialData }: { initialData: AppInitialD
               <p className="mt-3 text-sm leading-6 text-white/75">{stageSummary}</p>
               {mode === "authenticated" && userEmail ? (
                 <p className="mt-2 text-xs text-white/55">Signed in as {userEmail}</p>
-              ) : (
+              ) : requireAuth ? null : (
                 <p className="mt-2 text-xs text-white/55">Preview mode  -  sign in to save progress</p>
               )}
               <button
@@ -760,7 +836,7 @@ export default function WishIKnewApp({ initialData }: { initialData: AppInitialD
           </div>
         </header>
 
-        <AppNav activeView={activeView} onChange={setActiveView} />
+        <AppNav activeView={activeView} isAdmin={initialData.isAdmin} onChange={setActiveView} />
 
         {activeView === "home" ? (
           <HomeView
@@ -804,8 +880,10 @@ export default function WishIKnewApp({ initialData }: { initialData: AppInitialD
             childStatus={childStatus}
             form={form}
             mode={mode}
+            onFormChange={setForm}
             onJourneyStatusChange={setChildStatus}
             onResetPreview={resetPreview}
+            requireAuth={requireAuth}
             userEmail={userEmail}
           />
         ) : null}
@@ -823,6 +901,8 @@ export default function WishIKnewApp({ initialData }: { initialData: AppInitialD
           state={cardStates[selectedCard.id]}
         />
       ) : null}
+
+      <SiteFooter className="mt-10 pb-8" />
     </main>
   );
 }
@@ -830,9 +910,11 @@ export default function WishIKnewApp({ initialData }: { initialData: AppInitialD
 function AppNav({
   activeView,
   onChange,
+  isAdmin,
 }: {
   activeView: AppView;
   onChange: (view: AppView) => void;
+  isAdmin: boolean;
 }) {
   const items: { label: string; view: AppView }[] = [
     { label: "Home", view: "home" },
@@ -840,7 +922,7 @@ function AppNav({
     { label: "Library", view: "library" },
     { label: "Saved", view: "saved" },
     { label: "Settings", view: "settings" },
-    { label: "Content", view: "admin" },
+    ...(isAdmin ? [{ label: "Content", view: "admin" as const }] : []),
   ];
 
   return (
@@ -1325,21 +1407,28 @@ function SettingsView({
   childStatus,
   form,
   mode,
+  onFormChange,
   onJourneyStatusChange,
   userEmail,
   onResetPreview,
+  requireAuth,
 }: {
   childId: string | null;
   childStatus: ChildJourneyStatus;
   form: OnboardingState;
   mode: AppMode;
+  onFormChange: (form: OnboardingState) => void;
   onJourneyStatusChange: (status: ChildJourneyStatus) => void;
   userEmail: string | null;
   onResetPreview: () => void;
+  requireAuth: boolean;
 }) {
   const router = useRouter();
   const [journeyError, setJourneyError] = useState<string | null>(null);
+  const [lookaheadError, setLookaheadError] = useState<string | null>(null);
+  const [lookaheadMessage, setLookaheadMessage] = useState<string | null>(null);
   const [isUpdatingJourney, startJourneyTransition] = useTransition();
+  const [isUpdatingLookahead, startLookaheadTransition] = useTransition();
 
   function handleJourneyChange(status: ChildJourneyStatus) {
     if (!childId) return;
@@ -1361,6 +1450,31 @@ function SettingsView({
   const journeyLabel =
     childStatus === "active" ? "Active" : childStatus === "paused" ? "Paused" : "Ended";
 
+  function handleLookaheadSave() {
+    if (!childId) return;
+
+    setLookaheadError(null);
+    setLookaheadMessage(null);
+
+    startLookaheadTransition(async () => {
+      const result = await updateLookaheadSettings({
+        childId,
+        weeklyEmailEnabled: form.weeklyEmailEnabled,
+        lookaheadDay: form.lookaheadDay,
+        lookaheadTime: form.lookaheadTime,
+        timezone: form.timezone || resolveBrowserTimezone(),
+      });
+
+      if (result.error) {
+        setLookaheadError(result.error);
+        return;
+      }
+
+      setLookaheadMessage("Weekly email preferences saved.");
+      router.refresh();
+    });
+  }
+
   return (
     <section className="mt-6 grid gap-5 lg:grid-cols-2">
       <div className="wik-shell-card p-6">
@@ -1380,11 +1494,79 @@ function SettingsView({
           <SettingRow label="First child" value={form.firstChild ? "Yes" : "No"} />
           <SettingRow label="Childcare" value={sentenceCase(form.childcareIntention)} />
           <SettingRow label="Lookahead" value={`${sentenceCase(form.lookaheadDay)} at ${form.lookaheadTime}`} />
+          <SettingRow
+            label="Weekly email"
+            value={
+              form.weeklyEmailEnabled
+                ? `On (${form.timezone})`
+                : "Off"
+            }
+          />
           {mode === "authenticated" && childId ? (
             <SettingRow label="Journey" value={journeyLabel} />
           ) : null}
         </dl>
       </div>
+
+      {mode === "authenticated" && childId ? (
+        <div className="wik-shell-card p-6">
+          <SectionHeading
+            eyebrow="Weekly email"
+            title="Lookahead reminders"
+            subtitle="One calm email each week with your cards. Sends on the hour in your timezone."
+          />
+          <div className="mt-5 space-y-4">
+            <label className="flex items-start gap-3 rounded-xl bg-[#FFF6E6] px-4 py-3">
+              <input
+                checked={form.weeklyEmailEnabled}
+                className="mt-1"
+                onChange={(event) => onFormChange({ ...form, weeklyEmailEnabled: event.target.checked })}
+                type="checkbox"
+              />
+              <span className="text-sm leading-6 text-[#172033]">Send my weekly Lookahead by email</span>
+            </label>
+
+            <label>
+              <span className="text-sm font-semibold text-[#172033]">Day</span>
+              <select
+                className="mt-1.5 w-full rounded-xl border border-[#0d1b2a]/15 bg-[#FFFDF7] px-4 py-3 outline-none focus:border-[#1D809F]"
+                onChange={(event) =>
+                  onFormChange({ ...form, lookaheadDay: event.target.value as LookaheadDay })
+                }
+                value={form.lookaheadDay}
+              >
+                {["saturday", "sunday", "monday", "tuesday", "wednesday", "thursday", "friday"].map((day) => (
+                  <option key={day} value={day}>
+                    {sentenceCase(day)}
+                  </option>
+                ))}
+              </select>
+            </label>
+
+            <label>
+              <span className="text-sm font-semibold text-[#172033]">Time (on the hour)</span>
+              <input
+                className="mt-1.5 w-full rounded-xl border border-[#0d1b2a]/15 bg-[#FFFDF7] px-4 py-3 outline-none focus:border-[#1D809F]"
+                onChange={(event) => onFormChange({ ...form, lookaheadTime: event.target.value })}
+                type="time"
+                value={form.lookaheadTime}
+              />
+            </label>
+
+            <button
+              className="wik-button wik-button-sun w-full"
+              disabled={isUpdatingLookahead}
+              onClick={handleLookaheadSave}
+              type="button"
+            >
+              {isUpdatingLookahead ? "Saving…" : "Save email preferences"}
+            </button>
+
+            {lookaheadError ? <p className="text-sm font-medium text-[#FF6B6B]">{lookaheadError}</p> : null}
+            {lookaheadMessage ? <p className="text-sm font-medium text-[#1D809F]">{lookaheadMessage}</p> : null}
+          </div>
+        </div>
+      ) : null}
 
       {mode === "authenticated" && childId ? (
         <div className="wik-shell-card p-6">
@@ -1454,7 +1636,7 @@ function SettingsView({
               </button>
             </form>
           </>
-        ) : (
+        ) : requireAuth ? null : (
           <>
             <p className="wik-chip bg-white/15 text-[#FFD79A]">Preview controls</p>
             <h2 className="font-display mt-3 text-2xl font-semibold">Reset preview</h2>

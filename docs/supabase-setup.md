@@ -23,9 +23,26 @@ In the Supabase SQL editor (or Supabase CLI), run in order:
 3. `supabase/migrations/003_off_ramp_suggestions_overdue.sql`  -  journey status, card suggestions, `time_critical` flag
 4. `supabase/migrations/004_card_image_storage_policies.sql`  -  admin upload to the `card-images` bucket
 5. `supabase/seed.sql` (optional  -  loads the original six demo cards)
-6. `supabase/seed_content_library.sql` (optional  -  loads the full pregnancy → 24 months card library, ~30 cards including quiet-week fallbacks; safe to re-run, upserts by slug)
+6. `supabase/seed_content_library.sql` (optional  -  loads the first batch of pregnancy to 24 months cards, ~30 including quiet-week fallbacks; safe to re-run, upserts by slug)
+7. `supabase/seed_content_library_batch2.sql` (optional  -  50 more cards; safe to re-run, upserts by slug)
+8. `supabase/migrations/005_beta_launch.sql` (beta invites, email idempotency, paywall stub)
 
 Re-running a migration that already applied will error (e.g. `type "user_role" already exists` on 001). That is expected  -  each file runs once only.
+
+## 2a. Beta invites (friends-and-family launch)
+
+After migration 005, add invited emails in the SQL editor:
+
+```sql
+insert into public.beta_invites (email, note) values
+  ('you@example.com', 'founder'),
+  ('friend@example.com', 'F&F beta')
+on conflict (email) do nothing;
+```
+
+Set `WIK_BETA_INVITE_ONLY=true` in Vercel. Only invited emails can request a magic link.
+
+See `docs/soft-launch.md` for the full deploy checklist.
 
 ## 2b. Grant yourself admin (for the Content Studio)
 
@@ -98,7 +115,7 @@ curl -H "Authorization: Bearer $CRON_SECRET" http://127.0.0.1:3000/api/cron/week
 
 ## 7. Full-stack smoke test (after loading content)
 
-Once migrations 001–004 and `seed_content_library.sql` are applied:
+Once migrations 001–004 and the content seed files are applied:
 
 | Feature | How to verify |
 |---------|----------------|
@@ -111,4 +128,4 @@ Once migrations 001–004 and `seed_content_library.sql` are applied:
 | **Match debugger** | `/admin/debugger` → change profile → see bucket + match reasons |
 | **Weekly email** | Set `CRON_SECRET` + Resend keys, curl the cron route at your chosen lookahead hour |
 
-Card count after full seed: **~36 published cards** (6 from `seed.sql` + 30 from `seed_content_library.sql`, upserted by slug  -  safe overlap on the original six).
+Card count after full seed: **~86 published cards** (6 from `seed.sql` + 30 from batch 1 + 50 from batch 2, merged by slug).

@@ -18,6 +18,10 @@ const inter = Inter({
 export const metadata: Metadata = {
   title: "Wish I Knew",
   description: "Know what's coming next.",
+  robots: {
+    index: false,
+    follow: false,
+  },
 };
 
 export default function RootLayout({

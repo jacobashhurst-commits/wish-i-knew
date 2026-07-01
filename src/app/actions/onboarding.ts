@@ -1,8 +1,9 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
+import { normalizeLookaheadTime } from "@/lib/launch/timezone";
 import { createClient } from "@/lib/supabase/server";
-import type { OnboardingState } from "@/types/app";
+import type { LookaheadDay, OnboardingState } from "@/types/app";
 
 export type ActionResult = {
   error?: string;
@@ -33,7 +34,6 @@ async function requireProfileId(): Promise<{ profileId: string; error?: string }
     return { profileId: profile.id };
   }
 
-  // Fallback if the auth trigger has not been applied yet.
   const { data: created, error: createError } = await supabase
     .from("profiles")
     .insert({
@@ -110,15 +110,25 @@ export async function saveOnboarding(form: OnboardingState, childId?: string | n
     savedChildId = data.id;
   }
 
+  const { data: existingPref } = await supabase
+    .from("weekly_lookahead_preferences")
+    .select("enabled")
+    .eq("user_id", profileId)
+    .eq("child_id", savedChildId)
+    .maybeSingle();
+
+  const weeklyEmailEnabled = form.weeklyEmailEnabled;
+  const enabled = weeklyEmailEnabled ? (existingPref?.enabled ?? true) : false;
+
   const { error: prefError } = await supabase.from("weekly_lookahead_preferences").upsert(
     {
       user_id: profileId,
       child_id: savedChildId,
       day_of_week: form.lookaheadDay,
-      time_of_day: `${form.lookaheadTime}:00`,
-      timezone: "Australia/Sydney",
-      delivery_channel: "in_app",
-      enabled: true,
+      time_of_day: normalizeLookaheadTime(form.lookaheadTime),
+      timezone: form.timezone || "Australia/Sydney",
+      delivery_channel: weeklyEmailEnabled ? "email" : "manual_only",
+      enabled: weeklyEmailEnabled ? enabled : false,
     },
     { onConflict: "user_id,child_id" },
   );
@@ -130,4 +140,58 @@ export async function saveOnboarding(form: OnboardingState, childId?: string | n
   revalidatePath("/");
 
   return { childId: savedChildId ?? undefined };
+}
+
+export type LookaheadSettingsInput = {
+  childId: string;
+  weeklyEmailEnabled: boolean;
+  lookaheadDay: LookaheadDay;
+  lookaheadTime: string;
+  timezone: string;
+};
+
+export async function updateLookaheadSettings(input: LookaheadSettingsInput): Promise<ActionResult> {
+  const { profileId, error: profileError } = await requireProfileId();
+
+  if (profileError || !profileId) {
+    return { error: profileError ?? "Not signed in." };
+  }
+
+  const supabase = await createClient();
+
+  const { data: child, error: childError } = await supabase
+    .from("children")
+    .select("id")
+    .eq("id", input.childId)
+    .eq("user_id", profileId)
+    .maybeSingle();
+
+  if (childError) {
+    return { error: childError.message };
+  }
+
+  if (!child) {
+    return { error: "Child not found." };
+  }
+
+  const { error } = await supabase.from("weekly_lookahead_preferences").upsert(
+    {
+      user_id: profileId,
+      child_id: input.childId,
+      day_of_week: input.lookaheadDay,
+      time_of_day: normalizeLookaheadTime(input.lookaheadTime),
+      timezone: input.timezone || "Australia/Sydney",
+      delivery_channel: input.weeklyEmailEnabled ? "email" : "manual_only",
+      enabled: input.weeklyEmailEnabled,
+    },
+    { onConflict: "user_id,child_id" },
+  );
+
+  if (error) {
+    return { error: error.message };
+  }
+
+  revalidatePath("/");
+
+  return {};
 }

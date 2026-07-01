@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 420" role="img" aria-labelledby="title desc">
+  <title id="title">Wish I Knew card illustration</title>
+  <desc id="desc">Warm placeholder card art with a small milestone star on cream background.</desc>
+  <rect width="640" height="420" rx="48" fill="#FFF6E6"/>
+  <circle cx="320" cy="200" r="88" fill="#1D809F" opacity="0.15"/>
+  <rect x="248" y="148" width="144" height="104" rx="20" fill="#0d1b2a"/>
+  <path d="M272 188h96M272 212h64" stroke="#FFD79A" stroke-width="10" stroke-linecap="round"/>
+  <path d="M290 248l20 28 40-56" fill="none" stroke="#6FAF8E" stroke-width="12" stroke-linecap="round" stroke-linejoin="round"/>
+  <circle cx="320" cy="92" r="24" fill="#FFC857"/>
+  <path d="M320 72v12M320 92l14-8" stroke="#0d1b2a" stroke-width="4" stroke-linecap="round"/>
+</svg>

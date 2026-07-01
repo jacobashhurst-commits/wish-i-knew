@@ -10,6 +10,7 @@ const root = path.resolve(import.meta.dirname, "..");
 const seedFiles = [
   path.join(root, "supabase/seed.sql"),
   path.join(root, "supabase/seed_content_library.sql"),
+  path.join(root, "supabase/seed_content_library_batch2.sql"),
 ];
 
 const insertColumns = [
@@ -137,6 +138,10 @@ function tokenizeTuple(inner) {
   return tokens;
 }
 
+function stripSqlComments(block) {
+  return block.replace(/--[^\n]*/g, "");
+}
+
 function extractTuples(sql) {
   const valuesIndex = sql.indexOf(") values");
   if (valuesIndex === -1) return [];
@@ -148,16 +153,17 @@ function extractTuples(sql) {
   const tuples = [];
   let depth = 0;
   let start = -1;
+  const cleaned = stripSqlComments(valuesBlock);
 
-  for (let i = 0; i < valuesBlock.length; i += 1) {
-    const char = valuesBlock[i];
+  for (let i = 0; i < cleaned.length; i += 1) {
+    const char = cleaned[i];
     if (char === "(") {
       if (depth === 0) start = i + 1;
       depth += 1;
     } else if (char === ")") {
       depth -= 1;
       if (depth === 0 && start !== -1) {
-        tuples.push(valuesBlock.slice(start, i));
+        tuples.push(cleaned.slice(start, i));
         start = -1;
       }
     }

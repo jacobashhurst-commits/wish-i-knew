@@ -25,12 +25,15 @@ export type OnboardingState = {
   childcareIntention: "yes" | "no" | "unsure";
   lookaheadDay: LookaheadDay;
   lookaheadTime: string;
+  weeklyEmailEnabled: boolean;
+  timezone: string;
 };
 
 export type AppMode = "preview" | "authenticated";
 
 export type AppInitialData = {
   mode: AppMode;
+  requireAuth: boolean;
   userEmail: string | null;
   profileId: string | null;
   childId: string | null;
@@ -52,6 +55,8 @@ export const defaultOnboarding: OnboardingState = {
   childcareIntention: "unsure",
   lookaheadDay: "saturday",
   lookaheadTime: "08:00",
+  weeklyEmailEnabled: true,
+  timezone: "Australia/Sydney",
 };
 
 export function emptyCardStates(): Record<string, UserCardState> {

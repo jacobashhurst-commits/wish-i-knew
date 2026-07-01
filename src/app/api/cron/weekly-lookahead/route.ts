@@ -73,7 +73,8 @@ export async function GET(request: Request) {
     .select(
       "id, user_id, child_id, day_of_week, time_of_day, timezone, delivery_channel, enabled, profiles(email), children(id, nickname, birth_date, due_date, is_born, state, first_child, childcare_intention, status)",
     )
-    .eq("enabled", true);
+    .eq("enabled", true)
+    .eq("delivery_channel", "email");
 
   if (prefError) {
     return NextResponse.json({ error: prefError.message }, { status: 500 });
@@ -114,18 +115,21 @@ export async function GET(request: Request) {
       continue;
     }
 
-    // Idempotency: one lookahead per child per local day, even if the cron re-runs.
-    const { data: alreadySent } = await supabase
-      .from("reminders")
-      .select("id")
-      .eq("user_id", pref.user_id)
-      .eq("child_id", pref.child_id)
-      .eq("reminder_type", "weekly_lookahead")
-      .eq("reminder_date", now.date)
-      .limit(1);
+    const { error: claimError } = await supabase.from("reminders").insert({
+      user_id: pref.user_id,
+      child_id: pref.child_id,
+      reminder_date: now.date,
+      reminder_type: "weekly_lookahead",
+      status: "pending",
+    });
 
-    if (alreadySent && alreadySent.length > 0) {
-      results.push({ preference: pref.id, outcome: "skipped: already sent today" });
+    if (claimError) {
+      if (claimError.code === "23505") {
+        results.push({ preference: pref.id, outcome: "skipped: already sent today" });
+        continue;
+      }
+
+      results.push({ preference: pref.id, outcome: `error: ${claimError.message}` });
       continue;
     }
 
@@ -154,6 +158,14 @@ export async function GET(request: Request) {
     const digest = composeDigest(timeline);
 
     if (digest.length === 0) {
+      await supabase
+        .from("reminders")
+        .update({ status: "dismissed" })
+        .eq("user_id", pref.user_id)
+        .eq("child_id", pref.child_id)
+        .eq("reminder_type", "weekly_lookahead")
+        .eq("reminder_date", now.date);
+
       results.push({ preference: pref.id, outcome: "skipped: nothing to say this week" });
       continue;
     }
@@ -174,17 +186,25 @@ export async function GET(request: Request) {
     });
 
     if (sendError) {
+      await supabase
+        .from("reminders")
+        .update({ status: "dismissed" })
+        .eq("user_id", pref.user_id)
+        .eq("child_id", pref.child_id)
+        .eq("reminder_type", "weekly_lookahead")
+        .eq("reminder_date", now.date);
+
       results.push({ preference: pref.id, outcome: `error: ${sendError}` });
       continue;
     }
 
-    await supabase.from("reminders").insert({
-      user_id: pref.user_id,
-      child_id: pref.child_id,
-      reminder_date: now.date,
-      reminder_type: "weekly_lookahead",
-      status: "sent",
-    });
+    await supabase
+      .from("reminders")
+      .update({ status: "sent" })
+      .eq("user_id", pref.user_id)
+      .eq("child_id", pref.child_id)
+      .eq("reminder_type", "weekly_lookahead")
+      .eq("reminder_date", now.date);
 
     sent += 1;
     results.push({ preference: pref.id, outcome: `sent ${digest.length} cards` });

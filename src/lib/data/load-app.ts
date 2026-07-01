@@ -1,5 +1,7 @@
 import { mergePublishedCards } from "@/lib/content/bundled-cards";
 import { mapTimelineCard, type TimelineCardRow } from "@/lib/data/map-card";
+import { isAuthRequired } from "@/lib/launch/config";
+import { lookaheadTimeForUi } from "@/lib/launch/timezone";
 import { createClient } from "@/lib/supabase/server";
 import { isSupabaseConfigured } from "@/lib/supabase/config";
 import type { AppInitialData, LookaheadDay, OnboardingState } from "@/types/app";
@@ -24,15 +26,10 @@ function lookaheadDayFromDb(value: string | null | undefined): LookaheadDay {
   return "saturday";
 }
 
-function timeFromDb(value: string | null | undefined): string {
-  if (!value) return "08:00";
-
-  return value.slice(0, 5);
-}
-
 function previewInitialData(): AppInitialData {
   return {
     mode: "preview",
+    requireAuth: isAuthRequired(),
     userEmail: null,
     profileId: null,
     childId: null,
@@ -87,10 +84,12 @@ async function loadAuthenticatedAppData(): Promise<AppInitialData> {
   }
 
   const mappedCards = mergePublishedCards(cards.map(mapTimelineCard));
+  const requireAuth = isAuthRequired();
 
   if (!user) {
     return {
       ...previewInitialData(),
+      requireAuth,
       cards: mappedCards,
     };
   }
@@ -108,6 +107,7 @@ async function loadAuthenticatedAppData(): Promise<AppInitialData> {
   if (!profile) {
     return {
       mode: "authenticated",
+      requireAuth,
       userEmail: user.email ?? null,
       profileId: null,
       childId: null,
@@ -135,6 +135,7 @@ async function loadAuthenticatedAppData(): Promise<AppInitialData> {
   if (!child) {
     return {
       mode: "authenticated",
+      requireAuth,
       userEmail: user.email ?? profile.email,
       profileId: profile.id,
       childId: null,
@@ -152,7 +153,7 @@ async function loadAuthenticatedAppData(): Promise<AppInitialData> {
 
   const { data: preferences } = await supabase
     .from("weekly_lookahead_preferences")
-    .select("day_of_week, time_of_day")
+    .select("day_of_week, time_of_day, timezone, delivery_channel, enabled")
     .eq("user_id", profile.id)
     .eq("child_id", child.id)
     .maybeSingle();
@@ -177,6 +178,9 @@ async function loadAuthenticatedAppData(): Promise<AppInitialData> {
     });
   }
 
+  const weeklyEmailEnabled =
+    preferences?.delivery_channel === "email" && (preferences?.enabled ?? true);
+
   const form: OnboardingState = {
     childName: child.nickname,
     isBorn: child.is_born,
@@ -186,11 +190,14 @@ async function loadAuthenticatedAppData(): Promise<AppInitialData> {
     firstChild: child.first_child,
     childcareIntention: child.childcare_intention,
     lookaheadDay: lookaheadDayFromDb(preferences?.day_of_week),
-    lookaheadTime: timeFromDb(preferences?.time_of_day),
+    lookaheadTime: lookaheadTimeForUi(preferences?.time_of_day),
+    weeklyEmailEnabled,
+    timezone: preferences?.timezone ?? "Australia/Sydney",
   };
 
   return {
     mode: "authenticated",
+    requireAuth,
     userEmail: user.email ?? profile.email,
     profileId: profile.id,
     childId: child.id,

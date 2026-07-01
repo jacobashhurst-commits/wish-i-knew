@@ -9,7 +9,7 @@
     "lint": "eslint .",
     "test": "vitest run",
     "test:watch": "vitest",
-    "export:cards": "node scripts/export-card-library.mjs"
+    "export:cards": "node scripts/generate-batch2-seed.mjs && node scripts/export-card-library.mjs"
   },
   "dependencies": {
     "@supabase/ssr": "latest",
