@@ -1365,6 +1365,12 @@ function ContentStudioView({
         title="Card health"
         subtitle="A lightweight admin preview showing publish readiness, image status and source validation."
       />
+      <a
+        className="wik-button wik-button-sun mt-4 inline-block"
+        href="/admin"
+      >
+        Open the full Content Studio
+      </a>
       <div className="mt-4 grid grid-cols-3 gap-3">
         <Metric label="Publish-ready" value={readyCount} />
         <Metric label="Cards checked" value={contentHealth.length} />

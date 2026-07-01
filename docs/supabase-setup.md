@@ -21,9 +21,18 @@ In the Supabase SQL editor (or Supabase CLI), run in order:
 1. `supabase/migrations/001_initial_schema.sql`
 2. `supabase/migrations/002_auth_profile_trigger.sql`
 3. `supabase/migrations/003_off_ramp_suggestions_overdue.sql` — journey status, card suggestions, `time_critical` flag
-4. `supabase/seed.sql` (optional — loads six published demo cards)
+4. `supabase/migrations/004_card_image_storage_policies.sql` — admin upload to the `card-images` bucket
+5. `supabase/seed.sql` (optional — loads the published demo cards)
 
 Re-running a migration that already applied will error (e.g. `type "user_role" already exists` on 001). That is expected — each file runs once only.
+
+## 2b. Grant yourself admin (for the Content Studio)
+
+The Content Studio lives at `/admin` and is only visible to admin profiles. Run once in the SQL editor, with your own email:
+
+```sql
+update public.profiles set role = 'admin' where email = 'you@example.com';
+```
 
 ## 3. Auth redirect URLs
 
