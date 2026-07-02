@@ -862,7 +862,14 @@ export default function WishIKnewApp({ initialData }: { initialData: AppInitialD
         ) : null}
 
         {activeView === "library" ? (
-          <LibraryView cards={cards} cardStates={cardStates} onOpen={setSelectedCard} />
+          <LibraryView
+            cardStates={cardStates}
+            cards={cards}
+            isAdmin={initialData.isAdmin}
+            mode={mode}
+            onOpen={setSelectedCard}
+            requireAuth={requireAuth}
+          />
         ) : null}
 
         {activeView === "saved" ? (
@@ -1281,10 +1288,16 @@ function LibraryView({
   cards,
   cardStates,
   onOpen,
+  mode,
+  isAdmin,
+  requireAuth,
 }: {
   cards: TimelineCard[];
   cardStates: Record<string, UserCardState>;
   onOpen: (card: TimelineCard) => void;
+  mode: AppMode;
+  isAdmin: boolean;
+  requireAuth: boolean;
 }) {
   const [query, setQuery] = useState("");
   const [lifeStage, setLifeStage] = useState("all");
@@ -1315,6 +1328,24 @@ function LibraryView({
         title="All cards"
         subtitle="Every card in the journey, regardless of where you are today. The Timeline tab shows what matches your dates."
       />
+
+      {mode === "preview" && !requireAuth ? (
+        <p className="mt-3 rounded-xl bg-[#FFF6E6] px-4 py-3 text-sm leading-6 text-[#697386]">
+          Preview mode uses the bundled card library from the repo. Sign in to use your live Supabase
+          library. Cards marked in_review in seeds need publishing in Content Studio before they appear
+          for signed-in users.
+        </p>
+      ) : null}
+
+      {isAdmin ? (
+        <p className="mt-3 text-sm text-[#697386]">
+          Add or edit cards in{" "}
+          <a className="font-semibold text-[#1D809F] underline-offset-2 hover:underline" href="/admin/cards/new">
+            Content Studio → New card
+          </a>
+          .
+        </p>
+      ) : null}
 
       <div className="mt-4 flex flex-wrap items-end gap-3 rounded-2xl border border-[#0d1b2a]/10 bg-white p-4 shadow-sm">
         <label className="min-w-[12rem] flex-1 text-sm">

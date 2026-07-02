@@ -32,11 +32,11 @@ Run migrations in order through `005_beta_launch.sql`, then seeds:
 2. `002_auth_profile_trigger.sql`
 3. `003_off_ramp_suggestions_overdue.sql`
 4. `004_card_image_storage_policies.sql`
-  5. `005_beta_launch.sql`
-  6. `006_enforce_beta_invite.sql`
-6. `seed.sql`
-7. `seed_content_library.sql`
-8. `seed_content_library_batch2.sql`
+5. `supabase/migrations/005_beta_launch.sql`
+6. `supabase/migrations/006_enforce_beta_invite.sql`
+7. `supabase/seed.sql`
+8. `supabase/seed_content_library.sql`
+9. `supabase/seed_content_library_batch2.sql`
 
 Grant yourself admin:
 

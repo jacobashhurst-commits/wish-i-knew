@@ -91,10 +91,14 @@ async function loadAuthenticatedAppData(): Promise<AppInitialData> {
   const requireAuth = isAuthRequired();
 
   if (!user) {
+    // Local preview (auth not required): merge bundle so devs see the full library without
+    // every card published in Supabase. Production sign-in path uses DB published rows only.
+    const cardsForView = requireAuth ? mappedCards : mergePublishedCards(mappedCards);
+
     return {
       ...previewInitialData(),
       requireAuth,
-      cards: mappedCards,
+      cards: cardsForView,
     };
   }
 

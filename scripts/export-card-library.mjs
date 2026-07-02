@@ -240,7 +240,7 @@ for (const file of seedFiles) {
         tokens.splice(11, 0, false);
       }
       const card = rowToCard(tokens);
-      if (card.status !== "published") {
+      if (card.status !== "published" && card.status !== "in_review") {
         continue;
       }
       bySlug.set(card.slug, card);
