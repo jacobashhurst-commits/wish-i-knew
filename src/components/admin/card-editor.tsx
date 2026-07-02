@@ -189,10 +189,22 @@ export function CardEditor({ card }: { card: AdminCardRow | null }) {
     run(
       () => uploadCardImage(data),
       () => {
+        if (!form.image_alt?.trim()) {
+          set("image_alt", form.title);
+        }
         setMessage("Image uploaded and attached.");
         setImageFile(null);
+        router.refresh();
       },
     );
+  }
+
+  const suggestedPrompt = `${form.image_style ?? "cute 8-bit pixel art item"}: ${form.title}. ${form.short_summary}`;
+
+  async function copyIllustrationPrompt() {
+    const text = form.illustration_prompt?.trim() || suggestedPrompt;
+    await navigator.clipboard.writeText(text);
+    setMessage("Illustration prompt copied.");
   }
 
   return (
@@ -503,15 +515,27 @@ export function CardEditor({ card }: { card: AdminCardRow | null }) {
         </Section>
 
         <Section title="Image">
-          <label className={`${labelClass} sm:col-span-2`}>
-            Illustration prompt
+          <div className={`${labelClass} sm:col-span-2`}>
+            <div className="flex items-center justify-between gap-3">
+              <span>Illustration prompt</span>
+              <button
+                className="rounded-lg border border-[#0d1b2a]/15 px-3 py-1.5 text-xs font-semibold text-[#172033] hover:border-[#1D809F]"
+                onClick={() => {
+                  void copyIllustrationPrompt();
+                }}
+                type="button"
+              >
+                Copy prompt
+              </button>
+            </div>
             <textarea
               className={inputClass}
               onChange={(e) => set("illustration_prompt", e.target.value || null)}
+              placeholder={suggestedPrompt}
               rows={2}
               value={form.illustration_prompt ?? ""}
             />
-          </label>
+          </div>
           <label className={labelClass}>
             Image URL
             <input

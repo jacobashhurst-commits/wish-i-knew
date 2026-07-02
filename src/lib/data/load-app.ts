@@ -65,7 +65,11 @@ export async function loadAppInitialData(): Promise<AppInitialData> {
   try {
     return await loadAuthenticatedAppData();
   } catch {
-    return previewInitialData();
+    return {
+      ...previewInitialData(),
+      requireAuth: isAuthRequired(),
+      cards: [],
+    };
   }
 }
 
@@ -83,7 +87,7 @@ async function loadAuthenticatedAppData(): Promise<AppInitialData> {
     cards = [];
   }
 
-  const mappedCards = mergePublishedCards(cards.map(mapTimelineCard));
+  const mappedCards = cards.map(mapTimelineCard);
   const requireAuth = isAuthRequired();
 
   if (!user) {

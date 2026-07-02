@@ -240,6 +240,9 @@ for (const file of seedFiles) {
         tokens.splice(11, 0, false);
       }
       const card = rowToCard(tokens);
+      if (card.status !== "published") {
+        continue;
+      }
       bySlug.set(card.slug, card);
     } catch (error) {
       console.warn(`Skipping tuple in ${path.basename(file)}: ${error.message}`);

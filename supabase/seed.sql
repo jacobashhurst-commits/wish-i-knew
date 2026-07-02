@@ -62,11 +62,7 @@ insert into public.timeline_cards (
   '/card-images/pixel/px-first-gp-appointment.png',
   'Illustrated calendar with a positive pregnancy test and coffee cup.',
   'cute 8-bit pixel art item',
-  'approved',
-  'published',
-  current_date,
-  current_date + interval '12 months',
-  now()
+  'approved', 'in_review', null, null, null
 ),
 (
   'start-thinking-about-childcare',
@@ -97,11 +93,7 @@ insert into public.timeline_cards (
   '/card-images/pixel/px-start-thinking-about-childcare.png',
   'Illustrated childcare planning clipboard with blocks, dummy and calendar.',
   'cute 8-bit pixel art item',
-  'approved',
-  'published',
-  current_date,
-  current_date + interval '12 months',
-  now()
+  'approved', 'in_review', null, null, null
 ),
 (
   'two-month-immunisations',

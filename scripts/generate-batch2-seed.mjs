@@ -1134,6 +1134,26 @@ function conditionsField(card) {
   return sqlJson(c);
 }
 
+function publishFields(card) {
+  const needsReview =
+    String(card.source_notes ?? "")
+      .toLowerCase()
+      .includes("review before production use") ||
+    Boolean(
+      card.medical_sensitivity ||
+        card.government_sensitivity ||
+        card.safety_sensitivity ||
+        card.allergy_sensitivity ||
+        card.feeding_sensitivity,
+    );
+
+  if (needsReview) {
+    return `'approved',\n  'in_review',\n  null,\n  null,\n  null`;
+  }
+
+  return `'approved',\n  'published',\n  current_date,\n  current_date + interval '12 months',\n  now()`;
+}
+
 const tuples = cards.map((card) => {
   const checklist = card.checklist_items ?? [];
   const sources = card.source_urls ?? [];
@@ -1171,11 +1191,7 @@ const tuples = cards.map((card) => {
   ${sqlString(imageUrl)},
   ${sqlString(imageMeta.alt)},
   ${sqlString(imageStyle)},
-  'approved',
-  'published',
-  current_date,
-  current_date + interval '12 months',
-  now()
+  ${publishFields(card)}
 )`;
 });
 

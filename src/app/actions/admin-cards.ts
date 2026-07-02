@@ -156,7 +156,12 @@ export async function uploadCardImage(formData: FormData): Promise<AdminActionRe
 
   const { error: updateError } = await supabase
     .from("timeline_cards")
-    .update({ image_url: publicUrl, image_status: "uploaded", updated_by: admin.id })
+    .update({
+      image_url: publicUrl,
+      image_status: "uploaded",
+      ...(card.image_alt?.trim() ? {} : { image_alt: card.title }),
+      updated_by: admin.id,
+    })
     .eq("id", cardId);
 
   if (updateError) return { error: updateError.message };

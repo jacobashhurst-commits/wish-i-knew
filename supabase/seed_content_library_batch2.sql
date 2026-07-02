@@ -67,10 +67,10 @@ insert into public.timeline_cards (
   'Pixel art prenatal vitamin bottle and iron tablet on a warm cream background.',
   'cute 8-bit pixel art item',
   'approved',
-  'published',
-  current_date,
-  current_date + interval '12 months',
-  now()
+  'in_review',
+  null,
+  null,
+  null
 ),
 (
   'dental-check-during-pregnancy',
@@ -101,10 +101,10 @@ insert into public.timeline_cards (
   'Pixel art toothbrush and dental mirror on a warm cream background.',
   'cute 8-bit pixel art item',
   'approved',
-  'published',
-  current_date,
-  current_date + interval '12 months',
-  now()
+  'in_review',
+  null,
+  null,
+  null
 ),
 (
   'glucose-tolerance-test',
@@ -135,10 +135,10 @@ insert into public.timeline_cards (
   'Pixel art glucose screening juice cup with calendar sticker, no needle.',
   'cute 8-bit pixel art item',
   'approved',
-  'published',
-  current_date,
-  current_date + interval '12 months',
-  now()
+  'in_review',
+  null,
+  null,
+  null
 ),
 (
   'group-b-strep-swab',
@@ -169,10 +169,10 @@ insert into public.timeline_cards (
   'Pixel art gentle swab kit with heart sticker on cream background.',
   'cute 8-bit pixel art item',
   'approved',
-  'published',
-  current_date,
-  current_date + interval '12 months',
-  now()
+  'in_review',
+  null,
+  null,
+  null
 ),
 (
   'antenatal-classes',
@@ -237,10 +237,10 @@ insert into public.timeline_cards (
   'Pixel art calendar and coffee cup for maternity planning chat.',
   'cute 8-bit pixel art item',
   'approved',
-  'published',
-  current_date,
-  current_date + interval '12 months',
-  now()
+  'in_review',
+  null,
+  null,
+  null
 ),
 (
   'pelvic-floor-pregnancy',
@@ -271,10 +271,10 @@ insert into public.timeline_cards (
   'Pixel art rolled yoga mat for pelvic floor exercises.',
   'cute 8-bit pixel art item',
   'approved',
-  'published',
-  current_date,
-  current_date + interval '12 months',
-  now()
+  'in_review',
+  null,
+  null,
+  null
 ),
 (
   'pregnancy-nausea-normal',
@@ -305,10 +305,10 @@ insert into public.timeline_cards (
   'Pixel art ginger tea and crackers for pregnancy nausea.',
   'cute 8-bit pixel art item',
   'approved',
-  'published',
-  current_date,
-  current_date + interval '12 months',
-  now()
+  'in_review',
+  null,
+  null,
+  null
 ),
 (
   'birth-preferences-draft',
@@ -373,10 +373,10 @@ insert into public.timeline_cards (
   'Pixel art phone and hospital bag for when labour starts.',
   'cute 8-bit pixel art item',
   'approved',
-  'published',
-  current_date,
-  current_date + interval '12 months',
-  now()
+  'in_review',
+  null,
+  null,
+  null
 ),
 (
   'umbilical-cord-care',
@@ -407,10 +407,10 @@ insert into public.timeline_cards (
   'Pixel art newborn onesie and cord care essentials.',
   'cute 8-bit pixel art item',
   'approved',
-  'published',
-  current_date,
-  current_date + interval '12 months',
-  now()
+  'in_review',
+  null,
+  null,
+  null
 ),
 (
   'newborn-poo-colours',
@@ -441,10 +441,10 @@ insert into public.timeline_cards (
   'Pixel art nappy with gentle colour guide swatches.',
   'cute 8-bit pixel art item',
   'approved',
-  'published',
-  current_date,
-  current_date + interval '12 months',
-  now()
+  'in_review',
+  null,
+  null,
+  null
 ),
 (
   'visitor-boundaries-newborn',
@@ -509,10 +509,10 @@ insert into public.timeline_cards (
   'Pixel art couch with feeding pillow for cluster feeding evenings.',
   'cute 8-bit pixel art item',
   'approved',
-  'published',
-  current_date,
-  current_date + interval '12 months',
-  now()
+  'in_review',
+  null,
+  null,
+  null
 ),
 (
   'first-home-nurse-visit',
@@ -543,10 +543,10 @@ insert into public.timeline_cards (
   'Pixel art child health nurse visit bag.',
   'cute 8-bit pixel art item',
   'approved',
-  'published',
-  current_date,
-  current_date + interval '12 months',
-  now()
+  'in_review',
+  null,
+  null,
+  null
 ),
 (
   'postpartum-bleeding-normal',
@@ -577,10 +577,10 @@ insert into public.timeline_cards (
   'Pixel art maternity pads and tea cup for postpartum recovery.',
   'cute 8-bit pixel art item',
   'approved',
-  'published',
-  current_date,
-  current_date + interval '12 months',
-  now()
+  'in_review',
+  null,
+  null,
+  null
 ),
 (
   'postnatal-mental-health',
@@ -611,10 +611,10 @@ insert into public.timeline_cards (
   'Pixel art mugs and blanket for postnatal mental health support.',
   'cute 8-bit pixel art item',
   'approved',
-  'published',
-  current_date,
-  current_date + interval '12 months',
-  now()
+  'in_review',
+  null,
+  null,
+  null
 ),
 (
   'partner-support-newborn',
@@ -679,10 +679,10 @@ insert into public.timeline_cards (
   'Pixel art baby play mat for tummy time.',
   'cute 8-bit pixel art item',
   'approved',
-  'published',
-  current_date,
-  current_date + interval '12 months',
-  now()
+  'in_review',
+  null,
+  null,
+  null
 ),
 (
   'newborn-bath-optional',
@@ -713,10 +713,10 @@ insert into public.timeline_cards (
   'Pixel art rubber duck and washcloth for newborn bath.',
   'cute 8-bit pixel art item',
   'approved',
-  'published',
-  current_date,
-  current_date + interval '12 months',
-  now()
+  'in_review',
+  null,
+  null,
+  null
 ),
 (
   'white-noise-sleep',
@@ -747,10 +747,10 @@ insert into public.timeline_cards (
   'Pixel art white noise machine with moon and stars.',
   'cute 8-bit pixel art item',
   'approved',
-  'published',
-  current_date,
-  current_date + interval '12 months',
-  now()
+  'in_review',
+  null,
+  null,
+  null
 ),
 (
   'teething-signs-soothers',
@@ -781,10 +781,10 @@ insert into public.timeline_cards (
   'Pixel art teething ring and chilled washcloth.',
   'cute 8-bit pixel art item',
   'approved',
-  'published',
-  current_date,
-  current_date + interval '12 months',
-  now()
+  'in_review',
+  null,
+  null,
+  null
 ),
 (
   'rolling-and-floor-time',
@@ -815,10 +815,10 @@ insert into public.timeline_cards (
   'Pixel art play mat and ball for rolling practice.',
   'cute 8-bit pixel art item',
   'approved',
-  'published',
-  current_date,
-  current_date + interval '12 months',
-  now()
+  'in_review',
+  null,
+  null,
+  null
 ),
 (
   'separation-anxiety-phase',
@@ -849,10 +849,10 @@ insert into public.timeline_cards (
   'Pixel art comfort teddy for separation anxiety phase.',
   'cute 8-bit pixel art item',
   'approved',
-  'published',
-  current_date,
-  current_date + interval '12 months',
-  now()
+  'in_review',
+  null,
+  null,
+  null
 ),
 (
   'finger-foods-stage-two',
@@ -883,10 +883,10 @@ insert into public.timeline_cards (
   'Pixel art high chair tray with finger foods.',
   'cute 8-bit pixel art item',
   'approved',
-  'published',
-  current_date,
-  current_date + interval '12 months',
-  now()
+  'in_review',
+  null,
+  null,
+  null
 ),
 (
   'crawling-proofing-refresh',
@@ -917,10 +917,10 @@ insert into public.timeline_cards (
   'Pixel art baby gate and outlet cover for crawling proofing.',
   'cute 8-bit pixel art item',
   'approved',
-  'published',
-  current_date,
-  current_date + interval '12 months',
-  now()
+  'in_review',
+  null,
+  null,
+  null
 ),
 (
   'babbling-conversations',
@@ -951,10 +951,10 @@ insert into public.timeline_cards (
   'Pixel art picture book and speech bubbles for babbling.',
   'cute 8-bit pixel art item',
   'approved',
-  'published',
-  current_date,
-  current_date + interval '12 months',
-  now()
+  'in_review',
+  null,
+  null,
+  null
 ),
 (
   'introducing-sippy-cup',
@@ -985,10 +985,10 @@ insert into public.timeline_cards (
   'Pixel art sippy cup with playful splash.',
   'cute 8-bit pixel art item',
   'approved',
-  'published',
-  current_date,
-  current_date + interval '12 months',
-  now()
+  'in_review',
+  null,
+  null,
+  null
 ),
 (
   'mobile-baby-sleep-shift',
@@ -1019,10 +1019,10 @@ insert into public.timeline_cards (
   'Pixel art crib rail and sleep sack for mobile baby sleep.',
   'cute 8-bit pixel art item',
   'approved',
-  'published',
-  current_date,
-  current_date + interval '12 months',
-  now()
+  'in_review',
+  null,
+  null,
+  null
 ),
 (
   'playgroup-for-adults',
@@ -1087,10 +1087,10 @@ insert into public.timeline_cards (
   'Pixel art first aid booklet and soft finger foods.',
   'cute 8-bit pixel art item',
   'approved',
-  'published',
-  current_date,
-  current_date + interval '12 months',
-  now()
+  'in_review',
+  null,
+  null,
+  null
 ),
 (
   'drop-the-third-nap',
@@ -1121,10 +1121,10 @@ insert into public.timeline_cards (
   'Pixel art sleepy sun and clock for dropping the third nap.',
   'cute 8-bit pixel art item',
   'approved',
-  'published',
-  current_date,
-  current_date + interval '12 months',
-  now()
+  'in_review',
+  null,
+  null,
+  null
 ),
 (
   'childcare-drop-off-tips',
@@ -1155,10 +1155,10 @@ insert into public.timeline_cards (
   'Pixel art childcare backpack and comfort teddy at door.',
   'cute 8-bit pixel art item',
   'approved',
-  'published',
-  current_date,
-  current_date + interval '12 months',
-  now()
+  'in_review',
+  null,
+  null,
+  null
 ),
 (
   'shoes-wait-for-walking',
@@ -1189,10 +1189,10 @@ insert into public.timeline_cards (
   'Pixel art baby socks and waiting shoes.',
   'cute 8-bit pixel art item',
   'approved',
-  'published',
-  current_date,
-  current_date + interval '12 months',
-  now()
+  'in_review',
+  null,
+  null,
+  null
 ),
 (
   'potty-curiosity-ok',
@@ -1223,10 +1223,10 @@ insert into public.timeline_cards (
   'Pixel art potty chair with star sticker.',
   'cute 8-bit pixel art item',
   'approved',
-  'published',
-  current_date,
-  current_date + interval '12 months',
-  now()
+  'in_review',
+  null,
+  null,
+  null
 ),
 (
   'toddler-bed-can-wait',
@@ -1257,10 +1257,10 @@ insert into public.timeline_cards (
   'Pixel art cot and sleeping bag, toddler bed can wait.',
   'cute 8-bit pixel art item',
   'approved',
-  'published',
-  current_date,
-  current_date + interval '12 months',
-  now()
+  'in_review',
+  null,
+  null,
+  null
 ),
 (
   'parallel-play-normal',
@@ -1291,10 +1291,10 @@ insert into public.timeline_cards (
   'Pixel art two toy cars for parallel play.',
   'cute 8-bit pixel art item',
   'approved',
-  'published',
-  current_date,
-  current_date + interval '12 months',
-  now()
+  'in_review',
+  null,
+  null,
+  null
 ),
 (
   'bedtime-routine-toddler',
@@ -1325,10 +1325,10 @@ insert into public.timeline_cards (
   'Pixel art bath duck, book and bed for bedtime routine.',
   'cute 8-bit pixel art item',
   'approved',
-  'published',
-  current_date,
-  current_date + interval '12 months',
-  now()
+  'in_review',
+  null,
+  null,
+  null
 ),
 (
   'toddler-helping-kitchen',
@@ -1359,10 +1359,10 @@ insert into public.timeline_cards (
   'Pixel art step stool and wooden spoon for kitchen helping.',
   'cute 8-bit pixel art item',
   'approved',
-  'published',
-  current_date,
-  current_date + interval '12 months',
-  now()
+  'in_review',
+  null,
+  null,
+  null
 ),
 (
   'saying-no-without-shame',
@@ -1393,10 +1393,10 @@ insert into public.timeline_cards (
   'Pixel art gentle boundary fence with heart.',
   'cute 8-bit pixel art item',
   'approved',
-  'published',
-  current_date,
-  current_date + interval '12 months',
-  now()
+  'in_review',
+  null,
+  null,
+  null
 ),
 (
   'first-dentist-toddler',
@@ -1427,10 +1427,10 @@ insert into public.timeline_cards (
   'Pixel art toothbrush and friendly tooth for first dentist visit.',
   'cute 8-bit pixel art item',
   'approved',
-  'published',
-  current_date,
-  current_date + interval '12 months',
-  now()
+  'in_review',
+  null,
+  null,
+  null
 ),
 (
   'library-rhyme-time',
@@ -1495,10 +1495,10 @@ insert into public.timeline_cards (
   'Pixel art calendar and nursing icon for return of period.',
   'cute 8-bit pixel art item',
   'approved',
-  'published',
-  current_date,
-  current_date + interval '12 months',
-  now()
+  'in_review',
+  null,
+  null,
+  null
 ),
 (
   'private-health-pregnancy-check',
@@ -1529,10 +1529,10 @@ insert into public.timeline_cards (
   'Pixel art health insurance card and stethoscope.',
   'cute 8-bit pixel art item',
   'approved',
-  'published',
-  current_date,
-  current_date + interval '12 months',
-  now()
+  'in_review',
+  null,
+  null,
+  null
 ),
 (
   'update-will-insurance',
@@ -1563,10 +1563,10 @@ insert into public.timeline_cards (
   'Pixel art folder and pen for will and insurance update.',
   'cute 8-bit pixel art item',
   'approved',
-  'published',
-  current_date,
-  current_date + interval '12 months',
-  now()
+  'in_review',
+  null,
+  null,
+  null
 ),
 (
   'baby-name-registration-timing',
@@ -1597,10 +1597,10 @@ insert into public.timeline_cards (
   'Pixel art birth registration folder and baby socks.',
   'cute 8-bit pixel art item',
   'approved',
-  'published',
-  current_date,
-  current_date + interval '12 months',
-  now()
+  'in_review',
+  null,
+  null,
+  null
 ),
 (
   'blackout-blinds-sleep',
@@ -1631,10 +1631,10 @@ insert into public.timeline_cards (
   'Pixel art window with blackout blinds and moon.',
   'cute 8-bit pixel art item',
   'approved',
-  'published',
-  current_date,
-  current_date + interval '12 months',
-  now()
+  'in_review',
+  null,
+  null,
+  null
 ),
 (
   'quiet-week-rest-counts',

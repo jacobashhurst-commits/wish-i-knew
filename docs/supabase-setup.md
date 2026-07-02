@@ -26,6 +26,7 @@ In the Supabase SQL editor (or Supabase CLI), run in order:
 6. `supabase/seed_content_library.sql` (optional  -  loads the first batch of pregnancy to 24 months cards, ~30 including quiet-week fallbacks; safe to re-run, upserts by slug)
 7. `supabase/seed_content_library_batch2.sql` (optional  -  50 more cards; safe to re-run, upserts by slug)
 8. `supabase/migrations/005_beta_launch.sql` (beta invites, email idempotency, paywall stub)
+9. `supabase/migrations/006_enforce_beta_invite.sql` (DB-level invite wall — drop trigger at public launch; see docs/soft-launch.md)
 
 Re-running a migration that already applied will error (e.g. `type "user_role" already exists` on 001). That is expected  -  each file runs once only.
 

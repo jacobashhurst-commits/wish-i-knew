@@ -158,6 +158,7 @@ export async function GET(request: Request) {
     const digest = composeDigest(timeline);
 
     if (digest.length === 0) {
+      // Nothing to send today — keep the claim so we do not retry every hour.
       await supabase
         .from("reminders")
         .update({ status: "dismissed" })
@@ -186,9 +187,10 @@ export async function GET(request: Request) {
     });
 
     if (sendError) {
+      // Release the claim so the next hourly run can retry after a transient Resend failure.
       await supabase
         .from("reminders")
-        .update({ status: "dismissed" })
+        .delete()
         .eq("user_id", pref.user_id)
         .eq("child_id", pref.child_id)
         .eq("reminder_type", "weekly_lookahead")

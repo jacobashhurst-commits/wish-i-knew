@@ -32,7 +32,8 @@ Run migrations in order through `005_beta_launch.sql`, then seeds:
 2. `002_auth_profile_trigger.sql`
 3. `003_off_ramp_suggestions_overdue.sql`
 4. `004_card_image_storage_policies.sql`
-5. `005_beta_launch.sql`
+  5. `005_beta_launch.sql`
+  6. `006_enforce_beta_invite.sql`
 6. `seed.sql`
 7. `seed_content_library.sql`
 8. `seed_content_library_batch2.sql`
@@ -128,3 +129,14 @@ Push the repo, then run your separate review agent. Typical review focus:
 - Email idempotency
 - Legal copy adequacy (not legal advice — flag for your lawyer before public launch)
 - Content medical review flags in seed SQL
+
+## 8. Public launch (later)
+
+When opening signup beyond the invite list, run in Supabase:
+
+```sql
+drop trigger if exists enforce_beta_invite on auth.users;
+drop function if exists public.enforce_beta_invite();
+```
+
+Then set `WIK_BETA_INVITE_ONLY=false` in Vercel.

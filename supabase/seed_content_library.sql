@@ -66,7 +66,7 @@ insert into public.timeline_cards (
   '/card-images/pixel/px-choose-your-care-pathway.png',
   'Pixel art signpost with three paths leading to different maternity care options.',
   'cute 8-bit pixel art item',
-  'approved', 'published', current_date, current_date + interval '12 months', now()
+  'approved', 'in_review', null, null, null
 ),
 (
   'medicare-mygov-setup',
@@ -90,7 +90,7 @@ insert into public.timeline_cards (
   '/card-images/pixel/px-medicare-mygov-setup.png',
   'Pixel art folder with a service card and padlock representing linked government accounts.',
   'cute 8-bit pixel art item',
-  'approved', 'published', current_date, current_date + interval '12 months', now()
+  'approved', 'in_review', null, null, null
 ),
 (
   'early-pregnancy-screening-choices',
@@ -114,7 +114,7 @@ insert into public.timeline_cards (
   '/card-images/pixel/px-early-pregnancy-screening-choices.png',
   'Pixel art calendar and clipboard representing optional pregnancy screening choices.',
   'cute 8-bit pixel art item',
-  'approved', 'published', current_date, current_date + interval '12 months', now()
+  'approved', 'in_review', null, null, null
 ),
 (
   'morphology-scan-window',
@@ -138,7 +138,7 @@ insert into public.timeline_cards (
   '/card-images/pixel/px-morphology-scan-window.png',
   'Pixel art framed ultrasound picture with a small star, warm and friendly.',
   'cute 8-bit pixel art item',
-  'approved', 'published', current_date, current_date + interval '12 months', now()
+  'approved', 'in_review', null, null, null
 ),
 (
   'whooping-cough-booster-pregnancy',
@@ -162,7 +162,7 @@ insert into public.timeline_cards (
   '/card-images/pixel/px-whooping-cough-booster-pregnancy.png',
   'Pixel art shield with a heart and bandage sticker representing vaccination protection.',
   'cute 8-bit pixel art item',
-  'approved', 'published', current_date, current_date + interval '12 months', now()
+  'approved', 'in_review', null, null, null
 ),
 (
   'parental-leave-pay-groundwork',
@@ -186,7 +186,7 @@ insert into public.timeline_cards (
   '/card-images/pixel/px-parental-leave-pay-groundwork.png',
   'Pixel art envelope with a coin and calendar representing parental leave payments.',
   'cute 8-bit pixel art item',
-  'approved', 'published', current_date, current_date + interval '12 months', now()
+  'approved', 'in_review', null, null, null
 ),
 (
   'car-seat-sorted-before-birth',
@@ -210,7 +210,7 @@ insert into public.timeline_cards (
   '/card-images/pixel/px-car-seat-sorted-before-birth.png',
   'Pixel art rear-facing baby car seat with a gentle sparkle.',
   'cute 8-bit pixel art item',
-  'approved', 'published', current_date, current_date + interval '12 months', now()
+  'approved', 'in_review', null, null, null
 ),
 (
   'hospital-bag-and-plan-b',
@@ -258,7 +258,7 @@ insert into public.timeline_cards (
   '/card-images/pixel/px-safe-sleep-setup.png',
   'Pixel art cot with a flat mattress under a gentle moon, representing safe sleep.',
   'cute 8-bit pixel art item',
-  'approved', 'published', current_date, current_date + interval '12 months', now()
+  'approved', 'in_review', null, null, null
 ),
 
 -- ============================================================
@@ -286,7 +286,7 @@ insert into public.timeline_cards (
   '/card-images/pixel/px-register-birth-and-medicare.png',
   'Pixel art birth certificate scroll with a tiny footprint and Medicare-style card.',
   'cute 8-bit pixel art item',
-  'approved', 'published', current_date, current_date + interval '12 months', now()
+  'approved', 'in_review', null, null, null
 ),
 (
   'centrelink-claims-after-birth',
@@ -310,7 +310,7 @@ insert into public.timeline_cards (
   '/card-images/pixel/px-centrelink-claims-after-birth.png',
   'Pixel art piggy bank and completed checklist representing finished payment claims.',
   'cute 8-bit pixel art item',
-  'approved', 'published', current_date, current_date + interval '12 months', now()
+  'approved', 'in_review', null, null, null
 ),
 (
   'child-health-checks-book',
@@ -334,7 +334,7 @@ insert into public.timeline_cards (
   '/card-images/pixel/px-child-health-checks-book.png',
   'Pixel art child health record book with a growth chart and stethoscope.',
   'cute 8-bit pixel art item',
-  'approved', 'published', current_date, current_date + interval '12 months', now()
+  'approved', 'in_review', null, null, null
 ),
 (
   'feeding-help-exists',
@@ -358,7 +358,7 @@ insert into public.timeline_cards (
   '/card-images/pixel/px-feeding-help-exists.png',
   'Pixel art phone with a heart beside a baby bottle, representing feeding support.',
   'cute 8-bit pixel art item',
-  'approved', 'published', current_date, current_date + interval '12 months', now()
+  'approved', 'in_review', null, null, null
 ),
 (
   'crying-peaks-and-coping',
@@ -382,7 +382,7 @@ insert into public.timeline_cards (
   '/card-images/pixel/px-crying-peaks-and-coping.png',
   'Pixel art moonlit cot and armchair with tea, representing calm during the crying peak.',
   'cute 8-bit pixel art item',
-  'approved', 'published', current_date, current_date + interval '12 months', now()
+  'approved', 'in_review', null, null, null
 ),
 (
   'four-month-immunisations',
@@ -406,7 +406,7 @@ insert into public.timeline_cards (
   '/card-images/pixel/px-four-month-immunisations.png',
   'Pixel art calendar with bandage sticker and gold star for the four-month immunisations.',
   'cute 8-bit pixel art item',
-  'approved', 'published', current_date, current_date + interval '12 months', now()
+  'approved', 'in_review', null, null, null
 ),
 (
   'four-month-sleep-shakeup',
@@ -458,7 +458,7 @@ insert into public.timeline_cards (
   '/card-images/pixel/px-six-month-immunisations.png',
   'Pixel art calendar with three bandage stickers and a trophy for the six-month round.',
   'cute 8-bit pixel art item',
-  'approved', 'published', current_date, current_date + interval '12 months', now()
+  'approved', 'in_review', null, null, null
 ),
 (
   'introducing-allergens-early',
@@ -482,7 +482,7 @@ insert into public.timeline_cards (
   '/card-images/pixel/px-introducing-allergens-early.png',
   'Pixel art bowl of peanut butter and a cooked egg with sparkles, for early allergen introduction.',
   'cute 8-bit pixel art item',
-  'approved', 'published', current_date, current_date + interval '12 months', now()
+  'approved', 'in_review', null, null, null
 ),
 (
   'baby-proofing-before-crawling',
@@ -506,7 +506,7 @@ insert into public.timeline_cards (
   '/card-images/pixel/px-baby-proofing-before-crawling.png',
   'Pixel art anchored bookshelf with a strap and padlock badge, for baby-proofing.',
   'cute 8-bit pixel art item',
-  'approved', 'published', current_date, current_date + interval '12 months', now()
+  'approved', 'in_review', null, null, null
 ),
 (
   'child-care-subsidy-paperwork',
@@ -530,7 +530,7 @@ insert into public.timeline_cards (
   '/card-images/pixel/px-child-care-subsidy-paperwork.png',
   'Pixel art childcare backpack beside an approved document, for the Child Care Subsidy.',
   'cute 8-bit pixel art item',
-  'approved', 'published', current_date, current_date + interval '12 months', now()
+  'approved', 'in_review', null, null, null
 ),
 (
   'water-safety-around-babies',
@@ -554,7 +554,7 @@ insert into public.timeline_cards (
   '/card-images/pixel/px-water-safety-around-babies.png',
   'Pixel art life ring and pool gate latch by an ocean pool, for water safety.',
   'cute 8-bit pixel art item',
-  'approved', 'published', current_date, current_date + interval '12 months', now()
+  'approved', 'in_review', null, null, null
 ),
 (
   'twelve-month-immunisations',
@@ -578,7 +578,7 @@ insert into public.timeline_cards (
   '/card-images/pixel/px-twelve-month-immunisations.png',
   'Pixel art calendar with a party-hat bandage sticker for the twelve-month immunisations.',
   'cute 8-bit pixel art item',
-  'approved', 'published', current_date, current_date + interval '12 months', now()
+  'approved', 'in_review', null, null, null
 ),
 (
   'first-birthday-you-made-it',
@@ -630,7 +630,7 @@ insert into public.timeline_cards (
   '/card-images/pixel/px-sun-safety-little-skin.png',
   'Pixel art tiny sun hat, sunscreen and beach umbrella under a friendly sun.',
   'cute 8-bit pixel art item',
-  'approved', 'published', current_date, current_date + interval '12 months', now()
+  'approved', 'in_review', null, null, null
 ),
 (
   'toddler-tantrums-are-normal',
@@ -678,7 +678,7 @@ insert into public.timeline_cards (
   '/card-images/pixel/px-eighteen-month-immunisations.png',
   'Pixel art reminder ribbon tied around a calendar with a bandage sticker.',
   'cute 8-bit pixel art item',
-  'approved', 'published', current_date, current_date + interval '12 months', now()
+  'approved', 'in_review', null, null, null
 ),
 (
   'talking-and-hearing-checks',
@@ -702,7 +702,7 @@ insert into public.timeline_cards (
   '/card-images/pixel/px-talking-and-hearing-checks.png',
   'Pixel art speech bubble sprouting like a plant beside a friendly ear.',
   'cute 8-bit pixel art item',
-  'approved', 'published', current_date, current_date + interval '12 months', now()
+  'approved', 'in_review', null, null, null
 ),
 
 -- ============================================================
