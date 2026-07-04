@@ -2,7 +2,7 @@
   "crons": [
     {
       "path": "/api/cron/weekly-lookahead",
-      "schedule": "0 * * * *"
+      "schedule": "0 22 * * 5"
     }
   ]
 }
