@@ -1,6 +1,10 @@
 {
   "crons": [
     {
+      "path": "/api/cron/keepalive",
+      "schedule": "0 12 * * *"
+    },
+    {
       "path": "/api/cron/weekly-lookahead",
       "schedule": "0 22 * * 5"
     }

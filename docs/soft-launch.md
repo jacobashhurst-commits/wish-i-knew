@@ -74,13 +74,19 @@ Import the GitHub repo and set environment variables from `.env.example`:
 | `WIK_FROM_EMAIL` | Verified sender in Resend |
 | `CRON_SECRET` | Long random string |
 
-Deploy from `main`. `vercel.json` schedules the weekly email cron hourly.
+Deploy from `main`. `vercel.json` schedules:
 
-**Cron note:** Vercel Cron on the Hobby plan may be limited. Options:
+- **Daily keepalive** (`/api/cron/keepalive` at 12:00 UTC) — pings Supabase so free-tier projects do not pause
+- **Weekly email** (`/api/cron/weekly-lookahead` Friday 22:00 UTC ≈ Saturday morning Sydney)
 
-- Upgrade to Pro for native cron
-- Call the route yourself during testing: `curl -H "Authorization: Bearer $CRON_SECRET" https://your-domain.com/api/cron/weekly-lookahead`
-- Use a free external cron (e.g. cron-job.org) hitting the same URL
+Both are Hobby-safe (at most once per day). Keepalive needs `SUPABASE_SERVICE_ROLE_KEY` + `CRON_SECRET` only.
+
+**Manual test:**
+
+```bash
+curl -H "Authorization: Bearer $CRON_SECRET" https://your-domain.com/api/cron/keepalive
+curl -H "Authorization: Bearer $CRON_SECRET" https://your-domain.com/api/cron/weekly-lookahead
+```
 
 ## 3. Email (Resend)
 
@@ -108,7 +114,7 @@ Users can pause from the email link or turn email back on in **Settings → Week
 
 ## 5. Paywall later
 
-Migration `005` adds `user_entitlements` with `plan = free` for every new profile. No paywall UI yet — ready for a future Stripe/Zuora hook without schema churn.
+Migration `005` adds `user_entitlements` with `plan = free` for every new profile. No paywall UI yet - ready for a future Stripe/Zuora hook without schema churn.
 
 ## 6. Pre-invite smoke test
 
@@ -127,7 +133,7 @@ Push the repo, then run your separate review agent. Typical review focus:
 
 - Auth/RLS boundaries
 - Email idempotency
-- Legal copy adequacy (not legal advice — flag for your lawyer before public launch)
+- Legal copy adequacy (not legal advice - flag for your lawyer before public launch)
 - Content medical review flags in seed SQL
 
 ## 8. Public launch (later)
