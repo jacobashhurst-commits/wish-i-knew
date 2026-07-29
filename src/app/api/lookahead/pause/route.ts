@@ -54,7 +54,7 @@ function readPauseParams(request: Request, body?: FormData) {
   return { id, token };
 }
 
-/** GET shows confirmation only — scanners must not disable emails on prefetch. */
+/** GET shows confirmation only - scanners must not disable emails on prefetch. */
 export async function GET(request: Request) {
   const { id, token } = readPauseParams(request);
 

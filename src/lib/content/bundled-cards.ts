@@ -5,7 +5,7 @@ import { mapTimelineCard, type TimelineCardRow } from "@/lib/data/map-card";
 /** Default ±30 day horizon for the timeline journey map. */
 export const timelineHorizonDays = 30;
 
-/** Published + in_review cards bundled from seed SQL — preview/dev only. Live app uses DB published rows. */
+/** Published + in_review cards bundled from seed SQL - preview/dev only. Live app uses DB published rows. */
 export const bundledPublishedCards: TimelineCard[] = (libraryCards as TimelineCardRow[]).map(
   mapTimelineCard,
 );

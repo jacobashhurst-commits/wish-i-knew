@@ -158,7 +158,7 @@ export async function GET(request: Request) {
     const digest = composeDigest(timeline);
 
     if (digest.length === 0) {
-      // Nothing to send today — keep the claim so we do not retry every hour.
+      // Nothing to send today - keep the claim so we do not retry every hour.
       await supabase
         .from("reminders")
         .update({ status: "dismissed" })
