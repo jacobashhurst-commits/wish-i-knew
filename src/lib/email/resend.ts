@@ -3,6 +3,8 @@ type SendEmailInput = {
   subject: string;
   html: string;
   text: string;
+  /** One-click unsubscribe/pause URL. Gmail and Yahoo require these headers for bulk senders. */
+  unsubscribeUrl?: string;
 };
 
 /**
@@ -28,6 +30,16 @@ export async function sendEmail(input: SendEmailInput): Promise<{ error?: string
       subject: input.subject,
       html: input.html,
       text: input.text,
+      ...(input.unsubscribeUrl
+        ? {
+            headers: {
+              // RFC 8058 one-click: providers POST to this URL with the query
+              // credentials intact; our pause POST handles it without a form.
+              "List-Unsubscribe": `<${input.unsubscribeUrl}>`,
+              "List-Unsubscribe-Post": "List-Unsubscribe=One-Click",
+            },
+          }
+        : {}),
     }),
   });
 

@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useMemo, useState, useTransition } from "react";
 import { saveOnboarding, updateLookaheadSettings } from "@/app/actions/onboarding";
@@ -1340,9 +1341,9 @@ function LibraryView({
       {isAdmin ? (
         <p className="mt-3 text-sm text-[#697386]">
           Add or edit cards in{" "}
-          <a className="font-semibold text-[#1D809F] underline-offset-2 hover:underline" href="/admin/cards/new">
+          <Link className="font-semibold text-[#1D809F] underline-offset-2 hover:underline" href="/admin/cards/new">
             Content Studio → New card
-          </a>
+          </Link>
           .
         </p>
       ) : null}

@@ -26,7 +26,7 @@ Your sequence is sound:
 
 ## 1. Supabase (production project)
 
-Run migrations in order through `005_beta_launch.sql`, then seeds:
+Run migrations in order through `007_rls_tightening.sql`, then seeds:
 
 1. `001_initial_schema.sql`
 2. `002_auth_profile_trigger.sql`
@@ -34,9 +34,15 @@ Run migrations in order through `005_beta_launch.sql`, then seeds:
 4. `004_card_image_storage_policies.sql`
 5. `supabase/migrations/005_beta_launch.sql`
 6. `supabase/migrations/006_enforce_beta_invite.sql`
-7. `supabase/seed.sql`
-8. `supabase/seed_content_library.sql`
-9. `supabase/seed_content_library_batch2.sql`
+7. `supabase/migrations/007_rls_tightening.sql`
+8. `supabase/seed.sql`
+9. `supabase/seed_content_library.sql`
+10. `supabase/seed_content_library_batch2.sql`
+11. `supabase/seed_content_library_batch3.sql`
+
+**Important:** once 006 runs, signups are blocked for anyone not in
+`beta_invites` - add your own email to the invite list before you try to sign
+up, or sign up first and run 006 after.
 
 Grant yourself admin:
 

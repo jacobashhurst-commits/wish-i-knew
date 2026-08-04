@@ -46,8 +46,8 @@
     "image_style": "cute 8-bit pixel art item",
     "image_status": "approved",
     "status": "published",
-    "review_due_date": "2026-07-02",
-    "last_reviewed_at": "2026-07-02"
+    "review_due_date": "2027-08-04",
+    "last_reviewed_at": "2026-08-04"
   },
   {
     "id": "70d733d043584d0382324966880e31ca",
@@ -297,8 +297,8 @@
     "image_style": "cute 8-bit pixel art item",
     "image_status": "approved",
     "status": "published",
-    "review_due_date": "2026-07-02",
-    "last_reviewed_at": "2026-07-02"
+    "review_due_date": "2027-08-04",
+    "last_reviewed_at": "2026-08-04"
   },
   {
     "id": "a37c696191e5f2630e601db386b3e6f2",
@@ -346,6 +346,57 @@
     "image_alt": "Pixel art window with blackout blinds and moon.",
     "image_style": "cute 8-bit pixel art item",
     "image_status": "approved",
+    "status": "in_review",
+    "review_due_date": null,
+    "last_reviewed_at": null
+  },
+  {
+    "id": "8a7228686f13db48dacadc541e1e39ed",
+    "slug": "c-section-recovery-plan",
+    "title": "Caesarean recovery is surgery recovery",
+    "subtitle": "Six weeks, not six days",
+    "card_type": "Parent Sanity",
+    "category": "Postpartum / Health",
+    "life_stage": "Newborn (0-3 months)",
+    "start_age_days": 0,
+    "end_age_days": 56,
+    "pregnancy_week_start": null,
+    "pregnancy_week_end": null,
+    "priority": 90,
+    "time_critical": false,
+    "short_summary": "A caesarean is major abdominal surgery. Recovery takes weeks: no lifting heavier than your baby, wound care, and a doctor check before driving.",
+    "wish_i_knew": "A caesarean is the only major surgery where they hand you a newborn and send you home to look after it.",
+    "why_it_matters": "Treating recovery seriously prevents setbacks. Lifting, stairs and driving too early can strain the wound. Most people need help at home for the first fortnight at least.",
+    "what_to_do_now": "Accept every offer of help and be specific: meals, washing, holding the baby while you shower. Keep the wound clean and dry, and watch for redness, oozing or fever.",
+    "what_can_wait": "Driving. Check with your doctor and your car insurer about when you are covered again - commonly around six weeks, but it varies.",
+    "checklist_items": [
+      "Nothing heavier than your baby for the first weeks",
+      "Line up help for fortnight one before the birth if planned",
+      "Check the wound daily: redness, ooze or fever means call the GP",
+      "Ask your doctor and insurer before driving again"
+    ],
+    "shopping_items": [],
+    "source_urls": [
+      "https://www.pregnancybirthbaby.org.au/recovery-after-a-caesarean"
+    ],
+    "source_notes": "Medical content - review against current guidance and verify link before production use.",
+    "medical_sensitivity": true,
+    "government_sensitivity": false,
+    "safety_sensitivity": false,
+    "allergy_sensitivity": false,
+    "feeding_sensitivity": false,
+    "state_specific": false,
+    "states": [],
+    "conditions": {
+      "born_only": true
+    },
+    "illustration_prompt": "Cute pixel art collectible: a heart-shaped care badge, a small water bottle and a soft blanket folded neatly.",
+    "image_url": null,
+    "thumbnail_url": null,
+    "hero_image_url": null,
+    "image_alt": "Pixel art care badge, water bottle and folded blanket on a warm cream background.",
+    "image_style": "cute 8-bit pixel art item",
+    "image_status": "needed",
     "status": "in_review",
     "review_due_date": null,
     "last_reviewed_at": null
@@ -805,6 +856,57 @@
     "last_reviewed_at": null
   },
   {
+    "id": "c5ca3ff26daa2ae99e7a66f7c4614a77",
+    "slug": "daycare-sickness-era",
+    "title": "The daycare sickness era",
+    "subtitle": "Stock up before the first snot wave",
+    "card_type": "Heads Up",
+    "category": "Childcare / Illness",
+    "life_stage": "Baby / Toddler",
+    "start_age_days": 240,
+    "end_age_days": 540,
+    "pregnancy_week_start": null,
+    "pregnancy_week_end": null,
+    "priority": 80,
+    "time_critical": false,
+    "short_summary": "Starting daycare often means more bugs. It helps to have a basic illness setup before everyone is tired and covered in snot.",
+    "wish_i_knew": "Daycare sickness is not one cold. It is a season of life.",
+    "why_it_matters": "Having basics ready can make sick days less chaotic.",
+    "what_to_do_now": "Prepare a simple sick-day kit and know your GP and after-hours options.",
+    "what_can_wait": "You do not need to panic-buy every medicine. Keep it sensible and ask your pharmacist or GP what is appropriate.",
+    "checklist_items": [
+      "Save your GP and after-hours details",
+      "Check what your childcare asks parents to do when children are sick",
+      "Ask your pharmacist or GP what basics suit your child"
+    ],
+    "shopping_items": [],
+    "source_urls": [
+      "https://raisingchildren.net.au/guides/a-z-health-reference/colds"
+    ],
+    "source_notes": "Review illness wording before production use.",
+    "medical_sensitivity": true,
+    "government_sensitivity": false,
+    "safety_sensitivity": false,
+    "allergy_sensitivity": false,
+    "feeding_sensitivity": false,
+    "state_specific": false,
+    "states": [],
+    "conditions": {
+      "born_only": true,
+      "childcare_yes_or_unsure": true
+    },
+    "illustration_prompt": "A cute tissue box, thermometer and tiny socks in a warm illustrated style.",
+    "image_url": "/card-images/pixel/px-daycare-sickness-era.png",
+    "thumbnail_url": null,
+    "hero_image_url": null,
+    "image_alt": "Illustrated tissue box, thermometer and tiny socks.",
+    "image_style": "cute 8-bit pixel art item",
+    "image_status": "approved",
+    "status": "published",
+    "review_due_date": "2027-02-04",
+    "last_reviewed_at": "2026-08-04"
+  },
+  {
     "id": "efe9acee869e8e48829147fd261dda0c",
     "slug": "dental-check-during-pregnancy",
     "title": "A dental check while pregnant",
@@ -1156,6 +1258,58 @@
     "last_reviewed_at": null
   },
   {
+    "id": "36784419eef21477f5d25da37794c5b7",
+    "slug": "first-24-hours-at-home",
+    "title": "The first 24 hours at home",
+    "subtitle": "From staffed ward to just you",
+    "card_type": "Heads Up",
+    "category": "Newborn / Care",
+    "life_stage": "Newborn (0-3 months)",
+    "start_age_days": 0,
+    "end_age_days": 7,
+    "pregnancy_week_start": null,
+    "pregnancy_week_end": null,
+    "priority": 88,
+    "time_critical": false,
+    "short_summary": "Coming home is a cliff: no midwife button, feeds every two to three hours, and a baby who slept in hospital deciding not to. Lower the bar to feed, sleep, safety.",
+    "wish_i_knew": "The hospital had a button that summoned a professional. Home has you, and that turns out to be enough.",
+    "why_it_matters": "The first night home is famously hard because day-two-or-three babies feed constantly and everyone is exhausted. Knowing that this is normal, and who to call, turns panic into a long night instead of a crisis.",
+    "what_to_do_now": "One job today: feeds in, nappies out, everyone sleeps when possible. Save healthdirect (1800 022 222) and your hospital ward number - many maternity wards take calls from recent patients.",
+    "what_can_wait": "Visitors, tidying, thank-you messages, and any parenting decision that is not about today.",
+    "checklist_items": [
+      "Save healthdirect 1800 022 222 and your ward number",
+      "Aim for feed, sleep, safety - nothing else counts today",
+      "Expect a wakeful, feed-heavy first night - it is normal",
+      "Put a no-visitors buffer on day one if you can"
+    ],
+    "shopping_items": [],
+    "source_urls": [
+      "https://www.pregnancybirthbaby.org.au/baby-first-24-hours",
+      "https://raisingchildren.net.au/newborns/health-daily-care"
+    ],
+    "source_notes": "Medical-adjacent content - review and verify links before production use.",
+    "medical_sensitivity": true,
+    "government_sensitivity": false,
+    "safety_sensitivity": false,
+    "allergy_sensitivity": false,
+    "feeding_sensitivity": false,
+    "state_specific": false,
+    "states": [],
+    "conditions": {
+      "born_only": true
+    },
+    "illustration_prompt": "Cute pixel art collectible: a little house with a warm glowing window and a tiny crescent moon above it.",
+    "image_url": null,
+    "thumbnail_url": null,
+    "hero_image_url": null,
+    "image_alt": "Pixel art house with a glowing window under a crescent moon on a warm cream background.",
+    "image_style": "cute 8-bit pixel art item",
+    "image_status": "needed",
+    "status": "in_review",
+    "review_due_date": null,
+    "last_reviewed_at": null
+  },
+  {
     "id": "ab657c3a41d844b4166c5218cc037072",
     "slug": "first-birthday-you-made-it",
     "title": "One year: you actually did it",
@@ -1200,8 +1354,8 @@
     "image_style": "cute 8-bit pixel art item",
     "image_status": "approved",
     "status": "published",
-    "review_due_date": "2026-07-02",
-    "last_reviewed_at": "2026-07-02"
+    "review_due_date": "2027-08-04",
+    "last_reviewed_at": "2026-08-04"
   },
   {
     "id": "4dd391f01d4ecea543978935597c1e05",
@@ -1266,40 +1420,40 @@
     "pregnancy_week_start": 6,
     "pregnancy_week_end": 8,
     "priority": 100,
-    "time_critical": "Book a GP appointment to confirm pregnancy, organise early bloods, discuss supplements and plan the next steps.",
-    "short_summary": "The first appointment is less dramatic than you imagine, but it starts the whole Australian pregnancy pathway.",
-    "wish_i_knew": "Your GP can help confirm pregnancy, organise early tests, discuss folate and iodine, talk through public/private care options and refer you into the right pathway.",
-    "why_it_matters": "Book a GP appointment and bring your estimated last menstrual period or positive pregnancy test date if known.",
-    "what_to_do_now": "You do not need to have every hospital or birth decision made before this appointment.",
-    "what_can_wait": [
+    "time_critical": false,
+    "short_summary": "Book a GP appointment to confirm pregnancy, organise early bloods, discuss supplements and plan the next steps.",
+    "wish_i_knew": "The first appointment is less dramatic than you imagine, but it starts the whole Australian pregnancy pathway.",
+    "why_it_matters": "Your GP can help confirm pregnancy, organise early tests, discuss folate and iodine, talk through public/private care options and refer you into the right pathway.",
+    "what_to_do_now": "Book a GP appointment and bring your estimated last menstrual period or positive pregnancy test date if known.",
+    "what_can_wait": "You do not need to have every hospital or birth decision made before this appointment.",
+    "checklist_items": [
       "Book a GP appointment",
       "Note your estimated last menstrual period if known",
       "Write down any early questions"
     ],
-    "checklist_items": [
+    "shopping_items": [],
+    "source_urls": [
       "https://www.pregnancybirthbaby.org.au/your-first-antenatal-visit"
     ],
-    "shopping_items": [],
-    "source_urls": [],
-    "source_notes": true,
-    "medical_sensitivity": false,
+    "source_notes": "Review against current Australian pregnancy guidance before production use.",
+    "medical_sensitivity": true,
     "government_sensitivity": false,
     "safety_sensitivity": false,
-    "allergy_sensitivity": {
-      "unborn_only": true
-    },
-    "feeding_sensitivity": "A warm illustrated calendar with a tiny positive pregnancy test and coffee cup nearby.",
+    "allergy_sensitivity": false,
+    "feeding_sensitivity": false,
     "state_specific": false,
     "states": [],
-    "conditions": {},
-    "illustration_prompt": "Illustrated calendar with a positive pregnancy test and coffee cup.",
-    "image_url": "cute 8-bit pixel art item",
+    "conditions": {
+      "unborn_only": true
+    },
+    "illustration_prompt": "A warm illustrated calendar with a tiny positive pregnancy test and coffee cup nearby.",
+    "image_url": "/card-images/pixel/px-first-gp-appointment.png",
     "thumbnail_url": null,
     "hero_image_url": null,
-    "image_alt": "approved",
-    "image_style": "in_review",
+    "image_alt": "Illustrated calendar with a positive pregnancy test and coffee cup.",
+    "image_style": "cute 8-bit pixel art item",
     "image_status": "approved",
-    "status": "published",
+    "status": "in_review",
     "review_due_date": null,
     "last_reviewed_at": null
   },
@@ -1501,8 +1655,8 @@
     "image_style": "cute 8-bit pixel art item",
     "image_status": "approved",
     "status": "published",
-    "review_due_date": "2026-07-02",
-    "last_reviewed_at": "2026-07-02"
+    "review_due_date": "2027-08-04",
+    "last_reviewed_at": "2026-08-04"
   },
   {
     "id": "e28a1d44ce78ddef7e6155187b9cb6bc",
@@ -1701,8 +1855,8 @@
     "image_style": "cute 8-bit pixel art item",
     "image_status": "approved",
     "status": "published",
-    "review_due_date": "2026-07-02",
-    "last_reviewed_at": "2026-07-02"
+    "review_due_date": "2027-08-04",
+    "last_reviewed_at": "2026-08-04"
   },
   {
     "id": "c52ecbdcf4fe2f80980921dc5fe5348f",
@@ -1853,8 +2007,8 @@
     "image_style": "cute 8-bit pixel art item",
     "image_status": "approved",
     "status": "published",
-    "review_due_date": "2026-07-02",
-    "last_reviewed_at": "2026-07-02"
+    "review_due_date": "2027-08-04",
+    "last_reviewed_at": "2026-08-04"
   },
   {
     "id": "7357feeb3f1b062271465b61a19ffb58",
@@ -1902,6 +2056,58 @@
     "image_alt": "Pixel art folder with a service card and padlock representing linked government accounts.",
     "image_style": "cute 8-bit pixel art item",
     "image_status": "approved",
+    "status": "in_review",
+    "review_due_date": null,
+    "last_reviewed_at": null
+  },
+  {
+    "id": "ae3ddcdb5c2c09a609231201f6498d28",
+    "slug": "milk-coming-in-day-three",
+    "title": "Day three: milk, and maybe tears",
+    "subtitle": "Hormones have a schedule of their own",
+    "card_type": "Heads Up",
+    "category": "Newborn / Feeding",
+    "life_stage": "Newborn (0-3 months)",
+    "start_age_days": 1,
+    "end_age_days": 7,
+    "pregnancy_week_start": null,
+    "pregnancy_week_end": null,
+    "priority": 82,
+    "time_critical": false,
+    "short_summary": "Around day two to five, milk typically comes in and hormones shift hard. Engorgement and a teary emotional dip are both common and usually brief.",
+    "wish_i_knew": "Nobody schedules the day-three cry, but almost everyone attends.",
+    "why_it_matters": "The hormonal drop after birth is real and steep, and it often lands the same day as engorgement. Knowing both are coming - whatever your feeding plan - makes them events, not emergencies. If low mood lasts beyond a fortnight, that is a talk-to-someone sign, not a toughen-up sign.",
+    "what_to_do_now": "Warm shower or cloth for comfort, feed or express for relief if breastfeeding, and let the tears happen. The ABA helpline (1800 686 268) runs 24/7 for feeding questions of any kind.",
+    "what_can_wait": "Judging your feeding journey by this week. Day three is the worst possible data point.",
+    "checklist_items": [
+      "Expect fullness or engorgement around day two to five",
+      "Expect an emotional dip - it is hormonal and common",
+      "Save the ABA helpline: 1800 686 268",
+      "Low mood beyond two weeks: mention it to your GP or nurse"
+    ],
+    "shopping_items": [],
+    "source_urls": [
+      "https://www.pregnancybirthbaby.org.au/breast-engorgement",
+      "https://www.breastfeeding.asn.au/"
+    ],
+    "source_notes": "Feeding content - keep wording inclusive of all feeding methods. Review and verify links before production use.",
+    "medical_sensitivity": true,
+    "government_sensitivity": false,
+    "safety_sensitivity": false,
+    "allergy_sensitivity": false,
+    "feeding_sensitivity": true,
+    "state_specific": false,
+    "states": [],
+    "conditions": {
+      "born_only": true
+    },
+    "illustration_prompt": "Cute pixel art collectible: a small calendar showing day three with a tiny raincloud and a warm sun peeking behind it.",
+    "image_url": null,
+    "thumbnail_url": null,
+    "hero_image_url": null,
+    "image_alt": "Pixel art calendar with a raincloud and sun on a warm cream background.",
+    "image_style": "cute 8-bit pixel art item",
+    "image_status": "needed",
     "status": "in_review",
     "review_due_date": null,
     "last_reviewed_at": null
@@ -2207,6 +2413,57 @@
     "last_reviewed_at": null
   },
   {
+    "id": "b86c3016deb9e32314d8574e8b06fafe",
+    "slug": "partner-role-during-labour",
+    "title": "Partners: your labour job description",
+    "subtitle": "Support crew, snack mule, advocate",
+    "card_type": "Heads Up",
+    "category": "Birth / Planning",
+    "life_stage": "Pregnancy",
+    "start_age_days": null,
+    "end_age_days": null,
+    "pregnancy_week_start": 32,
+    "pregnancy_week_end": 40,
+    "priority": 75,
+    "time_critical": false,
+    "short_summary": "Partners do best in labour with a clear job: know the birth preferences, handle logistics, keep snacks and phone chargers flowing, and speak up when asked to.",
+    "wish_i_knew": "You cannot take the contractions, but you can take literally everything else off the list.",
+    "why_it_matters": "Labour goes better for everyone when the labouring person only has to labour. A partner who knows the preferences and the hospital route is calm, and calm is contagious.",
+    "what_to_do_now": "Read the birth preferences together. Pack your own small bag: snacks, water, charger, a jumper. Know where to park at 3am and which entrance is open.",
+    "what_can_wait": "A perfect script. Your presence and the snacks matter more than saying the right thing.",
+    "checklist_items": [
+      "Read the birth preferences together before week 36",
+      "Pack a partner bag: snacks, charger, jumper",
+      "Do a 3am-entrance dry run of the hospital route",
+      "Agree on a phrase that means please advocate for me now"
+    ],
+    "shopping_items": [],
+    "source_urls": [
+      "https://www.pregnancybirthbaby.org.au/labour-and-birth-tips-for-partners"
+    ],
+    "source_notes": "Verify link during review.",
+    "medical_sensitivity": false,
+    "government_sensitivity": false,
+    "safety_sensitivity": false,
+    "allergy_sensitivity": false,
+    "feeding_sensitivity": false,
+    "state_specific": false,
+    "states": [],
+    "conditions": {
+      "unborn_only": true
+    },
+    "illustration_prompt": "Cute pixel art collectible: a small backpack with a water bottle, muesli bar and phone charger cable peeking out.",
+    "image_url": null,
+    "thumbnail_url": null,
+    "hero_image_url": null,
+    "image_alt": "Pixel art backpack with snacks and a charger cable on a warm cream background.",
+    "image_style": "cute 8-bit pixel art item",
+    "image_status": "needed",
+    "status": "in_review",
+    "review_due_date": null,
+    "last_reviewed_at": null
+  },
+  {
     "id": "b97810bf518d0eee3a967f3d0ea2a6d9",
     "slug": "partner-support-newborn",
     "title": "Partners need support too",
@@ -2253,8 +2510,8 @@
     "image_style": "cute 8-bit pixel art item",
     "image_status": "approved",
     "status": "published",
-    "review_due_date": "2026-07-02",
-    "last_reviewed_at": "2026-07-02"
+    "review_due_date": "2027-08-04",
+    "last_reviewed_at": "2026-08-04"
   },
   {
     "id": "115762d3efe3e5c0c27043507e307e4b",
@@ -2353,8 +2610,8 @@
     "image_style": "cute 8-bit pixel art item",
     "image_status": "approved",
     "status": "published",
-    "review_due_date": "2026-07-02",
-    "last_reviewed_at": "2026-07-02"
+    "review_due_date": "2027-08-04",
+    "last_reviewed_at": "2026-08-04"
   },
   {
     "id": "3179155a9f5cfebfcfe4e9f76ca15d48",
@@ -2646,8 +2903,8 @@
     "image_style": "cute 8-bit pixel art item",
     "image_status": "approved",
     "status": "published",
-    "review_due_date": "2026-07-02",
-    "last_reviewed_at": "2026-07-02"
+    "review_due_date": "2027-08-04",
+    "last_reviewed_at": "2026-08-04"
   },
   {
     "id": "190ba9ec397473f4237e3bd47b5d9a10",
@@ -2691,8 +2948,8 @@
     "image_style": "cute 8-bit pixel art item",
     "image_status": "approved",
     "status": "published",
-    "review_due_date": "2026-07-02",
-    "last_reviewed_at": "2026-07-02"
+    "review_due_date": "2027-08-04",
+    "last_reviewed_at": "2026-08-04"
   },
   {
     "id": "5e54d487563bb955f0d12c53bcd49d18",
@@ -2736,8 +2993,8 @@
     "image_style": "cute 8-bit pixel art item",
     "image_status": "approved",
     "status": "published",
-    "review_due_date": "2026-07-02",
-    "last_reviewed_at": "2026-07-02"
+    "review_due_date": "2027-08-04",
+    "last_reviewed_at": "2026-08-04"
   },
   {
     "id": "8070f5aeca02a0a22093f113fe995b57",
@@ -2781,8 +3038,8 @@
     "image_style": "cute 8-bit pixel art item",
     "image_status": "approved",
     "status": "published",
-    "review_due_date": "2026-07-02",
-    "last_reviewed_at": "2026-07-02"
+    "review_due_date": "2027-08-04",
+    "last_reviewed_at": "2026-08-04"
   },
   {
     "id": "c31b9c57d75ab526576c834452474660",
@@ -2826,8 +3083,8 @@
     "image_style": "cute 8-bit pixel art item",
     "image_status": "approved",
     "status": "published",
-    "review_due_date": "2026-07-02",
-    "last_reviewed_at": "2026-07-02"
+    "review_due_date": "2027-08-04",
+    "last_reviewed_at": "2026-08-04"
   },
   {
     "id": "73e68ae9e991e8eac8674c59637287be",
@@ -2870,8 +3127,8 @@
     "image_style": "cute 8-bit pixel art item",
     "image_status": "approved",
     "status": "published",
-    "review_due_date": "2026-07-02",
-    "last_reviewed_at": "2026-07-02"
+    "review_due_date": "2027-08-04",
+    "last_reviewed_at": "2026-08-04"
   },
   {
     "id": "5f64af538c70bec8d6815fadbd0b9e88",
@@ -3274,6 +3531,57 @@
     "last_reviewed_at": null
   },
   {
+    "id": "0d76372642dabbbabbab7d58f8996b2f",
+    "slug": "six-week-postnatal-check",
+    "title": "The six-week check is for you too",
+    "subtitle": "Not just a baby appointment",
+    "card_type": "Big Milestone",
+    "category": "Postpartum / Health",
+    "life_stage": "Newborn (0-3 months)",
+    "start_age_days": 28,
+    "end_age_days": 56,
+    "pregnancy_week_start": null,
+    "pregnancy_week_end": null,
+    "priority": 85,
+    "time_critical": true,
+    "short_summary": "Around six weeks, a GP checks your recovery, mood and contraception options, and usually your baby at the same visit. Book it around week four.",
+    "wish_i_knew": "The six-week check is the appointment where someone finally asks how YOU are - if you book it.",
+    "why_it_matters": "It covers wound or perineal healing, bleeding, mental health screening and contraception, plus the baby check. Skipping it means small problems get found late. And you never need to wait for six weeks if something feels wrong now.",
+    "what_to_do_now": "Book the appointment around week four so you get a slot near week six. Write down your questions - sleep deprivation eats them otherwise.",
+    "what_can_wait": "Having it all together by then. The check is a check-in, not an exam you can fail.",
+    "checklist_items": [
+      "Book with your GP around week four",
+      "Note down questions as they occur to you",
+      "Be honest in the mood questions - they are there to help",
+      "Do not wait for week six if you are worried earlier"
+    ],
+    "shopping_items": [],
+    "source_urls": [
+      "https://www.pregnancybirthbaby.org.au/postnatal-checks-and-care"
+    ],
+    "source_notes": "Medical content - review against current guidance and verify link before production use.",
+    "medical_sensitivity": true,
+    "government_sensitivity": false,
+    "safety_sensitivity": false,
+    "allergy_sensitivity": false,
+    "feeding_sensitivity": false,
+    "state_specific": false,
+    "states": [],
+    "conditions": {
+      "born_only": true
+    },
+    "illustration_prompt": "Cute pixel art collectible: a friendly clipboard with a heart checkbox and a small calendar showing week six.",
+    "image_url": null,
+    "thumbnail_url": null,
+    "hero_image_url": null,
+    "image_alt": "Pixel art clipboard with heart checkbox and small calendar on a warm cream background.",
+    "image_style": "cute 8-bit pixel art item",
+    "image_status": "needed",
+    "status": "in_review",
+    "review_due_date": null,
+    "last_reviewed_at": null
+  },
+  {
     "id": "22a363e972e4e8aec69c6a1ab386eaac",
     "slug": "start-thinking-about-childcare",
     "title": "Start thinking about childcare",
@@ -3286,44 +3594,96 @@
     "pregnancy_week_start": 24,
     "pregnancy_week_end": 40,
     "priority": 90,
-    "time_critical": "If you might need childcare, start researching and joining waitlists earlier than feels reasonable.",
-    "short_summary": "Childcare planning starts before you feel ready to think about childcare.",
-    "wish_i_knew": "Popular centres can have long waitlists, and it takes time to compare locations, fees, availability, orientation and Child Care Subsidy.",
-    "why_it_matters": "Make a shortlist of centres near home and work, ask about nursery availability, and join waitlists if needed.",
-    "what_to_do_now": "You do not need your exact return-to-work date locked in before you start researching.",
-    "what_can_wait": [
+    "time_critical": false,
+    "short_summary": "If you might need childcare, start researching and joining waitlists earlier than feels reasonable.",
+    "wish_i_knew": "Childcare planning starts before you feel ready to think about childcare.",
+    "why_it_matters": "Popular centres can have long waitlists, and it takes time to compare locations, fees, availability, orientation and Child Care Subsidy.",
+    "what_to_do_now": "Make a shortlist of centres near home and work, ask about nursery availability, and join waitlists if needed.",
+    "what_can_wait": "You do not need your exact return-to-work date locked in before you start researching.",
+    "checklist_items": [
       "List centres near home and work",
       "Ask about nursery availability",
       "Check waitlist fees",
       "Read the Child Care Subsidy basics"
     ],
-    "checklist_items": [
+    "shopping_items": [],
+    "source_urls": [
       "https://www.servicesaustralia.gov.au/child-care-subsidy"
     ],
-    "shopping_items": [],
-    "source_urls": [],
-    "source_notes": false,
-    "medical_sensitivity": true,
-    "government_sensitivity": false,
+    "source_notes": "Review Child Care Subsidy wording before production use.",
+    "medical_sensitivity": false,
+    "government_sensitivity": true,
     "safety_sensitivity": false,
-    "allergy_sensitivity": {
+    "allergy_sensitivity": false,
+    "feeding_sensitivity": false,
+    "state_specific": false,
+    "states": [],
+    "conditions": {
       "childcare_yes_or_unsure": true,
       "first_child_only": true
     },
-    "feeding_sensitivity": "A playful illustrated clipboard with tiny blocks, a dummy and a calendar.",
-    "state_specific": false,
-    "states": [],
-    "conditions": {},
-    "illustration_prompt": "Illustrated childcare planning clipboard with blocks, dummy and calendar.",
-    "image_url": "cute 8-bit pixel art item",
+    "illustration_prompt": "A playful illustrated clipboard with tiny blocks, a dummy and a calendar.",
+    "image_url": "/card-images/pixel/px-start-thinking-about-childcare.png",
     "thumbnail_url": null,
     "hero_image_url": null,
-    "image_alt": "approved",
-    "image_style": "in_review",
+    "image_alt": "Illustrated childcare planning clipboard with blocks, dummy and calendar.",
+    "image_style": "cute 8-bit pixel art item",
     "image_status": "approved",
-    "status": "published",
+    "status": "in_review",
     "review_due_date": null,
     "last_reviewed_at": null
+  },
+  {
+    "id": "a8547dc22b83302ab95ad14444de1d56",
+    "slug": "starting-solids",
+    "title": "Starting solids",
+    "subtitle": "Cute mess, but also a bit of a project",
+    "card_type": "Big Milestone",
+    "category": "Feeding / Solids",
+    "life_stage": "Baby",
+    "start_age_days": 120,
+    "end_age_days": 190,
+    "pregnancy_week_start": null,
+    "pregnancy_week_end": null,
+    "priority": 95,
+    "time_critical": false,
+    "short_summary": "Solids are about more than purees. You will be thinking about readiness, iron, allergens, textures, mess and routine.",
+    "wish_i_knew": "Starting solids is less about fancy recipes and more about repetition, safety and not losing your mind cleaning the floor.",
+    "why_it_matters": "This stage introduces new skills, flavours and routines. It can feel overwhelming, but you can keep it simple.",
+    "what_to_do_now": "Get a high chair, a few bibs, some easy first foods and learn the basics of choking versus gagging.",
+    "what_can_wait": "You do not need elaborate recipes or a freezer full of tiny gourmet cubes.",
+    "checklist_items": [
+      "Check readiness signs with trusted guidance",
+      "Set up a high chair",
+      "Get a few easy-clean bibs",
+      "Read choking and allergy basics"
+    ],
+    "shopping_items": [],
+    "source_urls": [
+      "https://raisingchildren.net.au/babies/breastfeeding-bottle-feeding-solids/solids-drinks/introducing-solids",
+      "https://www.allergy.org.au/patients/allergy-prevention/ascia-how-to-introduce-solid-foods-to-babies"
+    ],
+    "source_notes": "Review feeding, allergy and safety claims before production use.",
+    "medical_sensitivity": false,
+    "government_sensitivity": false,
+    "safety_sensitivity": true,
+    "allergy_sensitivity": false,
+    "feeding_sensitivity": true,
+    "state_specific": false,
+    "states": [],
+    "conditions": {
+      "born_only": true
+    },
+    "illustration_prompt": "A cute messy high chair with pumpkin, spoon and bib.",
+    "image_url": "/card-images/pixel/px-starting-solids.png",
+    "thumbnail_url": null,
+    "hero_image_url": null,
+    "image_alt": "Illustrated messy high chair with pumpkin, spoon and bib.",
+    "image_style": "cute 8-bit pixel art item",
+    "image_status": "approved",
+    "status": "published",
+    "review_due_date": "2027-02-04",
+    "last_reviewed_at": "2026-08-04"
   },
   {
     "id": "0d6d94caf64e6b0fb7850bd1837a25f6",
@@ -3490,41 +3850,41 @@
     "pregnancy_week_start": null,
     "pregnancy_week_end": null,
     "priority": 70,
-    "time_critical": "Your baby may be ready for more normal toddler spoons as they eat thicker food and practise self-feeding.",
-    "short_summary": "Soft-tip baby spoons are great early on, but eventually they can make real food and self-feeding more annoying than helpful.",
-    "wish_i_knew": "Around this stage, babies are often eating thicker textures, grabbing the spoon, chewing on utensils and trying to feed themselves. A slightly more normal toddler spoon can make meals easier.",
-    "why_it_matters": "Buy 2-4 toddler spoons that are small enough for their mouth but sturdier than soft-tip baby spoons.",
-    "what_to_do_now": "You do not need a fancy full cutlery set. A few good spoons are enough.",
-    "what_can_wait": [
+    "time_critical": false,
+    "short_summary": "Your baby may be ready for more normal toddler spoons as they eat thicker food and practise self-feeding.",
+    "wish_i_knew": "Soft-tip baby spoons are great early on, but eventually they can make real food and self-feeding more annoying than helpful.",
+    "why_it_matters": "Around this stage, babies are often eating thicker textures, grabbing the spoon, chewing on utensils and trying to feed themselves. A slightly more normal toddler spoon can make meals easier.",
+    "what_to_do_now": "Buy 2-4 toddler spoons that are small enough for their mouth but sturdier than soft-tip baby spoons.",
+    "what_can_wait": "You do not need a fancy full cutlery set. A few good spoons are enough.",
+    "checklist_items": [
       "Check if your current spoons are too shallow or floppy",
       "Buy a small set of toddler spoons",
       "Keep old soft spoons if still useful",
       "Let baby practise holding one spoon while you use another"
     ],
-    "checklist_items": [],
     "shopping_items": [],
     "source_urls": [],
-    "source_notes": false,
+    "source_notes": null,
     "medical_sensitivity": false,
     "government_sensitivity": false,
     "safety_sensitivity": false,
-    "allergy_sensitivity": {
-      "born_only": true
-    },
-    "feeding_sensitivity": "A cute illustrated toddler spoon presented like a tiny level-up item.",
+    "allergy_sensitivity": false,
+    "feeding_sensitivity": false,
     "state_specific": false,
     "states": [],
-    "conditions": {},
-    "illustration_prompt": "Illustrated toddler spoon presented like a tiny level-up item.",
-    "image_url": "cute 8-bit pixel art item",
+    "conditions": {
+      "born_only": true
+    },
+    "illustration_prompt": "A cute illustrated toddler spoon presented like a tiny level-up item.",
+    "image_url": "/card-images/pixel/px-time-for-proper-spoons.png",
     "thumbnail_url": null,
     "hero_image_url": null,
-    "image_alt": "approved",
-    "image_style": "published",
-    "image_status": "2026-07-02",
+    "image_alt": "Illustrated toddler spoon presented like a tiny level-up item.",
+    "image_style": "cute 8-bit pixel art item",
+    "image_status": "approved",
     "status": "published",
     "review_due_date": null,
-    "last_reviewed_at": "2026-07-02T00:13:06.352Z"
+    "last_reviewed_at": "2026-08-04"
   },
   {
     "id": "b2f22219039d89bf9c15ae53de748ee0",
@@ -3674,8 +4034,8 @@
     "image_style": "cute 8-bit pixel art item",
     "image_status": "approved",
     "status": "published",
-    "review_due_date": "2026-07-02",
-    "last_reviewed_at": "2026-07-02"
+    "review_due_date": "2027-08-04",
+    "last_reviewed_at": "2026-08-04"
   },
   {
     "id": "5ca82a52e3f1b08b8288b2c279111210",
@@ -3778,6 +4138,56 @@
     "last_reviewed_at": null
   },
   {
+    "id": "3ccb08e124ac1c81bf976d1049df4d20",
+    "slug": "two-month-immunisations",
+    "title": "Two-month immunisations",
+    "subtitle": "Book it before the week gets away from you",
+    "card_type": "Big Milestone",
+    "category": "Health / Immunisations",
+    "life_stage": "Baby",
+    "start_age_days": 42,
+    "end_age_days": 70,
+    "pregnancy_week_start": null,
+    "pregnancy_week_end": null,
+    "priority": 100,
+    "time_critical": false,
+    "short_summary": "The first major post-birth immunisation appointment comes around quickly.",
+    "wish_i_knew": "Two months sounds far away when they are born, then suddenly it is next week.",
+    "why_it_matters": "The Australian immunisation schedule has key vaccines due in infancy. Booking ahead helps avoid scrambling.",
+    "what_to_do_now": "Check your child's due date for immunisations and book with your GP or provider.",
+    "what_can_wait": "You do not need to understand every vaccine in detail before booking. Your provider can talk you through it.",
+    "checklist_items": [
+      "Check the immunisation schedule",
+      "Book with your GP or provider",
+      "Add the appointment to your calendar"
+    ],
+    "shopping_items": [],
+    "source_urls": [
+      "https://www.health.gov.au/topics/immunisation/when-to-get-vaccinated/national-immunisation-program-schedule"
+    ],
+    "source_notes": "Review against current National Immunisation Program schedule before production use.",
+    "medical_sensitivity": true,
+    "government_sensitivity": false,
+    "safety_sensitivity": false,
+    "allergy_sensitivity": false,
+    "feeding_sensitivity": false,
+    "state_specific": false,
+    "states": [],
+    "conditions": {
+      "born_only": true
+    },
+    "illustration_prompt": "A gentle illustrated calendar with a tiny bandage sticker, not a scary needle.",
+    "image_url": "/card-images/pixel/px-two-month-immunisations.png",
+    "thumbnail_url": null,
+    "hero_image_url": null,
+    "image_alt": "Illustrated calendar with a small bandage sticker.",
+    "image_style": "cute 8-bit pixel art item",
+    "image_status": "approved",
+    "status": "published",
+    "review_due_date": "2027-02-04",
+    "last_reviewed_at": "2026-08-04"
+  },
+  {
     "id": "50cdf25b20212f980de25a1016a4d7f7",
     "slug": "umbilical-cord-care",
     "title": "Umbilical cord care is simple",
@@ -3878,6 +4288,57 @@
     "last_reviewed_at": null
   },
   {
+    "id": "26cda1043b537be7b56de4db4c2c574b",
+    "slug": "vaginal-birth-recovery-basics",
+    "title": "Recovery after a vaginal birth",
+    "subtitle": "Your body did something enormous",
+    "card_type": "Parent Sanity",
+    "category": "Postpartum / Health",
+    "life_stage": "Newborn (0-3 months)",
+    "start_age_days": 0,
+    "end_age_days": 42,
+    "pregnancy_week_start": null,
+    "pregnancy_week_end": null,
+    "priority": 90,
+    "time_critical": false,
+    "short_summary": "Soreness, swelling and stitches are common after a vaginal birth. Ice packs, rest and gentle care help, and there are clear signs for when to call someone.",
+    "wish_i_knew": "Nobody tells you the first week is a recovery ward at home. Plan for it like one.",
+    "why_it_matters": "Perineal soreness and swelling are normal for days to weeks. Knowing what is expected and what is not (worsening pain, bad-smelling discharge, fever) means you rest instead of worry, and call early when it matters.",
+    "what_to_do_now": "Ice packs in the first 48 hours, warm water over the area when weeing, and rest lying down when you can. Call your midwife, GP or healthdirect (1800 022 222) if pain gets worse instead of better.",
+    "what_can_wait": "Any exercise beyond short gentle walks. Pelvic floor physio is brilliant but week one is about rest.",
+    "checklist_items": [
+      "Stock ice packs or padsicles before the birth",
+      "Rest lying down, not just sitting",
+      "Know the call-someone signs: worsening pain, fever, unusual discharge",
+      "Book a pelvic health physio for later if you can"
+    ],
+    "shopping_items": [],
+    "source_urls": [
+      "https://www.pregnancybirthbaby.org.au/recovery-after-a-vaginal-birth"
+    ],
+    "source_notes": "Medical content - review against current guidance and verify link before production use.",
+    "medical_sensitivity": true,
+    "government_sensitivity": false,
+    "safety_sensitivity": false,
+    "allergy_sensitivity": false,
+    "feeding_sensitivity": false,
+    "state_specific": false,
+    "states": [],
+    "conditions": {
+      "born_only": true
+    },
+    "illustration_prompt": "Cute pixel art collectible: a soft cushion, a small ice pack and a steaming cup of tea with gentle sparkles.",
+    "image_url": null,
+    "thumbnail_url": null,
+    "hero_image_url": null,
+    "image_alt": "Pixel art cushion, ice pack and cup of tea on a warm cream background.",
+    "image_style": "cute 8-bit pixel art item",
+    "image_status": "needed",
+    "status": "in_review",
+    "review_due_date": null,
+    "last_reviewed_at": null
+  },
+  {
     "id": "8d386c5ee97811416b974949343d1492",
     "slug": "visitor-boundaries-newborn",
     "title": "You can set visitor boundaries",
@@ -3924,8 +4385,8 @@
     "image_style": "cute 8-bit pixel art item",
     "image_status": "approved",
     "status": "published",
-    "review_due_date": "2026-07-02",
-    "last_reviewed_at": "2026-07-02"
+    "review_due_date": "2027-08-04",
+    "last_reviewed_at": "2026-08-04"
   },
   {
     "id": "aa6c8da651ae66457d8f696b268d69a2",

@@ -9,7 +9,8 @@ import { buildTimeline } from "@/lib/timeline/matching";
 import type { UserCardState } from "@/types/content";
 
 export const dynamic = "force-dynamic";
-export const maxDuration = 300;
+// Vercel Hobby caps function duration well below Pro's 300s; 60s is the safe ceiling.
+export const maxDuration = 60;
 
 type PreferenceRow = {
   id: string;
@@ -108,10 +109,14 @@ export async function GET(request: Request) {
     }
 
     const now = localNow(pref.timezone || "Australia/Sydney");
-    const prefHour = Number(pref.time_of_day.slice(0, 2));
 
-    if (now.weekday !== pref.day_of_week || now.hour !== prefHour) {
-      results.push({ preference: pref.id, outcome: "skipped: not their chosen time" });
+    // Hobby-plan design: one daily run (see vercel.json), so we match on the
+    // user's chosen weekday only. Exact-hour matching breaks whenever the
+    // cron's UTC hour maps to a different local hour (daylight saving, WA)
+    // and would silently skip everyone. time_of_day is kept for a future
+    // hourly scheduler; the reminders unique index already prevents doubles.
+    if (now.weekday !== pref.day_of_week) {
+      results.push({ preference: pref.id, outcome: "skipped: not their chosen day" });
       continue;
     }
 
@@ -179,15 +184,29 @@ export async function GET(request: Request) {
       pauseUrl,
     });
 
-    const { error: sendError } = await sendEmail({
+    let { error: sendError } = await sendEmail({
       to: email,
       subject: message.subject,
       html: message.html,
       text: message.text,
+      unsubscribeUrl: pauseUrl,
     });
 
     if (sendError) {
-      // Release the claim so the next hourly run can retry after a transient Resend failure.
+      // One in-run retry: with a single daily cron there is no later run today,
+      // so a transient Resend blip would otherwise cost the whole week.
+      await new Promise((resolve) => setTimeout(resolve, 2000));
+      ({ error: sendError } = await sendEmail({
+        to: email,
+        subject: message.subject,
+        html: message.html,
+        text: message.text,
+        unsubscribeUrl: pauseUrl,
+      }));
+    }
+
+    if (sendError) {
+      // Release the claim so a manual re-run of this endpoint (same day) can retry.
       await supabase
         .from("reminders")
         .delete()

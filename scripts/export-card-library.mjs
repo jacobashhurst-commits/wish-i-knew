@@ -11,45 +11,25 @@ const seedFiles = [
   path.join(root, "supabase/seed.sql"),
   path.join(root, "supabase/seed_content_library.sql"),
   path.join(root, "supabase/seed_content_library_batch2.sql"),
+  path.join(root, "supabase/seed_content_library_batch3.sql"),
 ];
 
-const insertColumns = [
-  "slug",
-  "title",
-  "subtitle",
-  "card_type",
-  "category",
-  "life_stage",
-  "start_age_days",
-  "end_age_days",
-  "pregnancy_week_start",
-  "pregnancy_week_end",
-  "priority",
-  "time_critical",
-  "short_summary",
-  "wish_i_knew",
-  "why_it_matters",
-  "what_to_do_now",
-  "what_can_wait",
-  "checklist_items",
-  "source_urls",
-  "source_notes",
-  "medical_sensitivity",
-  "government_sensitivity",
-  "safety_sensitivity",
-  "allergy_sensitivity",
-  "feeding_sensitivity",
-  "conditions",
-  "illustration_prompt",
-  "image_url",
-  "image_alt",
-  "image_style",
-  "image_status",
-  "status",
-  "last_reviewed_at",
-  "review_due_date",
-  "published_at",
-];
+/**
+ * Each seed file declares its own column list in the INSERT statement, and the
+ * lists differ between files (seed.sql predates time_critical and
+ * allergy_sensitivity). Parse the list per file instead of assuming a shared
+ * layout - a hardcoded list silently misaligns every value after the first
+ * missing column.
+ */
+function parseInsertColumns(sql) {
+  const match = sql.match(/insert into public\.timeline_cards\s*\(([\s\S]*?)\)\s*values/i);
+  if (!match) return null;
+
+  return match[1]
+    .split(",")
+    .map((column) => column.trim())
+    .filter(Boolean);
+}
 
 function tokenizeTuple(inner) {
   const tokens = [];
@@ -78,14 +58,22 @@ function tokenizeTuple(inner) {
     }
 
     if (inner.startsWith("current_date", i)) {
-      tokens.push(new Date().toISOString().slice(0, 10));
+      const date = new Date();
       i += "current_date".length;
+      // `current_date + interval 'N months'` is one SQL value - compute it
+      // rather than emitting the interval as a stray extra token.
       if (inner.startsWith(" + interval", i)) {
         i = inner.indexOf("'", i);
         const end = inner.indexOf("'", i + 1);
-        tokens.push(inner.slice(i + 1, end));
+        const spec = inner.slice(i + 1, end);
+        const amount = Number.parseInt(spec, 10) || 0;
+        if (spec.includes("year")) date.setFullYear(date.getFullYear() + amount);
+        else if (spec.includes("month")) date.setMonth(date.getMonth() + amount);
+        else if (spec.includes("week")) date.setDate(date.getDate() + amount * 7);
+        else if (spec.includes("day")) date.setDate(date.getDate() + amount);
         i = end + 1;
       }
+      tokens.push(date.toISOString().slice(0, 10));
       continue;
     }
 
@@ -176,9 +164,9 @@ function slugToId(slug) {
   return createHash("sha256").update(slug).digest("hex").slice(0, 32);
 }
 
-function rowToCard(tokens) {
+function rowToCard(tokens, columns) {
   const row = {};
-  insertColumns.forEach((key, index) => {
+  columns.forEach((key, index) => {
     row[key] = tokens[index];
   });
 
@@ -229,17 +217,30 @@ function rowToCard(tokens) {
 const bySlug = new Map();
 
 for (const file of seedFiles) {
+  if (!fs.existsSync(file)) {
+    console.warn(`Seed file missing, skipping: ${path.basename(file)}`);
+    continue;
+  }
+
   const sql = fs.readFileSync(file, "utf8");
-  const hasTimeCritical = sql.includes("time_critical,");
+  const columns = parseInsertColumns(sql);
+
+  if (!columns) {
+    console.warn(`No timeline_cards insert found in ${path.basename(file)}, skipping.`);
+    continue;
+  }
 
   for (const tuple of extractTuples(sql)) {
     try {
       const tokens = tokenizeTuple(tuple);
-      if (!hasTimeCritical && tokens.length === insertColumns.length - 1) {
-        // seed.sql predates time_critical column in values  -  insert false after priority (index 10)
-        tokens.splice(11, 0, false);
+
+      if (tokens.length !== columns.length) {
+        throw new Error(
+          `Column mismatch: ${tokens.length} values for ${columns.length} columns`,
+        );
       }
-      const card = rowToCard(tokens);
+
+      const card = rowToCard(tokens, columns);
       if (card.status !== "published" && card.status !== "in_review") {
         continue;
       }

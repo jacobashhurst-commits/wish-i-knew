@@ -27,13 +27,14 @@ export const PUBLIC_PATH_PREFIXES = [
   "/privacy",
   "/terms",
   "/disclaimer",
+  // API routes are NOT public by default. Each entry here must carry its own
+  // auth (CRON_SECRET header or signed token) - add new routes deliberately.
+  "/api/cron/weekly-lookahead",
+  "/api/cron/keepalive",
+  "/api/lookahead/pause",
 ] as const;
 
 export function isPublicPath(pathname: string): boolean {
-  if (pathname.startsWith("/api/")) {
-    return true;
-  }
-
   return PUBLIC_PATH_PREFIXES.some(
     (prefix) => pathname === prefix || pathname.startsWith(`${prefix}/`),
   );
