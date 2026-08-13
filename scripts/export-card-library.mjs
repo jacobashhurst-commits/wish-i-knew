@@ -12,6 +12,7 @@ const seedFiles = [
   path.join(root, "supabase/seed_content_library.sql"),
   path.join(root, "supabase/seed_content_library_batch2.sql"),
   path.join(root, "supabase/seed_content_library_batch3.sql"),
+  path.join(root, "supabase/seed_content_library_batch4.sql"),
 ];
 
 /**
