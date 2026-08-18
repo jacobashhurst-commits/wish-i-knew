@@ -39,6 +39,8 @@ Run migrations in order through `007_rls_tightening.sql`, then seeds:
 9. `supabase/seed_content_library.sql`
 10. `supabase/seed_content_library_batch2.sql`
 11. `supabase/seed_content_library_batch3.sql`
+12. `supabase/seed_content_library_batch4.sql`
+13. `supabase/seed_content_library_batch5.sql`
 
 **Important:** once 006 runs, signups are blocked for anyone not in
 `beta_invites` - add your own email to the invite list before you try to sign
