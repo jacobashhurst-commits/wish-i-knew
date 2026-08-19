@@ -9,6 +9,7 @@ import {
   uploadCardImage,
 } from "@/app/actions/admin-cards";
 import { validateCardForPublish } from "@/lib/content/validation";
+import { describeCardTiming } from "@/lib/timeline/timing-preview";
 import type { AdminCardInput, AdminCardRow } from "@/types/admin";
 import { cardTypes, imageStatuses, lifeStages } from "@/types/admin";
 import type { AustralianState, CardStatus, ImageStatus, TimelineCard } from "@/types/content";
@@ -128,6 +129,8 @@ export function CardEditor({ card }: { card: AdminCardRow | null }) {
 
     return validateCardForPublish(candidate);
   }, [form, cardId]);
+
+  const timingPreview = useMemo(() => describeCardTiming(form), [form]);
 
   function run(action: () => Promise<{ error?: string; errors?: string[]; cardId?: string }>, onDone?: (id: string) => void) {
     setMessage(null);
@@ -317,9 +320,40 @@ export function CardEditor({ card }: { card: AdminCardRow | null }) {
           </label>
           {form.card_type === "quiet_week" ? (
             <p className="text-xs text-[#172033]/60 sm:col-span-2">
-              Quiet-week cards need no window  -  they are served as a fallback when a week has nothing scheduled.
+              Quiet-week cards need no window  -  they rotate in as fun email fillers when the week is thin.
             </p>
           ) : null}
+          {form.card_type === "This week with bub" ? (
+            <p className="text-xs text-[#172033]/60 sm:col-span-2">
+              Set pregnancy week start and end to the same number for a one-week anchor (e.g. both 28).
+            </p>
+          ) : null}
+          <div className="sm:col-span-2 rounded-xl border border-[#1D809F]/20 bg-[#E7F1FB]/30 p-4 text-sm">
+            <p className="font-semibold text-[#0d1b2a]">Timing preview</p>
+            <dl className="mt-2 space-y-1.5 text-[#172033]/80">
+              <div className="flex flex-wrap gap-x-2">
+                <dt className="font-semibold">Window:</dt>
+                <dd>{timingPreview.windowLabel}</dd>
+              </div>
+              {timingPreview.firstAppears ? (
+                <div className="flex flex-wrap gap-x-2">
+                  <dt className="font-semibold">First appears:</dt>
+                  <dd>{timingPreview.firstAppears}</dd>
+                </div>
+              ) : null}
+              <div className="flex flex-wrap gap-x-2">
+                <dt className="font-semibold">In the weekly email:</dt>
+                <dd>{timingPreview.repeatBehavior}</dd>
+              </div>
+            </dl>
+            {timingPreview.notes.length > 0 ? (
+              <ul className="mt-2 list-disc space-y-0.5 pl-4 text-xs text-[#172033]/60">
+                {timingPreview.notes.map((note) => (
+                  <li key={note}>{note}</li>
+                ))}
+              </ul>
+            ) : null}
+          </div>
         </Section>
 
         <Section title="Content">

@@ -75,6 +75,7 @@ export type AdminSuggestionRow = {
 };
 
 export const cardTypes = [
+  "This week with bub",
   "Big Milestone",
   "Heads Up",
   "Admin Trap",

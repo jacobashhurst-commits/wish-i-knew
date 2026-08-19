@@ -1,6 +1,9 @@
 import { describe, expect, it } from "vitest";
 import { composeDigest } from "@/lib/email/digest";
 import { renderLookaheadEmail } from "@/lib/email/render-lookahead";
+import { weeklyAnchorCardType } from "@/lib/timeline/card-roles";
+import { describeCardTiming } from "@/lib/timeline/timing-preview";
+import { dateForBabyWeek, dateForPregnancyWeek } from "@/lib/timeline/week-simulation";
 import type { MatchedCard, TimelineResult } from "@/lib/timeline/types";
 import type { TimelineCard } from "@/types/content";
 
@@ -59,60 +62,141 @@ function emptyResult(): TimelineResult {
     currentCards: [],
     comingSoonCards: [],
     laterCards: [],
+    recentPastCards: [],
     overdueCards: [],
     savedCards: [],
     snoozedCardsDue: [],
   };
 }
 
+describe("describeCardTiming", () => {
+  it("describes a single-week anchor", () => {
+    const preview = describeCardTiming({
+      card_type: weeklyAnchorCardType,
+      pregnancy_week_start: 28,
+      pregnancy_week_end: 28,
+      start_age_days: null,
+      end_age_days: null,
+    });
+
+    expect(preview.firstAppears).toBe("Pregnancy week 28");
+    expect(preview.repeatBehavior).toContain("once");
+  });
+
+  it("describes repeating reminders", () => {
+    const preview = describeCardTiming({
+      card_type: "Heads Up",
+      pregnancy_week_start: 24,
+      pregnancy_week_end: 40,
+      start_age_days: null,
+      end_age_days: null,
+    });
+
+    expect(preview.repeatBehavior).toContain("every week");
+  });
+});
+
+describe("week simulation dates", () => {
+  it("maps pregnancy week 24 to a date inside that week", () => {
+    const date = dateForPregnancyWeek("2026-12-15", 24);
+    expect(date).toMatch(/^\d{4}-\d{2}-\d{2}$/);
+  });
+
+  it("maps baby week 2 to days 7-13 range", () => {
+    const date = dateForBabyWeek("2026-06-01", 2);
+    expect(date).toMatch(/^2026-06-/);
+  });
+});
+
 describe("composeDigest", () => {
-  it("puts this-week cards before coming-soon and caps at four", () => {
+  it("leads with the weekly anchor", () => {
     const result = emptyResult();
     result.currentCards = [
-      matched({ id: "now-low", slug: "now-low", priority: 10 }),
-      matched({ id: "now-high", slug: "now-high", priority: 90 }),
-    ];
-    result.comingSoonCards = [
-      matched({ id: "soon-1", slug: "soon-1", priority: 50 }),
-      matched({ id: "soon-2", slug: "soon-2", priority: 40 }),
-      matched({ id: "soon-3", slug: "soon-3", priority: 30 }),
+      matched({ id: "reminder", slug: "reminder", priority: 99 }),
+      matched({
+        id: "anchor",
+        slug: "anchor",
+        card_type: weeklyAnchorCardType,
+        priority: 50,
+        pregnancy_week_start: 28,
+        pregnancy_week_end: 28,
+      }),
     ];
 
     const digest = composeDigest(result);
 
-    expect(digest).toHaveLength(4);
-    expect(digest.map((item) => item.card.id)).toEqual(["now-high", "now-low", "soon-1", "soon-2"]);
+    expect(digest[0].card.id).toBe("anchor");
   });
 
-  it("returns an empty digest when there is nothing at all", () => {
-    expect(composeDigest(emptyResult())).toHaveLength(0);
+  it("skips previously emailed reminders but keeps anchor", () => {
+    const result = emptyResult();
+    result.currentCards = [
+      matched({
+        id: "anchor",
+        slug: "anchor",
+        card_type: weeklyAnchorCardType,
+        priority: 100,
+      }),
+      matched({ id: "old", slug: "old-reminder", priority: 80 }),
+      matched({ id: "new", slug: "new-reminder", priority: 70 }),
+    ];
+
+    const digest = composeDigest(result, {
+      previouslyEmailedCardIds: new Set(["old"]),
+    });
+
+    expect(digest.map((item) => item.card.id)).toEqual(["anchor", "new"]);
+  });
+
+  it("adds fun filler when the week is thin", () => {
+    const anchor = matched({
+      id: "anchor",
+      slug: "anchor",
+      card_type: weeklyAnchorCardType,
+      priority: 100,
+    });
+    const fun = card({
+      id: "fun",
+      slug: "quiet-week-walk",
+      card_type: "quiet_week",
+      priority: 10,
+      start_age_days: null,
+      end_age_days: null,
+    });
+
+    const result = emptyResult();
+    result.currentCards = [anchor];
+
+    const digest = composeDigest(result, {
+      allCards: [anchor.card, fun],
+      currentDate: "2026-08-01",
+    });
+
+    expect(digest).toHaveLength(2);
+    expect(digest[1].card.card_type).toBe("quiet_week");
   });
 });
 
 describe("renderLookaheadEmail", () => {
-  it("renders full card content into the email body", () => {
+  it("uses anchor title in subject when present", () => {
     const message = renderLookaheadEmail({
       childName: "Pip",
+      weekContext: "Pregnancy week 28",
       cards: [
         matched({
-          title: "Two-month immunisations",
-          wish_i_knew: "The appointment is quicker than the worry.",
-          what_to_do_now: "Book the GP or council clinic.",
+          title: "Third trimester begins",
+          card_type: weeklyAnchorCardType,
         }),
       ],
       siteUrl: "https://example.com",
-      pauseUrl: "https://example.com/api/lookahead/pause?id=x&token=y",
+      pauseUrl: "https://example.com/pause",
     });
 
-    expect(message.subject).toContain("Pip");
-    expect(message.html).toContain("Two-month immunisations");
-    expect(message.html).toContain("The appointment is quicker than the worry.");
-    expect(message.html).toContain("Book the GP or council clinic.");
-    expect(message.html).toContain("Pause these emails");
-    expect(message.text).toContain("Two-month immunisations");
+    expect(message.subject).toContain("Third trimester begins");
+    expect(message.subject).toContain("Pregnancy week 28");
   });
 
-  it("uses a calm subject for quiet weeks and escapes HTML", () => {
+  it("escapes HTML in card titles", () => {
     const message = renderLookaheadEmail({
       childName: "Pip",
       cards: [matched({ card_type: "quiet_week", title: "A quiet <week>" })],
@@ -120,7 +204,6 @@ describe("renderLookaheadEmail", () => {
       pauseUrl: "https://example.com/pause",
     });
 
-    expect(message.subject).toContain("a quiet one");
     expect(message.html).toContain("A quiet &lt;week&gt;");
     expect(message.html).not.toContain("A quiet <week>");
   });

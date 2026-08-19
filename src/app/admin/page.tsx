@@ -20,7 +20,15 @@ function formatWindow(card: {
   pregnancy_week_end: number | null;
   card_type: string;
 }): string {
-  if (card.card_type === "quiet_week") return "Quiet week (fallback)";
+  if (card.card_type === "quiet_week") return "Fun filler (rotates)";
+  if (card.card_type === "This week with bub") {
+    if (card.pregnancy_week_start !== null && card.pregnancy_week_end !== null) {
+      return card.pregnancy_week_start === card.pregnancy_week_end
+        ? `Anchor · Week ${card.pregnancy_week_start}`
+        : `Anchor · Week ${card.pregnancy_week_start}–${card.pregnancy_week_end}`;
+    }
+    return "Weekly anchor";
+  }
   if (card.start_age_days !== null && card.end_age_days !== null) {
     return `Day ${card.start_age_days}–${card.end_age_days}`;
   }

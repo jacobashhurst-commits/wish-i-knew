@@ -27,6 +27,14 @@ In the Supabase SQL editor (or Supabase CLI), run in order:
 7. `supabase/seed_content_library_batch2.sql` (optional  -  50 more cards; safe to re-run, upserts by slug)
 8. `supabase/migrations/005_beta_launch.sql` (beta invites, email idempotency, paywall stub)
 9. `supabase/migrations/006_enforce_beta_invite.sql` (DB-level invite wall - drop trigger at public launch; see docs/soft-launch.md)
+10. `supabase/migrations/007_rls_tightening.sql` (card-state integrity + profile email lock)
+11. `supabase/migrations/008_digest_card_sends.sql` (tracks cards sent in weekly emails)
+12. `supabase/seed_pregnancy_weekly_anchors.sql` (optional — 40 "This week with bub" pregnancy anchors, weeks 1–40; safe to re-run)
+13. `supabase/seed_baby_weekly_anchors.sql` (optional — 52 "This week with bub" baby anchors, weeks 1–52; safe to re-run)
+
+Regenerate seeds: `node scripts/generate-pregnancy-anchor-seed.mjs && node scripts/generate-baby-anchor-seed.mjs`
+
+Export Codex image prompts: `node scripts/export-anchor-prompts.mjs`
 
 Re-running a migration that already applied will error (e.g. `type "user_role" already exists` on 001). That is expected  -  each file runs once only.
 

@@ -1,11 +1,12 @@
 import { NextResponse } from "next/server";
-import { composeDigest } from "@/lib/email/digest";
-import { renderLookaheadEmail } from "@/lib/email/render-lookahead";
+import { composeDigest, digestCardIds } from "@/lib/email/digest";
+import { buildWeekContextLabel, renderLookaheadEmail } from "@/lib/email/render-lookahead";
 import { sendEmail } from "@/lib/email/resend";
 import { signPauseToken } from "@/lib/email/tokens";
 import { mapTimelineCard, type TimelineCardRow } from "@/lib/data/map-card";
 import { createServiceClient } from "@/lib/supabase/service";
 import { buildTimeline } from "@/lib/timeline/matching";
+import { calculateAgeInDays, calculatePregnancyWeek } from "@/lib/timeline/dates";
 import type { UserCardState } from "@/types/content";
 
 export const dynamic = "force-dynamic";
@@ -144,6 +145,14 @@ export async function GET(request: Request) {
       .eq("user_id", pref.user_id)
       .eq("child_id", pref.child_id);
 
+    const { data: priorSendRows } = await supabase
+      .from("digest_card_sends")
+      .select("card_id")
+      .eq("user_id", pref.user_id)
+      .eq("child_id", pref.child_id);
+
+    const previouslyEmailedCardIds = new Set((priorSendRows ?? []).map((row) => row.card_id as string));
+
     const timeline = buildTimeline({
       profile: {
         currentDate: now.date,
@@ -160,7 +169,11 @@ export async function GET(request: Request) {
       comingSoonDays: 45,
     });
 
-    const digest = composeDigest(timeline);
+    const digest = composeDigest(timeline, {
+      previouslyEmailedCardIds,
+      allCards: cards,
+      currentDate: now.date,
+    });
 
     if (digest.length === 0) {
       // Nothing to send today - keep the claim so we do not retry every hour.
@@ -177,11 +190,24 @@ export async function GET(request: Request) {
     }
 
     const pauseUrl = `${siteUrl}/api/lookahead/pause?id=${pref.id}&token=${signPauseToken(pref.id)}`;
+
+    const pregnancyWeek = !child.is_born && child.due_date
+      ? calculatePregnancyWeek(child.due_date, now.date)
+      : null;
+    const babyWeek = child.is_born && child.birth_date
+      ? Math.floor(calculateAgeInDays(child.birth_date, now.date) / 7) + 1
+      : null;
+
     const message = renderLookaheadEmail({
       childName: child.nickname,
       cards: digest,
       siteUrl,
       pauseUrl,
+      weekContext: buildWeekContextLabel({
+        isBorn: child.is_born,
+        pregnancyWeek,
+        babyWeek,
+      }),
     });
 
     let { error: sendError } = await sendEmail({
@@ -226,6 +252,19 @@ export async function GET(request: Request) {
       .eq("child_id", pref.child_id)
       .eq("reminder_type", "weekly_lookahead")
       .eq("reminder_date", now.date);
+
+    const sentCardIds = digestCardIds(digest);
+    if (sentCardIds.length > 0) {
+      await supabase.from("digest_card_sends").upsert(
+        sentCardIds.map((cardId) => ({
+          user_id: pref.user_id,
+          child_id: pref.child_id,
+          card_id: cardId,
+          sent_on: now.date,
+        })),
+        { onConflict: "user_id,child_id,card_id,sent_on", ignoreDuplicates: true },
+      );
+    }
 
     sent += 1;
     results.push({ preference: pref.id, outcome: `sent ${digest.length} cards` });

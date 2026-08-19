@@ -1,3 +1,4 @@
+import { isWeeklyAnchorCard } from "@/lib/timeline/card-roles";
 import type { MatchedCard } from "@/lib/timeline/types";
 
 export type LookaheadEmailInput = {
@@ -5,6 +6,8 @@ export type LookaheadEmailInput = {
   cards: MatchedCard[];
   siteUrl: string;
   pauseUrl: string;
+  /** e.g. "Pregnancy week 28" or "Baby week 6" */
+  weekContext?: string | null;
 };
 
 function escapeHtml(value: string): string {
@@ -18,19 +21,24 @@ function escapeHtml(value: string): string {
 function cardSectionHtml(item: MatchedCard, siteUrl: string): string {
   const { card } = item;
   const isQuietWeek = card.card_type === "quiet_week";
+  const isAnchor = isWeeklyAnchorCard(card);
   const cardUrl = `${siteUrl}/?card=${encodeURIComponent(card.slug)}`;
 
-  const parts: string[] = [];
+  const typeLabel = isAnchor
+    ? "This week with bub"
+    : isQuietWeek
+      ? "Easy win"
+      : card.card_type;
 
-  parts.push(`
+  return `
     <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin:0 0 20px 0;background:#ffffff;border-radius:16px;border:1px solid #e8e4da;">
       <tr><td style="padding:20px 24px;">
         <p style="margin:0;font-size:11px;letter-spacing:0.14em;text-transform:uppercase;color:#6FAF8E;font-weight:bold;">
-          ${escapeHtml(isQuietWeek ? "Quiet week" : card.card_type)}
+          ${escapeHtml(typeLabel)}
         </p>
         <h2 style="margin:6px 0 0 0;font-size:20px;color:#0d1b2a;">${escapeHtml(card.title)}</h2>
         ${card.subtitle ? `<p style="margin:4px 0 0 0;font-size:14px;color:#697386;">${escapeHtml(card.subtitle)}</p>` : ""}
-        <p style="margin:12px 0 0 0;font-size:15px;line-height:1.6;color:#172033;">
+        <p style="margin:12px 0 0 0;font-size:15px;line-height:1.66;color:#172033;">
           ${escapeHtml(card.wish_i_knew)}
         </p>
         <p style="margin:10px 0 0 0;font-size:14px;line-height:1.6;color:#4a5468;">
@@ -51,9 +59,7 @@ function cardSectionHtml(item: MatchedCard, siteUrl: string): string {
           <a href="${cardUrl}&action=save" style="display:inline-block;margin-left:8px;color:#1D809F;text-decoration:underline;font-size:14px;">Save for later</a>
         </p>
       </td></tr>
-    </table>`);
-
-  return parts.join("");
+    </table>`;
 }
 
 function cardSectionText(item: MatchedCard, siteUrl: string): string {
@@ -70,16 +76,40 @@ function cardSectionText(item: MatchedCard, siteUrl: string): string {
   return lines.join("\n");
 }
 
+function buildSubject(input: LookaheadEmailInput): string {
+  const { childName, cards, weekContext } = input;
+  const anchor = cards.find(({ card }) => isWeeklyAnchorCard(card));
+  const namePart = childName ? childName : "your little one";
+  const weekPart = weekContext ? `${weekContext} with ${namePart}` : `Your week ahead with ${namePart}`;
+
+  if (anchor) {
+    return `${weekPart} — ${anchor.card.title}`;
+  }
+
+  const onlyFun = cards.length > 0 && cards.every(({ card }) => card.card_type === "quiet_week" || card.card_type === "Fun First");
+  if (onlyFun) {
+    return `${weekPart} — a gentle one for the week`;
+  }
+
+  if (cards.length === 1) {
+    return `${weekPart} — ${cards[0].card.title}`;
+  }
+
+  return `${weekPart} — ${cards.length} things worth knowing`;
+}
+
 export function renderLookaheadEmail(input: LookaheadEmailInput): {
   subject: string;
   html: string;
   text: string;
 } {
-  const { childName, cards, siteUrl, pauseUrl } = input;
-  const heading = childName ? `Your week ahead with ${childName}` : "Your week ahead";
-  const subject = cards.some((item) => item.card.card_type !== "quiet_week")
-    ? `${heading}  -  ${cards.length} thing${cards.length === 1 ? "" : "s"} worth knowing`
-    : `${heading}  -  a quiet one`;
+  const { childName, cards, siteUrl, pauseUrl, weekContext } = input;
+  const heading = weekContext
+    ? `${weekContext}${childName ? ` with ${childName}` : ""}`
+    : childName
+      ? `Your week ahead with ${childName}`
+      : "Your week ahead";
+  const subject = buildSubject(input);
 
   const html = `<!doctype html>
 <html lang="en">
@@ -125,4 +155,20 @@ export function renderLookaheadEmail(input: LookaheadEmailInput): {
   ].join("\n\n");
 
   return { subject, html, text };
+}
+
+export function buildWeekContextLabel(input: {
+  isBorn: boolean;
+  pregnancyWeek?: number | null;
+  babyWeek?: number | null;
+}): string | null {
+  if (input.isBorn && input.babyWeek) {
+    return `Baby week ${input.babyWeek}`;
+  }
+
+  if (!input.isBorn && input.pregnancyWeek) {
+    return `Pregnancy week ${input.pregnancyWeek}`;
+  }
+
+  return null;
 }
