@@ -207,4 +207,38 @@ describe("renderLookaheadEmail", () => {
     expect(message.html).toContain("A quiet &lt;week&gt;");
     expect(message.html).not.toContain("A quiet <week>");
   });
+
+  it("teases content and invites click-through instead of dumping full cards", () => {
+    const message = renderLookaheadEmail({
+      childName: "Pip",
+      weekContext: "Baby week 12",
+      cards: [
+        matched({
+          id: "anchor",
+          title: "Naps are shifting",
+          card_type: weeklyAnchorCardType,
+          wish_i_knew: "Sleep windows stretch a little this week, and that can feel like a curveball.",
+          what_to_do_now: "Start thinking about a slightly later morning nap window.",
+        }),
+        matched({
+          id: "reminder",
+          slug: "medicare-check",
+          title: "Medicare reminder",
+          card_type: "Heads Up",
+          short_summary: "Worth a quick check this week.",
+        }),
+      ],
+      siteUrl: "https://example.com",
+      pauseUrl: "https://example.com/pause",
+    });
+
+    expect(message.html).toContain("A peek at this week");
+    expect(message.html).toContain("Your cards this week");
+    expect(message.html).toContain("Open your timeline");
+    expect(message.html).toContain("Jump into Wish I Knew");
+    expect(message.html).toContain("Naps are shifting");
+    expect(message.html).toContain("Medicare reminder");
+    expect(message.html).not.toContain("Start thinking about a slightly later morning nap window.");
+    expect(message.html).not.toContain("everything useful is in this email");
+  });
 });

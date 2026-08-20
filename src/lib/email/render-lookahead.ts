@@ -16,11 +16,13 @@ const colors = {
   aqua: "#4EC6C1",
   cream: "#FFF6E6",
   creamSoft: "#FFFDF7",
+  creamDeep: "#F6E7C8",
   white: "#FFFFFF",
   ink: "#172033",
   muted: "#697386",
   gum: "#6FAF8E",
   sand: "#F4D6A0",
+  sun: "#FFC857",
   border: "#E8E4DA",
   softSky: "#E7F1FB",
 };
@@ -40,85 +42,218 @@ function absoluteAssetUrl(siteUrl: string, path: string | null | undefined): str
   return null;
 }
 
+function truncate(value: string, max: number): string {
+  const trimmed = value.trim();
+  if (trimmed.length <= max) return trimmed;
+  const slice = trimmed.slice(0, max - 1);
+  const breakAt = Math.max(slice.lastIndexOf(" "), slice.lastIndexOf("."), slice.lastIndexOf(","));
+  const cut = breakAt > max * 0.55 ? slice.slice(0, breakAt) : slice;
+  return `${cut.trimEnd()}…`;
+}
+
 function typeAccent(isAnchor: boolean, isQuietWeek: boolean): string {
   if (isAnchor) return colors.ocean;
   if (isQuietWeek) return colors.gum;
   return colors.aqua;
 }
 
-function cardSectionHtml(item: MatchedCard, siteUrl: string): string {
-  const { card } = item;
-  const isQuietWeek = card.card_type === "quiet_week";
-  const isAnchor = isWeeklyAnchorCard(card);
-  const cardUrl = `${siteUrl}/?card=${encodeURIComponent(card.slug)}`;
-  const accent = typeAccent(isAnchor, isQuietWeek);
-  const imageUrl = absoluteAssetUrl(siteUrl, card.image_url);
-  const imageAlt = card.image_alt || card.title;
+function typeLabel(card: MatchedCard["card"]): string {
+  if (isWeeklyAnchorCard(card)) return "This week with bub";
+  if (card.card_type === "quiet_week") return "Easy win";
+  return card.card_type;
+}
 
-  const typeLabel = isAnchor
-    ? "This week with bub"
-    : isQuietWeek
-      ? "Easy win"
-      : card.card_type;
+function cardUrl(siteUrl: string, slug: string): string {
+  return `${siteUrl.replace(/\/$/, "")}/?card=${encodeURIComponent(slug)}`;
+}
+
+function timelineUrl(siteUrl: string): string {
+  return siteUrl.replace(/\/$/, "");
+}
+
+function pickFeatured(cards: MatchedCard[]): MatchedCard | null {
+  return cards.find(({ card }) => isWeeklyAnchorCard(card)) ?? cards[0] ?? null;
+}
+
+function primaryCta(href: string, label: string): string {
+  return `
+    <table role="presentation" cellpadding="0" cellspacing="0" style="margin:0 auto;">
+      <tr>
+        <td style="border-radius:999px;background:${colors.sun};box-shadow:0 4px 0 ${colors.creamDeep};">
+          <a href="${href}" style="display:inline-block;padding:14px 28px;font-size:15px;font-weight:800;letter-spacing:0.02em;color:${colors.navy};text-decoration:none;">
+            ${escapeHtml(label)} →
+          </a>
+        </td>
+      </tr>
+    </table>`;
+}
+
+function secondaryLink(href: string, label: string): string {
+  return `<a href="${href}" style="font-size:14px;font-weight:700;color:${colors.ocean};text-decoration:underline;">${escapeHtml(label)}</a>`;
+}
+
+function featuredWindowHtml(item: MatchedCard, siteUrl: string): string {
+  const { card } = item;
+  const href = cardUrl(siteUrl, card.slug);
+  const imageUrl = absoluteAssetUrl(siteUrl, card.image_url || card.thumbnail_url);
+  const imageAlt = card.image_alt || card.title;
+  const hook = truncate(card.wish_i_knew || card.short_summary || "", 140);
+  const accent = typeAccent(isWeeklyAnchorCard(card), card.card_type === "quiet_week");
 
   return `
-    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin:0 0 18px 0;background:${colors.white};border-radius:18px;border:1px solid ${colors.border};overflow:hidden;">
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin:0 0 20px 0;background:${colors.white};border-radius:22px;border:1px solid ${colors.border};overflow:hidden;">
       <tr>
-        <td style="width:6px;background:${accent};font-size:0;line-height:0;">&nbsp;</td>
-        <td style="padding:0;">
+        <td style="padding:10px 14px 0 14px;background:${colors.creamSoft};">
+          <p style="margin:0;font-size:11px;letter-spacing:0.16em;text-transform:uppercase;color:${accent};font-weight:800;">
+            A peek at this week
+          </p>
+        </td>
+      </tr>
+      ${
+        imageUrl
+          ? `<tr>
+              <td align="center" style="padding:14px 18px 0 18px;background:${colors.creamSoft};">
+                <a href="${href}" style="text-decoration:none;">
+                  <img src="${escapeHtml(imageUrl)}" alt="${escapeHtml(imageAlt)}" width="220" height="220" style="display:block;width:220px;height:220px;max-width:100%;border-radius:20px;border:2px solid ${colors.white};box-shadow:0 8px 24px rgba(13,27,42,0.12);background:${colors.white};" />
+                </a>
+              </td>
+            </tr>`
+          : ""
+      }
+      <tr>
+        <td style="padding:18px 22px 22px 22px;background:${colors.white};">
+          <p style="margin:0;font-size:11px;letter-spacing:0.14em;text-transform:uppercase;color:${accent};font-weight:700;">
+            ${escapeHtml(typeLabel(card))}
+          </p>
+          <h2 style="margin:8px 0 0 0;font-size:24px;line-height:1.25;color:${colors.navy};font-family:Georgia,'Times New Roman',serif;">
+            <a href="${href}" style="color:${colors.navy};text-decoration:none;">${escapeHtml(card.title)}</a>
+          </h2>
+          ${
+            card.subtitle
+              ? `<p style="margin:6px 0 0 0;font-size:14px;color:${colors.muted};">${escapeHtml(card.subtitle)}</p>`
+              : ""
+          }
+          ${
+            hook
+              ? `<p style="margin:14px 0 0 0;font-size:15px;line-height:1.65;color:${colors.ink};">${escapeHtml(hook)}</p>`
+              : ""
+          }
+          <p style="margin:16px 0 0 0;">
+            ${secondaryLink(href, "Open the full card in the app")}
+          </p>
+        </td>
+      </tr>
+    </table>`;
+}
+
+function glanceRowHtml(item: MatchedCard, index: number, siteUrl: string): string {
+  const { card } = item;
+  const href = cardUrl(siteUrl, card.slug);
+  const isQuietWeek = card.card_type === "quiet_week";
+  const isAnchor = isWeeklyAnchorCard(card);
+  const accent = typeAccent(isAnchor, isQuietWeek);
+  const blurb = truncate(card.short_summary || card.wish_i_knew || "", 72);
+
+  return `
+    <tr>
+      <td style="padding:12px 0;${index === 0 ? "" : `border-top:1px solid ${colors.border};`}">
+        <table role="presentation" width="100%" cellpadding="0" cellspacing="0">
+          <tr>
+            <td valign="top" width="28" style="padding-top:2px;">
+              <span style="display:inline-block;width:22px;height:22px;line-height:22px;text-align:center;border-radius:999px;background:${colors.softSky};color:${colors.ocean};font-size:12px;font-weight:800;">
+                ${index + 1}
+              </span>
+            </td>
+            <td valign="top" style="padding-left:10px;">
+              <p style="margin:0;font-size:10px;letter-spacing:0.12em;text-transform:uppercase;color:${accent};font-weight:700;">
+                ${escapeHtml(typeLabel(card))}
+              </p>
+              <p style="margin:4px 0 0 0;font-size:15px;line-height:1.35;font-weight:700;color:${colors.navy};">
+                <a href="${href}" style="color:${colors.navy};text-decoration:none;">${escapeHtml(card.title)}</a>
+              </p>
+              ${
+                blurb
+                  ? `<p style="margin:4px 0 0 0;font-size:13px;line-height:1.5;color:${colors.muted};">${escapeHtml(blurb)}</p>`
+                  : ""
+              }
+            </td>
+            <td valign="middle" align="right" width="56" style="padding-left:8px;">
+              <a href="${href}" style="font-size:13px;font-weight:800;color:${colors.ocean};text-decoration:none;">Open</a>
+            </td>
+          </tr>
+        </table>
+      </td>
+    </tr>`;
+}
+
+function glanceSummaryHtml(cards: MatchedCard[], siteUrl: string): string {
+  if (cards.length === 0) return "";
+
+  return `
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin:0 0 20px 0;background:${colors.white};border-radius:22px;border:1px solid ${colors.border};">
+      <tr>
+        <td style="padding:18px 20px 8px 20px;">
+          <p style="margin:0;font-size:11px;letter-spacing:0.16em;text-transform:uppercase;color:${colors.ocean};font-weight:800;">
+            Your cards this week
+          </p>
+          <p style="margin:6px 0 0 0;font-size:14px;line-height:1.5;color:${colors.muted};">
+            A quick map — tap any one to open it in Wish I Knew.
+          </p>
+        </td>
+      </tr>
+      <tr>
+        <td style="padding:4px 20px 16px 20px;">
           <table role="presentation" width="100%" cellpadding="0" cellspacing="0">
-            ${
-              imageUrl
-                ? `<tr><td style="padding:18px 18px 0 18px;background:${colors.creamSoft};">
-                    <img src="${escapeHtml(imageUrl)}" alt="${escapeHtml(imageAlt)}" width="120" height="120" style="display:block;width:120px;height:120px;border-radius:16px;border:1px solid ${colors.border};background:${colors.white};" />
-                  </td></tr>`
-                : ""
-            }
-            <tr><td style="padding:18px 22px 22px 22px;">
-              <p style="margin:0;font-size:11px;letter-spacing:0.16em;text-transform:uppercase;color:${accent};font-weight:700;">
-                ${escapeHtml(typeLabel)}
-              </p>
-              <h2 style="margin:8px 0 0 0;font-size:21px;line-height:1.25;color:${colors.navy};font-family:Georgia,'Times New Roman',serif;">
-                ${escapeHtml(card.title)}
-              </h2>
+            ${cards.map((item, index) => glanceRowHtml(item, index, siteUrl)).join("")}
+          </table>
+        </td>
+      </tr>
+    </table>`;
+}
+
+function teaserCardHtml(item: MatchedCard, siteUrl: string): string {
+  const { card } = item;
+  const href = cardUrl(siteUrl, card.slug);
+  const isQuietWeek = card.card_type === "quiet_week";
+  const isAnchor = isWeeklyAnchorCard(card);
+  const accent = typeAccent(isAnchor, isQuietWeek);
+  const imageUrl = absoluteAssetUrl(siteUrl, card.thumbnail_url || card.image_url);
+  const imageAlt = card.image_alt || card.title;
+  const hook = truncate(card.wish_i_knew || card.short_summary || "", 110);
+
+  return `
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin:0 0 14px 0;background:${colors.white};border-radius:18px;border:1px solid ${colors.border};overflow:hidden;">
+      <tr>
+        <td style="width:5px;background:${accent};font-size:0;line-height:0;">&nbsp;</td>
+        <td style="padding:14px 16px;">
+          <table role="presentation" width="100%" cellpadding="0" cellspacing="0">
+            <tr>
               ${
-                card.subtitle
-                  ? `<p style="margin:6px 0 0 0;font-size:14px;color:${colors.muted};">${escapeHtml(card.subtitle)}</p>`
+                imageUrl
+                  ? `<td valign="top" width="72" style="padding-right:14px;">
+                      <a href="${href}" style="text-decoration:none;">
+                        <img src="${escapeHtml(imageUrl)}" alt="${escapeHtml(imageAlt)}" width="64" height="64" style="display:block;width:64px;height:64px;border-radius:14px;border:1px solid ${colors.border};background:${colors.creamSoft};" />
+                      </a>
+                    </td>`
                   : ""
               }
-              <p style="margin:14px 0 0 0;font-size:15px;line-height:1.7;color:${colors.ink};">
-                ${escapeHtml(card.wish_i_knew)}
-              </p>
-              <p style="margin:10px 0 0 0;font-size:14px;line-height:1.65;color:${colors.muted};">
-                ${escapeHtml(card.short_summary)}
-              </p>
-              ${
-                card.what_to_do_now
-                  ? `<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin:16px 0 0 0;background:${colors.softSky};border-radius:14px;">
-                      <tr><td style="padding:14px 16px;">
-                        <p style="margin:0;font-size:11px;letter-spacing:0.12em;text-transform:uppercase;color:${colors.ocean};font-weight:700;">What to do now</p>
-                        <p style="margin:6px 0 0 0;font-size:14px;line-height:1.6;color:${colors.ink};">${escapeHtml(card.what_to_do_now)}</p>
-                      </td></tr>
-                    </table>`
-                  : ""
-              }
-              ${
-                card.what_can_wait
-                  ? `<p style="margin:12px 0 0 0;font-size:13px;line-height:1.6;color:${colors.muted};"><strong style="color:${colors.ink};">Can wait:</strong> ${escapeHtml(card.what_can_wait)}</p>`
-                  : ""
-              }
-              <table role="presentation" cellpadding="0" cellspacing="0" style="margin:18px 0 0 0;">
-                <tr>
-                  <td style="border-radius:999px;background:${colors.navy};">
-                    <a href="${cardUrl}" style="display:inline-block;padding:11px 18px;font-size:14px;font-weight:700;color:${colors.cream};text-decoration:none;">Open in Wish I Knew</a>
-                  </td>
-                  <td style="width:12px;"></td>
-                  <td>
-                    <a href="${cardUrl}&action=save" style="font-size:14px;font-weight:600;color:${colors.ocean};text-decoration:underline;">Save for later</a>
-                  </td>
-                </tr>
-              </table>
-            </td></tr>
+              <td valign="top">
+                <p style="margin:0;font-size:10px;letter-spacing:0.12em;text-transform:uppercase;color:${accent};font-weight:700;">
+                  ${escapeHtml(typeLabel(card))}
+                </p>
+                <h3 style="margin:5px 0 0 0;font-size:17px;line-height:1.3;color:${colors.navy};font-family:Georgia,'Times New Roman',serif;">
+                  <a href="${href}" style="color:${colors.navy};text-decoration:none;">${escapeHtml(card.title)}</a>
+                </h3>
+                ${
+                  hook
+                    ? `<p style="margin:6px 0 0 0;font-size:13px;line-height:1.55;color:${colors.muted};">${escapeHtml(hook)}</p>`
+                    : ""
+                }
+                <p style="margin:10px 0 0 0;">
+                  ${secondaryLink(href, "Continue in the app")}
+                </p>
+              </td>
+            </tr>
           </table>
         </td>
       </tr>
@@ -127,16 +262,13 @@ function cardSectionHtml(item: MatchedCard, siteUrl: string): string {
 
 function cardSectionText(item: MatchedCard, siteUrl: string): string {
   const { card } = item;
-  const lines = [
-    ` -  ${card.title}  - `,
-    card.wish_i_knew,
-    card.short_summary,
-    card.what_to_do_now ? `What to do now: ${card.what_to_do_now}` : null,
-    card.what_can_wait ? `Can wait: ${card.what_can_wait}` : null,
-    `Open: ${siteUrl}/?card=${encodeURIComponent(card.slug)}`,
-  ].filter(Boolean);
-
-  return lines.join("\n");
+  return [
+    `• ${card.title}`,
+    truncate(card.wish_i_knew || card.short_summary || "", 120),
+    `Open: ${cardUrl(siteUrl, card.slug)}`,
+  ]
+    .filter(Boolean)
+    .join("\n");
 }
 
 function buildSubject(input: LookaheadEmailInput): string {
@@ -176,7 +308,10 @@ export function renderLookaheadEmail(input: LookaheadEmailInput): {
       : "Your week ahead";
   const subject = buildSubject(input);
   const cardCountLabel =
-    cards.length === 1 ? "1 thing worth knowing" : `${cards.length} things worth knowing`;
+    cards.length === 1 ? "1 card ready for you" : `${cards.length} cards ready for you`;
+  const featured = pickFeatured(cards);
+  const rest = featured ? cards.filter((item) => item.card.id !== featured.card.id) : cards;
+  const openTimeline = timelineUrl(siteUrl);
 
   const html = `<!doctype html>
 <html lang="en-AU">
@@ -193,43 +328,81 @@ export function renderLookaheadEmail(input: LookaheadEmailInput): {
 
         <!-- Brand header -->
         <tr><td style="padding:0 0 16px 0;">
-          <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:${colors.navy};border-radius:22px;overflow:hidden;">
-            <tr><td style="padding:22px 24px 20px 24px;">
-              <p style="margin:0;font-size:11px;letter-spacing:0.2em;text-transform:uppercase;color:${colors.aqua};font-weight:700;">Wish I Knew</p>
+          <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:${colors.navy};border-radius:24px;overflow:hidden;">
+            <tr><td style="padding:24px 24px 8px 24px;">
+              <p style="margin:0;font-size:11px;letter-spacing:0.22em;text-transform:uppercase;color:${colors.aqua};font-weight:800;">Wish I Knew</p>
               <h1 style="margin:10px 0 0 0;font-size:28px;line-height:1.2;color:${colors.cream};font-family:Georgia,'Times New Roman',serif;">
                 ${escapeHtml(heading)}
               </h1>
-              <p style="margin:10px 0 0 0;font-size:14px;line-height:1.6;color:rgba(255,246,230,0.78);">
-                Your weekly Lookahead — everything useful is in this email.
-              </p>
-              <p style="margin:14px 0 0 0;display:inline-block;padding:6px 12px;border-radius:999px;background:rgba(78,198,193,0.18);font-size:12px;font-weight:700;color:${colors.aqua};">
-                ${escapeHtml(cardCountLabel)}
+              <p style="margin:12px 0 0 0;font-size:15px;line-height:1.55;color:rgba(255,246,230,0.82);">
+                A little window into what’s new — then hop into the app for the full story.
               </p>
             </td></tr>
-            <tr><td style="height:6px;background:linear-gradient(90deg, ${colors.ocean}, ${colors.aqua}, ${colors.sand});font-size:0;line-height:0;">&nbsp;</td></tr>
+            <tr><td style="padding:14px 24px 22px 24px;">
+              <table role="presentation" width="100%" cellpadding="0" cellspacing="0">
+                <tr>
+                  <td>
+                    <span style="display:inline-block;padding:7px 12px;border-radius:999px;background:rgba(78,198,193,0.18);font-size:12px;font-weight:800;color:${colors.aqua};">
+                      ${escapeHtml(cardCountLabel)}
+                    </span>
+                  </td>
+                </tr>
+                <tr><td style="padding-top:16px;">
+                  ${primaryCta(openTimeline, "Open your timeline")}
+                </td></tr>
+              </table>
+            </td></tr>
+            <tr><td style="height:6px;background:${colors.ocean};font-size:0;line-height:0;">&nbsp;</td></tr>
+            <tr><td style="height:4px;background:${colors.aqua};font-size:0;line-height:0;">&nbsp;</td></tr>
+            <tr><td style="height:4px;background:${colors.sand};font-size:0;line-height:0;">&nbsp;</td></tr>
           </table>
         </td></tr>
 
-        <!-- Intro -->
-        <tr><td style="padding:0 6px 18px 6px;">
-          <p style="margin:0;font-size:14px;line-height:1.65;color:${colors.muted};">
-            No app hop required. Open a card only if it helps this week.
-          </p>
+        <!-- Featured peek -->
+        <tr><td>
+          ${featured ? featuredWindowHtml(featured, siteUrl) : ""}
         </td></tr>
 
-        <!-- Cards -->
+        <!-- At-a-glance summary -->
         <tr><td>
-          ${cards.map((item) => cardSectionHtml(item, siteUrl)).join("")}
+          ${glanceSummaryHtml(cards, siteUrl)}
+        </td></tr>
+
+        <!-- Extra teasers (non-featured) -->
+        ${
+          rest.length
+            ? `<tr><td style="padding:0 2px 8px 2px;">
+                <p style="margin:0 0 12px 0;font-size:11px;letter-spacing:0.16em;text-transform:uppercase;color:${colors.muted};font-weight:800;">
+                  More for this week
+                </p>
+                ${rest.map((item) => teaserCardHtml(item, siteUrl)).join("")}
+              </td></tr>`
+            : ""
+        }
+
+        <!-- Bottom CTA -->
+        <tr><td style="padding:4px 0 20px 0;">
+          <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:${colors.softSky};border-radius:22px;border:1px solid #d5e8f5;">
+            <tr><td style="padding:22px 20px;text-align:center;">
+              <p style="margin:0;font-size:16px;line-height:1.4;font-weight:700;color:${colors.navy};font-family:Georgia,'Times New Roman',serif;">
+                Ready for the full week?
+              </p>
+              <p style="margin:8px 0 16px 0;font-size:14px;line-height:1.55;color:${colors.muted};">
+                Checklists, saves, and the rest of your timeline live in the app.
+              </p>
+              ${primaryCta(openTimeline, "Jump into Wish I Knew")}
+            </td></tr>
+          </table>
         </td></tr>
 
         <!-- Footer -->
-        <tr><td style="padding:8px 6px 0 6px;">
+        <tr><td style="padding:0 6px 0 6px;">
           <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:${colors.white};border-radius:18px;border:1px solid ${colors.border};">
             <tr><td style="padding:18px 20px;">
               <p style="margin:0;font-size:13px;line-height:1.65;color:${colors.muted};">
                 You chose one calm email a week. Life busy?
                 <a href="${pauseUrl}" style="color:${colors.ocean};font-weight:600;">Pause these emails</a>
-                anytime — your account and timeline stay put. Turn them back on in Settings whenever you like.
+                anytime — your account and timeline stay put.
               </p>
               <p style="margin:14px 0 0 0;font-size:11px;line-height:1.6;color:#9aa1ad;">
                 Practical guidance for Australian parents, not medical advice.
@@ -252,10 +425,24 @@ export function renderLookaheadEmail(input: LookaheadEmailInput): {
     heading,
     cardCountLabel,
     "",
+    "A little window into what’s new — open the app for the full story.",
+    `Open your timeline: ${openTimeline}`,
+    "",
+    featured
+      ? ["A peek at this week", featured.card.title, truncate(featured.card.wish_i_knew || "", 140)].join(
+          "\n",
+        )
+      : null,
+    "",
+    "Your cards this week:",
     ...cards.map((item) => cardSectionText(item, siteUrl)),
     "",
+    `Jump into Wish I Knew: ${openTimeline}`,
+    "",
     `Pause these emails (your account stays): ${pauseUrl}`,
-  ].join("\n\n");
+  ]
+    .filter((line) => line !== null)
+    .join("\n\n");
 
   return { subject, html, text };
 }

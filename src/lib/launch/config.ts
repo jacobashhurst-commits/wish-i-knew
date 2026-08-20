@@ -1,3 +1,5 @@
+import { getServerEnv } from "@/lib/env";
+
 export function isAuthRequired(): boolean {
   const flag = process.env.WIK_REQUIRE_AUTH?.trim().toLowerCase();
 
@@ -18,7 +20,7 @@ export function isBetaInviteOnly(): boolean {
 }
 
 export function isEmailConfigured(): boolean {
-  return Boolean(process.env.RESEND_API_KEY?.trim() && process.env.WIK_FROM_EMAIL?.trim());
+  return Boolean(getServerEnv("RESEND_API_KEY") && getServerEnv("WIK_FROM_EMAIL"));
 }
 
 export const PUBLIC_PATH_PREFIXES = [

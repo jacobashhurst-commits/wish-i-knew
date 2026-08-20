@@ -3,6 +3,7 @@
 import { composeDigest } from "@/lib/email/digest";
 import { buildWeekContextLabel, renderLookaheadEmail } from "@/lib/email/render-lookahead";
 import { sendEmail } from "@/lib/email/resend";
+import { getServerEnv } from "@/lib/env";
 import { timelineHorizonDays } from "@/lib/content/bundled-cards";
 import { fetchAdminCards, getAdminProfile } from "@/lib/data/admin";
 import { getSiteUrl } from "@/lib/supabase/config";
@@ -34,10 +35,15 @@ export async function sendTestLookaheadEmail(
   const admin = await getAdminProfile();
   if (!admin) return { error: "Admin sign-in required." };
 
-  if (!process.env.RESEND_API_KEY?.trim() || !process.env.WIK_FROM_EMAIL?.trim()) {
+  // Bracket access so Next.js does not inline Sensitive Vercel secrets at build.
+  const missingEmailEnv = [
+    !getServerEnv("RESEND_API_KEY") ? "RESEND_API_KEY" : null,
+    !getServerEnv("WIK_FROM_EMAIL") ? "WIK_FROM_EMAIL" : null,
+  ].filter(Boolean);
+
+  if (missingEmailEnv.length > 0) {
     return {
-      error:
-        "Email is not configured. Set RESEND_API_KEY and WIK_FROM_EMAIL in Vercel (or .env.local).",
+      error: `Email is not configured. Missing on this deploy: ${missingEmailEnv.join(", ")}. Add under Vercel project wish-i-knew → Environment Variables, then Redeploy.`,
     };
   }
 
