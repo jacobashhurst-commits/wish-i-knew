@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { composeDigest } from "@/lib/email/digest";
 import { buildWeekContextLabel, renderLookaheadEmail } from "@/lib/email/render-lookahead";
 import { sendEmail } from "@/lib/email/resend";
-import { getServerEnv } from "@/lib/env";
+import { getEmailSecrets } from "@/lib/env";
 import { timelineHorizonDays } from "@/lib/content/bundled-cards";
 import { fetchAdminCards, getAdminProfile } from "@/lib/data/admin";
 import { getSiteUrl } from "@/lib/supabase/config";
@@ -44,9 +44,10 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "Invalid JSON body." }, { status: 400 });
   }
 
+  const { apiKey, from } = await getEmailSecrets();
   const missingEmailEnv = [
-    !getServerEnv("RESEND_API_KEY") ? "RESEND_API_KEY" : null,
-    !getServerEnv("WIK_FROM_EMAIL") ? "WIK_FROM_EMAIL" : null,
+    !apiKey ? "RESEND_API_KEY" : null,
+    !from ? "WIK_FROM_EMAIL" : null,
   ].filter(Boolean);
 
   if (missingEmailEnv.length > 0) {

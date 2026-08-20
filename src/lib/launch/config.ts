@@ -1,4 +1,4 @@
-import { getServerEnv } from "@/lib/env";
+import { getEmailSecrets } from "@/lib/env";
 
 export function isAuthRequired(): boolean {
   const flag = process.env.WIK_REQUIRE_AUTH?.trim().toLowerCase();
@@ -19,8 +19,9 @@ export function isBetaInviteOnly(): boolean {
   return flag === "true" || flag === "1";
 }
 
-export function isEmailConfigured(): boolean {
-  return Boolean(getServerEnv("RESEND_API_KEY") && getServerEnv("WIK_FROM_EMAIL"));
+export async function isEmailConfigured(): Promise<boolean> {
+  const { apiKey, from } = await getEmailSecrets();
+  return Boolean(apiKey && from);
 }
 
 export const PUBLIC_PATH_PREFIXES = [

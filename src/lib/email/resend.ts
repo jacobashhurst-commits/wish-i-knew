@@ -1,4 +1,4 @@
-import { getServerEnv } from "@/lib/env";
+import { getEmailSecrets } from "@/lib/env";
 
 type SendEmailInput = {
   to: string;
@@ -14,8 +14,7 @@ type SendEmailInput = {
  * TODO: set up SPF/DKIM on the sending domain before real users receive these.
  */
 export async function sendEmail(input: SendEmailInput): Promise<{ error?: string }> {
-  const apiKey = getServerEnv("RESEND_API_KEY");
-  const from = getServerEnv("WIK_FROM_EMAIL");
+  const { apiKey, from } = await getEmailSecrets();
 
   if (!apiKey) return { error: "RESEND_API_KEY is not configured." };
   if (!from) return { error: "WIK_FROM_EMAIL is not configured." };
