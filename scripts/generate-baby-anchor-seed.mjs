@@ -189,7 +189,7 @@ const babyWeekContent = {
     subtitle: "Baby week 22",
     wish: "Watching you eat is their research phase.",
     summary: "Around six months many families start solids. Readiness signs matter more than the calendar.",
-    doNow: "Watching whether bub is interested in your food and sitting with a bit of support is part of solids readiness chatter — search Australian Infant Feeding Guidelines when you get there.",
+    doNow: "Start thinking about solids readiness — watching food interest and supported sitting are the usual clues. Search Australian Infant Feeding Guidelines when you get curious.",
     prompt: "Cute pixel art high chair tray with soft spoon and avocado slice, cream and teal palette.",
   },
   23: {
@@ -269,7 +269,7 @@ const babyWeekContent = {
     subtitle: "Baby week 32",
     wish: "Pincer grasp turns snacks into a fine motor sport.",
     summary: "Soft finger foods support self-feeding skills. Stay nearby for safety.",
-    doNow: "One soft finger food at a shared meal is a gentle way to explore self-feeding when you are ready. Australian solids guidance is easy to search.",
+    doNow: "Start thinking about soft finger foods at a shared meal when you are ready — search Australian solids guidance rather than treating any one tip as a rule.",
     prompt: "Cute pixel art finger food plate with banana coin and cup, cream and teal palette.",
   },
   33: {
@@ -317,7 +317,7 @@ const babyWeekContent = {
     subtitle: "Baby week 38",
     wish: "Nine months in — you have a relationship now, not just a routine.",
     summary: "Mobility increases curiosity. Double-check stairs and pet bowls.",
-    doNow: "If stairs are in play, a stair gate is worth thinking about — search Australian stair gate safety and measure before you buy.",
+    doNow: "Start thinking about a stair gate if stairs are in play — search Australian stair gate safety and measure before you buy.",
     prompt: "Cute pixel art stair gate and teddy, warm cream and teal palette.",
   },
   39: {

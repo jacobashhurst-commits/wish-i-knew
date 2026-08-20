@@ -36,14 +36,14 @@ const weekContent = {
     subtitle: "Week 4 in the womb",
     wish: "Two lines can feel like a plot twist. Take a breath before the to-do list explodes.",
     summary: "Many home tests turn positive around now. A GP visit can confirm and start care planning.",
-    doNow: "Worth thinking about a GP visit if you have not had one yet — search your local practice or healthdirect for early pregnancy care.",
+    doNow: "Start thinking about a GP visit if you have not had one yet — search your local practice or healthdirect for early pregnancy care.",
   },
   5: {
     title: "The neural tube forms",
     subtitle: "Week 5 in the womb",
     wish: "Major structures are forming before you have told anyone. That is a lot to carry quietly.",
     summary: "The neural tube — future brain and spine — is developing. Folic acid support matters in early pregnancy.",
-    doNow: "Folate comes up a lot in early pregnancy guidance — worth a quick search of Pregnancy Care Guidelines or a chat with your GP or pharmacist.",
+    doNow: "Start thinking about folate — a quick search of Pregnancy Care Guidelines, or a chat with your GP or pharmacist, beats guessing from random tips.",
   },
   6: {
     title: "Heart tissue starts",
