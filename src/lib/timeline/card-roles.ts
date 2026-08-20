@@ -1,4 +1,4 @@
-import type { TimelineCard } from "@/types/content";
+import type { CardStatus, TimelineCard } from "@/types/content";
 
 /** Weekly anchor — one per pregnancy/baby week, leads the digest email. */
 export const weeklyAnchorCardType = "This week with bub";
@@ -8,6 +8,15 @@ export const quietWeekCardType = "quiet_week";
 export const funFillerCardTypes = [quietWeekCardType, "Fun First"] as const;
 
 export type FunFillerCardType = (typeof funFillerCardTypes)[number];
+
+/**
+ * Cards friends/users can see before final beta publish.
+ * `approved` = provisionally approved (wife still has final say).
+ * `published` = final for broader beta.
+ */
+export function isLiveForUsers(status: CardStatus): boolean {
+  return status === "approved" || status === "published";
+}
 
 export function isWeeklyAnchorCard(card: Pick<TimelineCard, "card_type">): boolean {
   return card.card_type === weeklyAnchorCardType;
@@ -22,7 +31,9 @@ export function isActiveReminderCard(card: Pick<TimelineCard, "card_type">): boo
   return !isWeeklyAnchorCard(card) && !isFunFillerCard(card);
 }
 
-export function isSingleWeekPregnancyWindow(card: Pick<TimelineCard, "pregnancy_week_start" | "pregnancy_week_end">): boolean {
+export function isSingleWeekPregnancyWindow(
+  card: Pick<TimelineCard, "pregnancy_week_start" | "pregnancy_week_end">,
+): boolean {
   return (
     card.pregnancy_week_start !== null &&
     card.pregnancy_week_end !== null &&

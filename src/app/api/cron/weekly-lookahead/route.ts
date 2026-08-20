@@ -85,7 +85,7 @@ export async function GET(request: Request) {
   const { data: cardRows, error: cardsError } = await supabase
     .from("timeline_cards")
     .select("*")
-    .eq("status", "published");
+    .in("status", ["approved", "published"]);
 
   if (cardsError) {
     return NextResponse.json({ error: cardsError.message }, { status: 500 });

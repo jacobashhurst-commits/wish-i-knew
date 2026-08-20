@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { fetchAdminCards } from "@/lib/data/admin";
 import { validateCardForPublish } from "@/lib/content/validation";
-import { cardStatuses, cardTypes, lifeStages } from "@/types/admin";
+import { cardStatuses, cardStatusLabels, cardTypes, lifeStages } from "@/types/admin";
 
 const statusTone: Record<string, string> = {
   published: "bg-[#E4F5EC] text-[#1B7A4B]",
@@ -73,7 +73,7 @@ export default async function AdminCardsPage({
             <option value="">All</option>
             {cardStatuses.map((value) => (
               <option key={value} value={value}>
-                {value}
+                {cardStatusLabels[value]}
               </option>
             ))}
           </select>
@@ -159,7 +159,7 @@ export default async function AdminCardsPage({
                     <span
                       className={`rounded-full px-2.5 py-1 text-xs font-semibold ${statusTone[card.status] ?? "bg-[#F0EEE9]"}`}
                     >
-                      {card.status}
+                      {cardStatusLabels[card.status] ?? card.status}
                     </span>
                   </td>
                   <td className="px-4 py-3 text-xs">

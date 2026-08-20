@@ -47,11 +47,11 @@ export async function fetchPublishedCards(): Promise<TimelineCardRow[]> {
   const { data, error } = await supabase
     .from("timeline_cards")
     .select("*")
-    .eq("status", "published")
+    .in("status", ["approved", "published"])
     .order("priority", { ascending: false });
 
   if (error) {
-    throw new Error(`Failed to load published cards: ${error.message}`);
+    throw new Error(`Failed to load live cards: ${error.message}`);
   }
 
   return (data ?? []) as TimelineCardRow[];

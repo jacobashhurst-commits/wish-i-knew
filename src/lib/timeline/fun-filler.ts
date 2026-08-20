@@ -1,10 +1,10 @@
-import { funFillerCardTypes, quietWeekCardType } from "@/lib/timeline/card-roles";
+import { funFillerCardTypes, isLiveForUsers, quietWeekCardType } from "@/lib/timeline/card-roles";
 import { toUtcDateOnly } from "@/lib/timeline/dates";
 import type { MatchedCard } from "@/lib/timeline/types";
 import type { TimelineCard } from "@/types/content";
 
 function isFunPoolCard(card: TimelineCard): boolean {
-  return (funFillerCardTypes as readonly string[]).includes(card.card_type) && card.status === "published";
+  return (funFillerCardTypes as readonly string[]).includes(card.card_type) && isLiveForUsers(card.status);
 }
 
 /** Deterministic fun card for a calendar week, excluding slugs already picked. */

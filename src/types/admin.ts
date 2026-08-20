@@ -96,6 +96,17 @@ export const cardStatuses: CardStatus[] = [
   "archived",
 ];
 
+/** Admin-facing labels — approved means friends can see it; published is wife-final for beta. */
+export const cardStatusLabels: Record<CardStatus, string> = {
+  idea: "Idea",
+  draft: "Draft",
+  in_review: "In review",
+  approved: "Provisionally approved",
+  published: "Published (final)",
+  needs_review: "Needs review",
+  archived: "Archived",
+};
+
 export const imageStatuses: ImageStatus[] = [
   "needed",
   "prompt_ready",

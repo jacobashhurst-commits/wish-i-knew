@@ -1,5 +1,6 @@
 import type { TimelineCard, UserCardState } from "@/types/content";
 import { calculateAgeInDays, calculatePregnancyWeek, toUtcDateOnly } from "./dates";
+import { isLiveForUsers } from "./card-roles";
 import type {
   CardMatchReason,
   MatchedCard,
@@ -14,7 +15,7 @@ const maxOverdueCards = 3;
 const quietWeekCardType = "quiet_week";
 
 function isVisibleCard(card: TimelineCard): boolean {
-  return card.status === "published";
+  return isLiveForUsers(card.status);
 }
 
 function isQuietWeekCard(card: TimelineCard): boolean {

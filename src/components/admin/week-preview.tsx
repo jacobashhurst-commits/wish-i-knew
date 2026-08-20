@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useMemo, useState } from "react";
 import { composeDigest } from "@/lib/email/digest";
 import { buildWeekContextLabel, renderLookaheadEmail } from "@/lib/email/render-lookahead";
-import { isWeeklyAnchorCard } from "@/lib/timeline/card-roles";
+import { isLiveForUsers, isWeeklyAnchorCard } from "@/lib/timeline/card-roles";
 import { calculateAgeInDays, calculatePregnancyWeek } from "@/lib/timeline/dates";
 import { buildTimeline } from "@/lib/timeline/matching";
 import { timelineHorizonDays } from "@/lib/content/bundled-cards";
@@ -82,7 +82,7 @@ export function WeekPreview({ cards }: { cards: AdminCardRow[] }) {
   );
 
   const publishedCards = useMemo(
-    () => engineCards.filter((card) => card.status === "published"),
+    () => engineCards.filter((card) => isLiveForUsers(card.status)),
     [engineCards],
   );
 

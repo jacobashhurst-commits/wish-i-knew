@@ -170,7 +170,13 @@ export function CardEditor({ card }: { card: AdminCardRow | null }) {
       () => changeCardStatus(cardId, next),
       () => {
         setStatus(next);
-        setMessage(next === "published" ? "Card published. It is live for matching users." : `Status changed to ${next}.`);
+        setMessage(
+          next === "published"
+            ? "Published (final). Live for matching users."
+            : next === "approved"
+              ? "Provisionally approved — live for friends; wife still has final say before beta."
+              : `Status changed to ${next}.`,
+        );
       },
     );
   }
@@ -385,9 +391,9 @@ export function CardEditor({ card }: { card: AdminCardRow | null }) {
             />
           </label>
           <label className={labelClass}>
-            Something to think about
+            What to do now
             <p className="mt-0.5 text-xs font-normal text-[#172033]/50">
-              Soft suggestions only — prefer search / clinician over hard instructions.
+              Suggestive prep — “start thinking about…”, not hard medical instructions.
             </p>
             <textarea
               className={inputClass}
@@ -645,7 +651,14 @@ export function CardEditor({ card }: { card: AdminCardRow | null }) {
         <div className="rounded-2xl border border-[#0d1b2a]/10 bg-white p-5 shadow-sm">
           <h2 className="font-display text-lg font-semibold">Lifecycle</h2>
           <p className="mt-1 text-sm text-[#172033]/70">
-            Current status: <span className="font-semibold">{status}</span>
+            Current status:{" "}
+            <span className="font-semibold">
+              {status === "approved"
+                ? "Provisionally approved"
+                : status === "published"
+                  ? "Published (final)"
+                  : status}
+            </span>
           </p>
 
           <div className="mt-4 flex flex-col gap-2">
@@ -676,7 +689,7 @@ export function CardEditor({ card }: { card: AdminCardRow | null }) {
                 onClick={() => handleStatus("approved")}
                 type="button"
               >
-                Approve
+                Approve (provisional)
               </button>
             ) : null}
 
@@ -687,7 +700,7 @@ export function CardEditor({ card }: { card: AdminCardRow | null }) {
                 onClick={() => handleStatus("published")}
                 type="button"
               >
-                Publish
+                Publish (final for beta)
               </button>
             ) : null}
 
@@ -698,7 +711,7 @@ export function CardEditor({ card }: { card: AdminCardRow | null }) {
                 onClick={() => handleStatus("approved")}
                 type="button"
               >
-                Unpublish (back to approved)
+                Back to provisional
               </button>
             ) : null}
 
