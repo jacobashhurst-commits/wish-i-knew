@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Fraunces, Inter } from "next/font/google";
+import { SessionKeepalive } from "@/components/session-keepalive";
 import "./globals.css";
 
 const fraunces = Fraunces({
@@ -31,7 +32,10 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en-AU" className={`${fraunces.variable} ${inter.variable}`}>
-      <body>{children}</body>
+      <body>
+        <SessionKeepalive />
+        {children}
+      </body>
     </html>
   );
 }

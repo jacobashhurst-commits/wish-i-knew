@@ -35,7 +35,7 @@ export function AuthGate({ userEmail, requireConsent = false, showBetaNote = fal
         return;
       }
 
-      setMessage("Check your email for a magic link. It may take a minute.");
+      setMessage("Check your email for a magic link. After you open it once, this device should stay signed in.");
     });
   }
 
@@ -43,7 +43,7 @@ export function AuthGate({ userEmail, requireConsent = false, showBetaNote = fal
     <section className="wik-shell-card p-5 sm:p-6">
       <h2 className="font-display text-2xl font-semibold text-[#0d1b2a]">Email me a magic link</h2>
       <p className="mt-2 text-sm leading-6 text-[#697386]">
-        Sign in with a magic link. No password. Your child profile and card actions stay synced across devices.
+        Sign in with a magic link. No password. After the first link on this device, you should stay signed in — we will not ask every visit.
       </p>
 
       {showBetaNote ? (
