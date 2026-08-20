@@ -1,7 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import { useMemo, useState } from "react";
+import { useMemo, useState, useTransition } from "react";
+import { sendTestLookaheadEmail } from "@/app/actions/admin-test-email";
 import { composeDigest } from "@/lib/email/digest";
 import { buildWeekContextLabel, renderLookaheadEmail } from "@/lib/email/render-lookahead";
 import { isLiveForUsers, isWeeklyAnchorCard } from "@/lib/timeline/card-roles";
@@ -75,6 +76,9 @@ export function WeekPreview({ cards }: { cards: AdminCardRow[] }) {
   const [state, setState] = useState<AustralianState>("NSW");
   const [firstChild, setFirstChild] = useState(true);
   const [childcare, setChildcare] = useState<ChildcareIntention>("unsure");
+  const [sendMessage, setSendMessage] = useState<string | null>(null);
+  const [sendError, setSendError] = useState<string | null>(null);
+  const [isSending, startSend] = useTransition();
 
   const engineCards = useMemo(
     () => cards.map((card) => toEngineCard(card, includeUnpublished)),
@@ -253,12 +257,47 @@ export function WeekPreview({ cards }: { cards: AdminCardRow[] }) {
       </div>
 
       <div className="mt-5 rounded-2xl border border-[#1D809F]/20 bg-[#E7F1FB]/40 p-5">
-        <h3 className="font-display text-lg font-semibold">Weekly email preview</h3>
-        <p className="mt-1 text-xs uppercase tracking-wide text-[#172033]/50">Subject line</p>
-        <p className="mt-1 text-sm font-semibold text-[#0d1b2a]">{emailPreview.subject}</p>
-        <p className="mt-3 text-xs uppercase tracking-wide text-[#172033]/50">
-          {digest.length} card{digest.length === 1 ? "" : "s"} in digest
-          {hasAnchor ? " · anchor included" : ""}
+        <div className="flex flex-wrap items-end justify-between gap-4">
+          <div>
+            <h3 className="font-display text-lg font-semibold">Weekly email preview</h3>
+            <p className="mt-1 text-xs uppercase tracking-wide text-[#172033]/50">Subject line</p>
+            <p className="mt-1 text-sm font-semibold text-[#0d1b2a]">{emailPreview.subject}</p>
+            <p className="mt-3 text-xs uppercase tracking-wide text-[#172033]/50">
+              {digest.length} card{digest.length === 1 ? "" : "s"} in digest
+              {hasAnchor ? " · anchor included" : ""}
+            </p>
+          </div>
+          <button
+            className="rounded-xl bg-[#1D809F] px-4 py-2.5 text-sm font-semibold text-white disabled:opacity-40"
+            disabled={isSending || digest.length === 0}
+            onClick={() => {
+              setSendMessage(null);
+              setSendError(null);
+              startSend(async () => {
+                const result = await sendTestLookaheadEmail({
+                  mode,
+                  weekNumber,
+                  state,
+                  firstChild,
+                  childcare,
+                  includeUnpublished,
+                  childName: "Sample bub",
+                });
+                if (result.error) setSendError(result.error);
+                else setSendMessage(result.success ?? "Sent.");
+              });
+            }}
+            type="button"
+          >
+            {isSending ? "Sending…" : "Email this week to me"}
+          </button>
+        </div>
+        {sendError ? <p className="mt-3 text-sm text-[#B4423C]">{sendError}</p> : null}
+        {sendMessage ? <p className="mt-3 text-sm text-[#1B7A4B]">{sendMessage}</p> : null}
+        <p className="mt-3 text-xs text-[#172033]/55">
+          Sends the digest for the week above to your admin email via Resend. Needs{" "}
+          <code className="rounded bg-white/70 px-1">RESEND_API_KEY</code> and{" "}
+          <code className="rounded bg-white/70 px-1">WIK_FROM_EMAIL</code>.
         </p>
       </div>
 

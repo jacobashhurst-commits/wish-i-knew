@@ -34,6 +34,9 @@ export default async function AdminLayout({ children }: { children: React.ReactN
             <Link className="rounded-full px-4 py-2 hover:bg-white/10" href="/admin/weeks">
               Week preview
             </Link>
+            <Link className="rounded-full px-4 py-2 hover:bg-white/10" href="/admin/invites">
+              Alpha testers
+            </Link>
             <Link className="rounded-full px-4 py-2 hover:bg-white/10" href="/admin/debugger">
               Match debugger
             </Link>
