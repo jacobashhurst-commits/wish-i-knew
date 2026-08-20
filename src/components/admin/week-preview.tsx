@@ -2,7 +2,6 @@
 
 import Link from "next/link";
 import { useMemo, useState, useTransition } from "react";
-import { sendTestLookaheadEmail } from "@/app/actions/admin-test-email";
 import { composeDigest } from "@/lib/email/digest";
 import { buildWeekContextLabel, renderLookaheadEmail } from "@/lib/email/render-lookahead";
 import { isLiveForUsers, isWeeklyAnchorCard } from "@/lib/timeline/card-roles";
@@ -274,17 +273,28 @@ export function WeekPreview({ cards }: { cards: AdminCardRow[] }) {
               setSendMessage(null);
               setSendError(null);
               startSend(async () => {
-                const result = await sendTestLookaheadEmail({
-                  mode,
-                  weekNumber,
-                  state,
-                  firstChild,
-                  childcare,
-                  includeUnpublished,
-                  childName: "Sample bub",
+                const response = await fetch("/api/admin/test-lookahead", {
+                  method: "POST",
+                  headers: { "Content-Type": "application/json" },
+                  body: JSON.stringify({
+                    mode,
+                    weekNumber,
+                    state,
+                    firstChild,
+                    childcare,
+                    includeUnpublished,
+                    childName: "Sample bub",
+                  }),
                 });
-                if (result.error) setSendError(result.error);
-                else setSendMessage(result.success ?? "Sent.");
+                const result = (await response.json().catch(() => ({}))) as {
+                  error?: string;
+                  success?: string;
+                };
+                if (!response.ok || result.error) {
+                  setSendError(result.error || `Request failed (${response.status}).`);
+                } else {
+                  setSendMessage(result.success ?? "Sent.");
+                }
               });
             }}
             type="button"
