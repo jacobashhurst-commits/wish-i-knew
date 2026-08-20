@@ -325,7 +325,7 @@ function CardDetail({
           </div>
 
           <DetailSection title="Why it matters" value={card.why_it_matters} />
-          <DetailSection title="What to do now" value={card.what_to_do_now} />
+          <DetailSection title="Something to think about" value={card.what_to_do_now} />
           <DetailSection title="What can wait" value={card.what_can_wait} />
 
           {card.checklist_items?.length ? (

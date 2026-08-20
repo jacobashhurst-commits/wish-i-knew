@@ -21,7 +21,7 @@ const babyWeekContent = {
     subtitle: "Baby week 1",
     wish: "Week one is mostly feeding, sleeping, and surviving — for both of you.",
     summary: "Your newborn is adjusting to light, sound and feeding outside the womb. Short wake windows and cluster feeds are normal.",
-    doNow: "Notice one tiny thing bub does that delights you — store it mentally.",
+    doNow: "Noticing one tiny thing bub does that delights you is enough of a win for week one.",
     prompt: "Cute pixel art newborn bundle with a tiny hat and soft blanket heart, warm cream and teal palette.",
   },
   2: {
@@ -29,7 +29,7 @@ const babyWeekContent = {
     subtitle: "Baby week 2",
     wish: "There is still no reliable schedule. That is not you failing — it is week two.",
     summary: "Feeding patterns may start to stretch slightly. Crying peaks for many babies around now before easing.",
-    doNow: "Accept help for one household job so you can rest during a nap window.",
+    doNow: "Accepting help for one household job so you can rest in a nap window is allowed — and smart.",
     prompt: "Cute pixel art rocking chair and tiny socks, soft morning light, warm cream and teal palette.",
   },
   3: {
@@ -37,7 +37,7 @@ const babyWeekContent = {
     subtitle: "Baby week 3",
     wish: "Real smiles can appear around now — they hit harder than you expect.",
     summary: "Bub may start brief eye contact and early social responses. Tummy time in tiny bursts builds neck strength.",
-    doNow: "Try 30 seconds of tummy time after a nappy change — stop when fussy.",
+    doNow: "A short burst of tummy time after a nappy change is something many parents try; stop when bub is done.",
     prompt: "Cute pixel art baby face with sparkle eyes and gentle smile curve, warm cream and teal palette.",
   },
   4: {
@@ -45,7 +45,7 @@ const babyWeekContent = {
     subtitle: "Baby week 4",
     wish: "One month sounds small. From where you are standing it probably feels enormous.",
     summary: "Many families have a GP check around the four-week mark. Feeding and weight gain are the main focus.",
-    doNow: "Book or attend the four-week check if it is due.",
+    doNow: "The four-week check is worth putting on the radar if it is due — your GP or child health nurse can confirm timing.",
     prompt: "Cute pixel art calendar with one heart sticker and stethoscope charm, warm cream and teal palette.",
   },
   5: {
@@ -53,7 +53,7 @@ const babyWeekContent = {
     subtitle: "Baby week 5",
     wish: "Bub may stare at your face like you are the most interesting show on earth — because you are.",
     summary: "Vision is still fuzzy but faces are fascinating. Cooing and throaty sounds may begin.",
-    doNow: "Hold bub 20–30 cm from your face during a calm alert moment.",
+    doNow: "Holding bub a little closer during a calm alert moment can make eye contact easier. No perfect distance required.",
     prompt: "Cute pixel art parent silhouette and baby eyes meeting, soft heart sparkle, cream and teal palette.",
   },
   6: {
@@ -61,7 +61,7 @@ const babyWeekContent = {
     subtitle: "Baby week 6",
     wish: "Some nights get a little longer between feeds. Others do not. Both belong to week six.",
     summary: "Sleep is still irregular. Immunisation conversations often start around six to eight weeks in Australia.",
-    doNow: "Check your next immunisation appointment is booked if due.",
+    doNow: "Worth checking when the next immunisation is due — your blue book, GP, or health.gov.au immunisation pages are solid places to look.",
     prompt: "Cute pixel art moon and baby bottle with shield badge, warm cream and teal palette.",
   },
   7: {
@@ -69,7 +69,7 @@ const babyWeekContent = {
     subtitle: "Baby week 7",
     wish: "Head control improves in micro-increments — like levelling up in a game you did not know you were playing.",
     summary: "During tummy time bub may lift their head briefly. Always supervise on a firm flat surface.",
-    doNow: "Add tummy time to one daily nappy change routine.",
+    doNow: "Tucking a tiny tummy-time moment into one nappy change is a low-friction habit if it suits your day.",
     prompt: "Cute pixel art baby doing mini tummy time on a play mat, warm cream and teal palette.",
   },
   8: {
@@ -77,7 +77,7 @@ const babyWeekContent = {
     subtitle: "Baby week 8",
     wish: "Eight weeks is a common checkpoint for feeding, sleep and how you are really doing.",
     summary: "Social smiling is more reliable. Some babies show clearer fussy periods in late afternoon.",
-    doNow: "Tell your GP or child health nurse if you are worried about feeding or mood.",
+    doNow: "Worried about feeding or how you are travelling? A GP or child health nurse chat is a good place to start — search your local child health service too.",
     prompt: "Cute pixel art two-month milestone ribbon and rattle, warm cream and teal palette.",
   },
   9: {
@@ -85,7 +85,7 @@ const babyWeekContent = {
     subtitle: "Baby week 9",
     wish: "Watching bub stare at their own fingers is free entertainment.",
     summary: "Hand discovery and batting at objects begins. Vision and tracking improve week by week.",
-    doNow: "Offer a high-contrast toy or your fingers during alert time.",
+    doNow: "A high-contrast toy or your fingers during alert time can be fun to offer. Bub will tell you when they are done.",
     prompt: "Cute pixel art baby hands and simple black-white toy, warm cream and teal palette.",
   },
   10: {
@@ -93,7 +93,7 @@ const babyWeekContent = {
     subtitle: "Baby week 10",
     wish: "Turn-taking coos are the first conversations. You are already fluent.",
     summary: "Bub may vocalise when you pause, as if replying. This builds language foundations.",
-    doNow: "Leave a pause after you speak — let bub fill the silence.",
+    doNow: "Leaving a pause after you speak lets bub fill the silence sometimes. Turn-taking, not performance.",
     prompt: "Cute pixel art speech bubble hearts between parent and baby icons, cream and teal palette.",
   },
   11: {
@@ -101,7 +101,7 @@ const babyWeekContent = {
     subtitle: "Baby week 11",
     wish: "Some babies start rolling early. Others wait months. Your timeline is fine.",
     summary: "Stronger neck and shoulder muscles prepare for rolling. Never leave bub unattended on elevated surfaces.",
-    doNow: "Clear the floor for supervised play time.",
+    doNow: "Clearing a bit of floor for supervised play can make rolling experiments safer when they start.",
     prompt: "Cute pixel art play mat with rolling arrow sparkle, warm cream and teal palette.",
   },
   12: {
@@ -109,7 +109,7 @@ const babyWeekContent = {
     subtitle: "Baby week 12",
     wish: "Quarter of a year. You have been showing up through the thick of it.",
     summary: "Many babies laugh out loud around now. Sleep may begin to consolidate slightly for some families.",
-    doNow: "Celebrate three months with something small — photo, cake, or a nap.",
+    doNow: "Three months is worth marking somehow — a photo, a cake, or a nap all count.",
     prompt: "Cute pixel art three-month cake candle and baby booties, warm cream and teal palette.",
   },
   13: {
@@ -117,7 +117,7 @@ const babyWeekContent = {
     subtitle: "Baby week 13",
     wish: "Everything reachable is now a scientific instrument.",
     summary: "Purposeful reaching develops. Safe toys within arm's length keep exploration calm.",
-    doNow: "Rotate two toys on the play mat this week.",
+    doNow: "Rotating a couple of toys on the play mat keeps things interesting without buying more stuff.",
     prompt: "Cute pixel art reaching hand and soft rattle, warm cream and teal palette.",
   },
   14: {
@@ -125,7 +125,7 @@ const babyWeekContent = {
     subtitle: "Baby week 14",
     wish: "You might notice when bub is usually happiest — use that window for outings.",
     summary: "Short awake windows still rule. Over tiredness shows up fast.",
-    doNow: "Note one reliable calm hour in your phone notes.",
+    doNow: "Noting one reliable calm hour in your phone can help when you need to plan a short outing.",
     prompt: "Cute pixel art sun clock and pram icon, warm cream and teal palette.",
   },
   15: {
@@ -133,7 +133,7 @@ const babyWeekContent = {
     subtitle: "Baby week 15",
     wish: "The vowel concert series has begun. Applause optional but encouraged.",
     summary: "Repeated sounds like ba-ba or ga-ga may appear. Respond like it makes perfect sense.",
-    doNow: "Repeat bub's sounds back — simple mirroring.",
+    doNow: "Mirroring bub's sounds back is a simple, optional conversation starter.",
     prompt: "Cute pixel art musical notes and baby mouth shape, warm cream and teal palette.",
   },
   16: {
@@ -141,7 +141,7 @@ const babyWeekContent = {
     subtitle: "Baby week 16",
     wish: "The moment they roll once, your floor lifestyle begins. Welcome.",
     summary: "Rolling front to back or back to front can start. Lower the cot before standing phase later.",
-    doNow: "Double-check the change table and sofa — hand on bub always.",
+    doNow: "Change tables and sofas reward a habit of one hand on bub — search baby fall prevention if you want a refresher.",
     prompt: "Cute pixel art rolling baby arrow on soft mat, warm cream and teal palette.",
   },
   17: {
@@ -149,7 +149,7 @@ const babyWeekContent = {
     subtitle: "Baby week 17",
     wish: "Peek-a-boo is about to become a stadium event.",
     summary: "Bub begins to understand things exist when hidden briefly. Games build trust and giggles.",
-    doNow: "Play peek-a-boo with a muslin cloth once a day.",
+    doNow: "Peek-a-boo with a muslin once a day is optional entertainment with a side of learning.",
     prompt: "Cute pixel art muslin cloth peek-a-boo face, warm cream and teal palette.",
   },
   18: {
@@ -157,7 +157,7 @@ const babyWeekContent = {
     subtitle: "Baby week 18",
     wish: "Supported sitting changes the view — for bub and for your arms.",
     summary: "Core strength grows. Prop with pillows or sit in your lap facing out.",
-    doNow: "Try supported sitting for a minute after a feed when content.",
+    doNow: "Supported sitting for a minute after a feed, when content, is something to try if bub seems ready — skip if they fuss.",
     prompt: "Cute pixel art baby sitting with pillow support, warm cream and teal palette.",
   },
   19: {
@@ -165,7 +165,7 @@ const babyWeekContent = {
     subtitle: "Baby week 19",
     wish: "Drool fashion week is not your fault.",
     summary: "Some babies teethe early. Chew toys and chilled cloths can soothe — follow product safety guidance.",
-    doNow: "Offer a safe teether if bub is chomping everything.",
+    doNow: "If everything is going in the mouth, a safe teether is worth having around. Check product safety labelling, or search ACCC baby product safety.",
     prompt: "Cute pixel art teether ring and drool bib, warm cream and teal palette.",
   },
   20: {
@@ -173,7 +173,7 @@ const babyWeekContent = {
     subtitle: "Baby week 20",
     wish: "Twenty weeks since birth — the newborn fog and the current you can coexist in one photo.",
     summary: "Many babies transfer objects hand to hand. Exploration gets messier and more joyful.",
-    doNow: "Take a comparison photo from the first week if you want one.",
+    doNow: "A comparison photo from week one is optional nostalgia — only if you want it.",
     prompt: "Cute pixel art half-year milestone star and blocks, warm cream and teal palette.",
   },
   21: {
@@ -181,7 +181,7 @@ const babyWeekContent = {
     subtitle: "Baby week 21",
     wish: "Preferring you is biology, not drama.",
     summary: "Bub may show caution with unfamiliar faces. Slow introductions help.",
-    doNow: "Let visitors give bub a minute before picking up.",
+    doNow: "Letting visitors wait a minute before picking up can help if bub is warming up slowly to new faces.",
     prompt: "Cute pixel art friendly visitor wave and baby clutching parent, cream and teal palette.",
   },
   22: {
@@ -189,7 +189,7 @@ const babyWeekContent = {
     subtitle: "Baby week 22",
     wish: "Watching you eat is their research phase.",
     summary: "Around six months many families start solids. Readiness signs matter more than the calendar.",
-    doNow: "Notice if bub watches food and sits with minimal support.",
+    doNow: "Watching whether bub is interested in your food and sitting with a bit of support is part of solids readiness chatter — search Australian Infant Feeding Guidelines when you get there.",
     prompt: "Cute pixel art high chair tray with soft spoon and avocado slice, cream and teal palette.",
   },
   23: {
@@ -197,7 +197,7 @@ const babyWeekContent = {
     subtitle: "Baby week 23",
     wish: "Pointed looks and grunts are full sentences if you squint.",
     summary: "Bub communicates wants with sounds and gestures. Naming what you see builds language.",
-    doNow: "Narrate one routine out loud — nappy, bath, or walk.",
+    doNow: "Narrating one routine out loud (nappy, bath, walk) is optional language practice that fits into things you already do.",
     prompt: "Cute pixel art gesture hands and heart speech bubble, warm cream and teal palette.",
   },
   24: {
@@ -205,7 +205,7 @@ const babyWeekContent = {
     subtitle: "Baby week 24",
     wish: "Half a year. Half a year of learning each other.",
     summary: "A major milestone month. Immunisations, solids and sitting often cluster around here.",
-    doNow: "Confirm six-month health checks and immunisations if due.",
+    doNow: "Six-month checks and immunisations are worth confirming if due — GP, child health nurse, or your immunisation history online.",
     prompt: "Cute pixel art six-month banner and stacking cups, warm cream and teal palette.",
   },
   25: {
@@ -213,7 +213,7 @@ const babyWeekContent = {
     subtitle: "Baby week 25",
     wish: "Independent sitting for five seconds deserves a medal.",
     summary: "Balance improves with padding nearby. Soft surfaces and supervision always.",
-    doNow: "Create a small safe floor play zone.",
+    doNow: "A small safe floor play zone with soft padding nearby can make early sitting experiments less stressful.",
     prompt: "Cute pixel art baby sitting alone with soft block tower, cream and teal palette.",
   },
   26: {
@@ -221,7 +221,7 @@ const babyWeekContent = {
     subtitle: "Baby week 26",
     wish: "The point of early solids is exposure, not a clean kitchen.",
     summary: "Iron-rich foods matter in the Australian guidance. Mess is part of motor learning.",
-    doNow: "Strip bub to a nappy or use a cover bib for one meal.",
+    doNow: "A cover bib or nappy-only meal can make early solids mess more manageable. Exposure over tidy kitchens.",
     prompt: "Cute pixel art messy bowl and splatter-proof bib, warm cream and teal palette.",
   },
   27: {
@@ -229,7 +229,7 @@ const babyWeekContent = {
     subtitle: "Baby week 27",
     wish: "Two toys, one in each hand, maximum satisfaction.",
     summary: "Passing toys between hands supports brain wiring. Offer varied textures.",
-    doNow: "Put two safe objects in reach during floor play.",
+    doNow: "Two safe objects within reach during floor play is a low-effort way to invite hand-to-hand practice.",
     prompt: "Cute pixel art two textured blocks swapping hands, warm cream and teal palette.",
   },
   28: {
@@ -237,7 +237,7 @@ const babyWeekContent = {
     subtitle: "Baby week 28",
     wish: "Army crawling counts. So does rolling everywhere. Mobility has many styles.",
     summary: "Some babies scoot early. Baby-proofing low cupboards starts to matter.",
-    doNow: "Scan one room from floor level for choking hazards.",
+    doNow: "A quick scan of one room from floor level can reveal choking hazards you stop seeing at adult height. Search babyproofing checklist if you want a fuller list.",
     prompt: "Cute pixel art baby crawling arrow and cupboard lock, warm cream and teal palette.",
   },
   29: {
@@ -245,7 +245,7 @@ const babyWeekContent = {
     subtitle: "Baby week 29",
     wish: "Just when you tell someone it got better, week twenty-nine sends a plot twist.",
     summary: "Developmental leaps can disturb sleep briefly. Consistency helps more than new gadgets.",
-    doNow: "Keep bedtime routine short and the same order.",
+    doNow: "Keeping bedtime in a short, familiar order helps some families more than new gadgets. Search infant sleep routines for ideas that fit you.",
     prompt: "Cute pixel art bedtime book and dim lamp, warm cream and teal palette.",
   },
   30: {
@@ -253,7 +253,7 @@ const babyWeekContent = {
     subtitle: "Baby week 30",
     wish: "Seven months of practice being a parent — you are not a beginner anymore.",
     summary: "Babbling may include consonant sounds. Social games stay a hit.",
-    doNow: "Schedule a floor play session at the same time daily.",
+    doNow: "A regular floor-play pocket at a similar time of day can become a nice anchor — whenever works.",
     prompt: "Cute pixel art seven star badge and rubber duck, warm cream and teal palette.",
   },
   31: {
@@ -261,7 +261,7 @@ const babyWeekContent = {
     subtitle: "Baby week 31",
     wish: "Furniture cruising is audition season.",
     summary: "Leg strength builds for standing. Lower cot mattress if bub is pulling up in the cot.",
-    doNow: "Check cot height and remove bumpers if still present.",
+    doNow: "If bub is pulling up in the cot, cot mattress height and bumper guidance are worth a look — search Red Nose or product instructions.",
     prompt: "Cute pixel art cot rail and strong little legs, warm cream and teal palette.",
   },
   32: {
@@ -269,7 +269,7 @@ const babyWeekContent = {
     subtitle: "Baby week 32",
     wish: "Pincer grasp turns snacks into a fine motor sport.",
     summary: "Soft finger foods support self-feeding skills. Stay nearby for safety.",
-    doNow: "Offer one soft finger food at a shared meal.",
+    doNow: "One soft finger food at a shared meal is a gentle way to explore self-feeding when you are ready. Australian solids guidance is easy to search.",
     prompt: "Cute pixel art finger food plate with banana coin and cup, cream and teal palette.",
   },
   33: {
@@ -277,7 +277,7 @@ const babyWeekContent = {
     subtitle: "Baby week 33",
     wish: "Short goodbyes beat long anxious ones.",
     summary: "Brief separation games build confidence. Always return with a calm hello.",
-    doNow: "Practice leaving the room for 30 seconds and returning.",
+    doNow: "A short leave-the-room-and-return practice can build confidence for some babies. Keep it calm and brief.",
     prompt: "Cute pixel art doorway wave and teddy waiting, warm cream and teal palette.",
   },
   34: {
@@ -285,7 +285,7 @@ const babyWeekContent = {
     subtitle: "Baby week 34",
     wish: "Eight months looks different in every house — compare gently, if at all.",
     summary: "Crawling, sitting and babbling combine into busy days. Energy comes in bursts.",
-    doNow: "Plan one low-effort outing that works for your bub's rhythm.",
+    doNow: "Planning one low-effort outing that matches bub's rhythm beats forcing a big day out.",
     prompt: "Cute pixel art eight-month medal and playground leaf, warm cream and teal palette.",
   },
   35: {
@@ -293,7 +293,7 @@ const babyWeekContent = {
     subtitle: "Baby week 35",
     wish: "Banging two blocks together is acoustics research.",
     summary: "Cause and effect play is peak comedy for bub. Safe pots and wooden spoons count.",
-    doNow: "Create a drawer or basket of safe kitchen items to explore.",
+    doNow: "A drawer or basket of safe kitchen items (wooden spoon, plastic tub) can turn exploration into free entertainment.",
     prompt: "Cute pixel art wooden spoon and pot with sparkles, warm cream and teal palette.",
   },
   36: {
@@ -301,7 +301,7 @@ const babyWeekContent = {
     subtitle: "Baby week 36",
     wish: "Pull-to-stand on the couch is their gym membership.",
     summary: "Many babies stand holding furniture. Sharp corners deserve softening or supervision.",
-    doNow: "Pad or block one sharp coffee table corner.",
+    doNow: "Padding or blocking one sharp coffee table corner is a small, practical thought if cruising is starting.",
     prompt: "Cute pixel art couch edge and standing baby hands, warm cream and teal palette.",
   },
   37: {
@@ -309,7 +309,7 @@ const babyWeekContent = {
     subtitle: "Baby week 37",
     wish: "A floppy wave from bub can fix a hard day.",
     summary: "Imitation of gestures like waving or clapping may start. Model without pressure.",
-    doNow: "Wave goodbye at one predictable moment each day.",
+    doNow: "Waving goodbye at one predictable moment models a gesture without turning it into homework.",
     prompt: "Cute pixel art waving hand with hello sparkle, warm cream and teal palette.",
   },
   38: {
@@ -317,7 +317,7 @@ const babyWeekContent = {
     subtitle: "Baby week 38",
     wish: "Nine months in — you have a relationship now, not just a routine.",
     summary: "Mobility increases curiosity. Double-check stairs and pet bowls.",
-    doNow: "Install or test one stair gate if needed.",
+    doNow: "If stairs are in play, a stair gate is worth thinking about — search Australian stair gate safety and measure before you buy.",
     prompt: "Cute pixel art stair gate and teddy, warm cream and teal palette.",
   },
   39: {
@@ -325,7 +325,7 @@ const babyWeekContent = {
     subtitle: "Baby week 39",
     wish: "Applause for eating one pea is valid parenting.",
     summary: "Clapping and repetitive games reinforce joy and coordination.",
-    doNow: "Clap when bub accomplishes something small — they notice.",
+    doNow: "A clap when bub does something small is optional cheerleading they often notice.",
     prompt: "Cute pixel art clapping hands and confetti hearts, warm cream and teal palette.",
   },
   40: {
@@ -333,7 +333,7 @@ const babyWeekContent = {
     subtitle: "Baby week 40",
     wish: "Side-stepping along the sofa is the pre-walking tour.",
     summary: "Cruising builds balance for independent steps later. Clear paths help.",
-    doNow: "Move stable furniture into a safe cruising line.",
+    doNow: "Moving stable furniture into a safer cruising line can reduce the 'oh no' moments.",
     prompt: "Cute pixel art sofa cruise path with arrow, warm cream and teal palette.",
   },
   41: {
@@ -341,7 +341,7 @@ const babyWeekContent = {
     subtitle: "Baby week 41",
     wish: "Ma-ma and da-da might be practice sounds long before they mean you — enjoy anyway.",
     summary: "Early word-like sounds emerge. Reading one board book daily helps.",
-    doNow: "Point at pictures and name one object per page.",
+    doNow: "Pointing at a picture and naming one object per page is a gentle reading habit if you have a board book handy.",
     prompt: "Cute pixel art board book with apple and cat icons, warm cream and teal palette.",
   },
   42: {
@@ -349,7 +349,7 @@ const babyWeekContent = {
     subtitle: "Baby week 42",
     wish: "Ten months of micro-decisions that add up to a childhood.",
     summary: "Fine motor play improves. Stacking and dumping are peak toddler prep.",
-    doNow: "Offer a container to fill and empty safely.",
+    doNow: "A container to fill and empty safely is peak ten-month entertainment for many babies.",
     prompt: "Cute pixel art stacking rings and bucket, warm cream and teal palette.",
   },
   43: {
@@ -357,7 +357,7 @@ const babyWeekContent = {
     subtitle: "Baby week 43",
     wish: "The head shake when they do not want something is early boundary setting.",
     summary: "Preferences show clearly. Offer two acceptable choices when you can.",
-    doNow: "Hold up two outfits or two snacks — let bub choose.",
+    doNow: "Holding up two acceptable options (outfits, snacks) lets bub practise choosing without a power struggle.",
     prompt: "Cute pixel art two-choice cards with heart icons, warm cream and teal palette.",
   },
   44: {
@@ -365,7 +365,7 @@ const babyWeekContent = {
     subtitle: "Baby week 44",
     wish: "Some walk at ten months. Some at sixteen. The range is enormous.",
     summary: "First steps need bare feet on safe floors for balance practice.",
-    doNow: "Clear a walking lane across one room.",
+    doNow: "Clearing a walking lane across one room helps if first steps are close — bare feet on safe floors are commonly suggested.",
     prompt: "Cute pixel art first steps footprint trail, warm cream and teal palette.",
   },
   45: {
@@ -373,7 +373,7 @@ const babyWeekContent = {
     subtitle: "Baby week 45",
     wish: "Eleven months feels like the last chapter before the one-year party.",
     summary: "Sleep, food and movement keep shifting. Routine anchors still help.",
-    doNow: "Start a simple list for a low-key first birthday if you want one.",
+    doNow: "A simple list for a low-key first birthday is optional planning, not a Pinterest brief.",
     prompt: "Cute pixel art eleven candle and party hat, warm cream and teal palette.",
   },
   46: {
@@ -381,7 +381,7 @@ const babyWeekContent = {
     subtitle: "Baby week 46",
     wish: "Shared pointing is how bub says look at that with you.",
     summary: "Joint attention links words to the world. Name what they point at.",
-    doNow: "Follow bub's point and say the object's name once.",
+    doNow: "Following bub's point and saying the object's name once is shared attention in its simplest form.",
     prompt: "Cute pixel art pointing finger and dog icon, warm cream and teal palette.",
   },
   47: {
@@ -389,7 +389,7 @@ const babyWeekContent = {
     subtitle: "Baby week 47",
     wish: "They will copy wiping the table with a sock. Praise the effort.",
     summary: "Imitation of daily tasks emerges. Tiny chores become play.",
-    doNow: "Give a clean cloth during tidy-up time.",
+    doNow: "A clean cloth during tidy-up can turn copying into a tiny helpful game.",
     prompt: "Cute pixel art mini cloth and toy broom, warm cream and teal palette.",
   },
   48: {
@@ -397,7 +397,7 @@ const babyWeekContent = {
     subtitle: "Baby week 48",
     wish: "The first birthday is for you as much as bub — you crossed a year together.",
     summary: "Walking, words and personality converge. Immunisations may include twelve-month doses.",
-    doNow: "Confirm twelve-month health visit timing.",
+    doNow: "Twelve-month health visit timing is worth confirming soon — GP, child health nurse, or your reminder texts.",
     prompt: "Cute pixel art birthday one candle and number block, warm cream and teal palette.",
   },
   49: {
@@ -405,7 +405,7 @@ const babyWeekContent = {
     subtitle: "Baby week 49",
     wish: "Water on the shirt is tuition for open-cup skills.",
     summary: "Transition toward cup drinking supports oral development. Small sips with help.",
-    doNow: "Offer a small open cup or straw cup at one meal.",
+    doNow: "A small open cup or straw cup at one meal is something to try when you are ready. Search cup drinking for babies for current tips.",
     prompt: "Cute pixel art training cup with water droplet, warm cream and teal palette.",
   },
   50: {
@@ -413,7 +413,7 @@ const babyWeekContent = {
     subtitle: "Baby week 50",
     wish: "Bouncing to music is gross motor joy — join in.",
     summary: "Rhythm and movement support coordination and mood for everyone.",
-    doNow: "Play one song and dance holding hands for sixty seconds.",
+    doNow: "One song and a sixty-second dance break is optional joy for everyone in the room.",
     prompt: "Cute pixel art music note and dancing shoes, warm cream and teal palette.",
   },
   51: {
@@ -421,7 +421,7 @@ const babyWeekContent = {
     subtitle: "Baby week 51",
     wish: "Give the block may work before you expect it.",
     summary: "Receptive language runs ahead of speech. Simple one-step requests are worth trying.",
-    doNow: "Ask for one easy action — give me the ball.",
+    doNow: "Asking for one easy action ('give me the ball') is receptive language practice if bub is in the mood.",
     prompt: "Cute pixel art ball and open hand gesture, warm cream and teal palette.",
   },
   52: {
@@ -429,7 +429,7 @@ const babyWeekContent = {
     subtitle: "Baby week 52",
     wish: "You made it through year one. That is not small.",
     summary: "A year of growth for bub and for you. Walking, words and personality keep unfolding.",
-    doNow: "Write one sentence about year one for future you to read.",
+    doNow: "Writing one sentence about year one for future you is a small gift to yourself.",
     prompt: "Cute pixel art first birthday cake and confetti, warm cream and teal palette.",
   },
 };

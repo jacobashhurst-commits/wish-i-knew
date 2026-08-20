@@ -2,7 +2,7 @@ import fs from "node:fs";
 
 const imageStyle = "cute 8-bit pixel art item";
 const sourceNotes =
-  "Editorial review before publish. General development info, not individual medical advice.";
+  "Suggestions only — not individual medical advice. Prefer your GP, midwife, child health nurse, or trusted sources (e.g. healthdirect, Pregnancy Care Guidelines, Infant Feeding Guidelines). Search when unsure.";
 
 function sqlString(value) {
   if (value === null || value === undefined) return "null";
@@ -93,11 +93,9 @@ on conflict (slug) do update set
   source_notes = excluded.source_notes,
   conditions = excluded.conditions,
   illustration_prompt = excluded.illustration_prompt,
-  image_url = excluded.image_url,
   image_alt = excluded.image_alt,
   image_style = excluded.image_style,
-  image_status = excluded.image_status,
-  status = excluded.status,
+  -- Keep existing image_url, image_status, status, published_at on re-seed.
   updated_at = now();
 `;
 

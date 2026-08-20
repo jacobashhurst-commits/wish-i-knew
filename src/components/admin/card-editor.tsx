@@ -385,7 +385,10 @@ export function CardEditor({ card }: { card: AdminCardRow | null }) {
             />
           </label>
           <label className={labelClass}>
-            What to do now
+            Something to think about
+            <p className="mt-0.5 text-xs font-normal text-[#172033]/50">
+              Soft suggestions only — prefer search / clinician over hard instructions.
+            </p>
             <textarea
               className={inputClass}
               onChange={(e) => set("what_to_do_now", e.target.value || null)}
