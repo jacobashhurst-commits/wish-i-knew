@@ -1,8 +1,9 @@
 import { NextResponse } from "next/server";
 import { composeDigest, digestCardIds } from "@/lib/email/digest";
 import { buildWeekContextLabel, renderLookaheadEmail } from "@/lib/email/render-lookahead";
-import { sendEmail } from "@/lib/email/resend";
+import { isResendTestSender, sendEmail } from "@/lib/email/resend";
 import { signPauseToken } from "@/lib/email/tokens";
+import { getEmailSecrets } from "@/lib/env";
 import { mapTimelineCard, type TimelineCardRow } from "@/lib/data/map-card";
 import { createServiceClient } from "@/lib/supabase/service";
 import { getSiteUrl } from "@/lib/supabase/config";
@@ -65,8 +66,25 @@ export async function GET(request: Request) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
+  const { from } = await getEmailSecrets();
+  if (!from || isResendTestSender(from)) {
+    return NextResponse.json(
+      {
+        error:
+          "Email sender not production-ready. Verify a domain in Resend and set WIK_FROM_EMAIL to an address on that domain (not @resend.dev).",
+        fromConfigured: Boolean(from),
+        testSender: !from || isResendTestSender(from),
+      },
+      { status: 503 },
+    );
+  }
+
   const siteUrl = getSiteUrl().replace(/\/$/, "");
   const supabase = createServiceClient();
+  console.info("[weekly-lookahead] cron start", {
+    at: new Date().toISOString(),
+    via: request.headers.get("x-vercel-cron") ? "vercel-cron" : "manual",
+  });
 
   const { data: preferences, error: prefError } = await supabase
     .from("weekly_lookahead_preferences")

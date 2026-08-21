@@ -1,0 +1,24 @@
+# Backup trigger for weekly lookahead emails.
+# Vercel Cron should still run (`0 22 * * *` UTC); this catches missed Hobby invocations.
+name: Weekly lookahead cron
+
+on:
+  schedule:
+    # ~8:05am Australia/Sydney during AEST (UTC+10); still Saturday local for AEDT (UTC+11).
+    - cron: "5 22 * * *"
+  workflow_dispatch:
+
+jobs:
+  trigger:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Invoke weekly-lookahead
+        env:
+          CRON_SECRET: ${{ secrets.CRON_SECRET }}
+        run: |
+          if [ -z "$CRON_SECRET" ]; then
+            echo "CRON_SECRET GitHub secret is not set" >&2
+            exit 1
+          fi
+          curl -fsS -H "Authorization: Bearer ${CRON_SECRET}" \
+            "https://wish-i-knew.vercel.app/api/cron/weekly-lookahead"

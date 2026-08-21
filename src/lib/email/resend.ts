@@ -9,6 +9,14 @@ type SendEmailInput = {
   unsubscribeUrl?: string;
 };
 
+/** Resend's shared onboarding sender can only deliver to the account owner. */
+export function isResendTestSender(from: string): boolean {
+  const address = from.includes("<")
+    ? (from.match(/<([^>]+)>/)?.[1] ?? from)
+    : from;
+  return address.trim().toLowerCase().endsWith("@resend.dev");
+}
+
 /**
  * Sends via the Resend REST API. No SDK dependency needed.
  * TODO: set up SPF/DKIM on the sending domain before real users receive these.
