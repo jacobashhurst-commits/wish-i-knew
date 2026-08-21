@@ -114,7 +114,7 @@ function featuredWindowHtml(item: MatchedCard, siteUrl: string): string {
           ? `<tr>
               <td align="center" style="padding:14px 18px 0 18px;background:${colors.creamSoft};">
                 <a href="${href}" style="text-decoration:none;">
-                  <img src="${escapeHtml(imageUrl)}" alt="${escapeHtml(imageAlt)}" width="220" height="220" style="display:block;width:220px;height:220px;max-width:100%;border-radius:20px;border:2px solid ${colors.white};box-shadow:0 8px 24px rgba(13,27,42,0.12);background:${colors.white};" />
+                  <img src="${escapeHtml(imageUrl)}" alt="${escapeHtml(imageAlt)}" width="220" style="display:block;width:220px;max-width:100%;height:auto;border-radius:20px;border:2px solid ${colors.white};box-shadow:0 8px 24px rgba(13,27,42,0.12);background:${colors.white};" />
                 </a>
               </td>
             </tr>`
@@ -230,9 +230,9 @@ function teaserCardHtml(item: MatchedCard, siteUrl: string): string {
             <tr>
               ${
                 imageUrl
-                  ? `<td valign="top" width="72" style="padding-right:14px;">
+                  ? `<td valign="top" width="72" style="width:72px;padding-right:14px;">
                       <a href="${href}" style="text-decoration:none;">
-                        <img src="${escapeHtml(imageUrl)}" alt="${escapeHtml(imageAlt)}" width="64" height="64" style="display:block;width:64px;height:64px;border-radius:14px;border:1px solid ${colors.border};background:${colors.creamSoft};" />
+                        <img src="${escapeHtml(imageUrl)}" alt="${escapeHtml(imageAlt)}" width="64" style="display:block;width:64px;max-width:64px;height:auto;border-radius:14px;border:1px solid ${colors.border};background:${colors.creamSoft};" />
                       </a>
                     </td>`
                   : ""
