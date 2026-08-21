@@ -35,6 +35,7 @@ export const PUBLIC_PATH_PREFIXES = [
   "/api/cron/weekly-lookahead",
   "/api/cron/keepalive",
   "/api/cron/smoke-email",
+  "/api/cron/env-check",
   "/api/lookahead/pause",
 ] as const;
 
