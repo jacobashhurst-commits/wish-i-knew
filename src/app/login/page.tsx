@@ -16,13 +16,13 @@ export default async function LoginPage({ searchParams }: LoginPageProps) {
           <p className="wik-chip mx-auto bg-[#FFF6E6] text-[#1D809F]">Wish I Knew beta</p>
           <h1 className="font-display mt-4 text-4xl font-semibold text-[#0d1b2a]">Sign in to continue</h1>
           <p className="mt-2 text-sm leading-6 text-[#697386]">
-            Magic link only. No password. Your timeline saves across devices.
+            Email + password for this alpha. Invited emails only — your timeline saves across devices.
           </p>
         </div>
 
         {authError ? (
           <p className="mb-4 rounded-xl bg-[#FFF5F5] px-4 py-3 text-sm font-medium text-[#FF6B6B]">
-            That sign-in link did not work. Request a fresh magic link below.
+            That sign-in did not work. Try again with your email and password.
           </p>
         ) : null}
 

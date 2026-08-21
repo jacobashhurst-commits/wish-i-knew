@@ -11,16 +11,9 @@ export type AuthActionResult = {
   success?: boolean;
 };
 
-export async function signInWithMagicLink(email: string): Promise<AuthActionResult> {
-  const trimmed = email.trim().toLowerCase();
-
-  if (!trimmed || !trimmed.includes("@")) {
-    return { error: "Enter a valid email address." };
-  }
-
+async function assertInvited(email: string): Promise<AuthActionResult | null> {
   try {
-    const invited = await isEmailInvited(trimmed);
-
+    const invited = await isEmailInvited(email);
     if (!invited) {
       return {
         error: isBetaInviteOnly()
@@ -33,6 +26,81 @@ export async function signInWithMagicLink(email: string): Promise<AuthActionResu
       error: error instanceof Error ? error.message : "Could not verify beta access.",
     };
   }
+  return null;
+}
+
+/** Alpha sign-in: email + password (avoids magic-link expiry / rate limits). */
+export async function signInWithPassword(
+  email: string,
+  password: string,
+): Promise<AuthActionResult> {
+  const trimmed = email.trim().toLowerCase();
+
+  if (!trimmed || !trimmed.includes("@")) {
+    return { error: "Enter a valid email address." };
+  }
+  if (!password || password.length < 8) {
+    return { error: "Enter your password (at least 8 characters)." };
+  }
+
+  const inviteError = await assertInvited(trimmed);
+  if (inviteError) return inviteError;
+
+  const supabase = await createClient();
+  const { error } = await supabase.auth.signInWithPassword({
+    email: trimmed,
+    password,
+  });
+
+  if (error) {
+    return { error: error.message };
+  }
+
+  return { success: true };
+}
+
+/** First-time alpha: create password account for an invited email. */
+export async function signUpWithPassword(
+  email: string,
+  password: string,
+): Promise<AuthActionResult> {
+  const trimmed = email.trim().toLowerCase();
+
+  if (!trimmed || !trimmed.includes("@")) {
+    return { error: "Enter a valid email address." };
+  }
+  if (!password || password.length < 8) {
+    return { error: "Choose a password with at least 8 characters." };
+  }
+
+  const inviteError = await assertInvited(trimmed);
+  if (inviteError) return inviteError;
+
+  const supabase = await createClient();
+  const { error } = await supabase.auth.signUp({
+    email: trimmed,
+    password,
+    options: {
+      emailRedirectTo: `${getSiteUrl()}/auth/callback`,
+    },
+  });
+
+  if (error) {
+    return { error: error.message };
+  }
+
+  return { success: true };
+}
+
+export async function signInWithMagicLink(email: string): Promise<AuthActionResult> {
+  const trimmed = email.trim().toLowerCase();
+
+  if (!trimmed || !trimmed.includes("@")) {
+    return { error: "Enter a valid email address." };
+  }
+
+  const inviteError = await assertInvited(trimmed);
+  if (inviteError) return inviteError;
 
   const supabase = await createClient();
   const { error } = await supabase.auth.signInWithOtp({

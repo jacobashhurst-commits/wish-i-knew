@@ -34,6 +34,7 @@ export const PUBLIC_PATH_PREFIXES = [
   // auth (CRON_SECRET header or signed token) - add new routes deliberately.
   "/api/cron/weekly-lookahead",
   "/api/cron/keepalive",
+  "/api/cron/smoke-email",
   "/api/lookahead/pause",
 ] as const;
 

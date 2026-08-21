@@ -1,8 +1,9 @@
 "use client";
 
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
-import { signInWithMagicLink } from "@/app/actions/auth";
+import { signInWithPassword, signUpWithPassword } from "@/app/actions/auth";
 
 type AuthGateProps = {
   userEmail?: string | null;
@@ -11,7 +12,10 @@ type AuthGateProps = {
 };
 
 export function AuthGate({ userEmail, requireConsent = false, showBetaNote = false }: AuthGateProps) {
+  const router = useRouter();
+  const [mode, setMode] = useState<"signin" | "signup">("signin");
   const [email, setEmail] = useState(userEmail ?? "");
+  const [password, setPassword] = useState("");
   const [consent, setConsent] = useState(false);
   const [message, setMessage] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -28,22 +32,32 @@ export function AuthGate({ userEmail, requireConsent = false, showBetaNote = fal
     }
 
     startTransition(async () => {
-      const result = await signInWithMagicLink(email);
+      const result =
+        mode === "signin"
+          ? await signInWithPassword(email, password)
+          : await signUpWithPassword(email, password);
 
       if (result.error) {
         setError(result.error);
         return;
       }
 
-      setMessage("Check your email for a magic link. After you open it once, this device should stay signed in.");
+      if (mode === "signup") {
+        setMessage("Account ready — you are signed in. If nothing loads, refresh once.");
+      }
+
+      router.replace("/");
+      router.refresh();
     });
   }
 
   return (
     <section className="wik-shell-card p-5 sm:p-6">
-      <h2 className="font-display text-2xl font-semibold text-[#0d1b2a]">Email me a magic link</h2>
+      <h2 className="font-display text-2xl font-semibold text-[#0d1b2a]">
+        {mode === "signin" ? "Sign in" : "Create alpha password"}
+      </h2>
       <p className="mt-2 text-sm leading-6 text-[#697386]">
-        Sign in with a magic link. No password. After the first link on this device, you should stay signed in — we will not ask every visit.
+        Friends-and-family alpha uses email + password (no magic link). Invited emails only.
       </p>
 
       {showBetaNote ? (
@@ -62,6 +76,19 @@ export function AuthGate({ userEmail, requireConsent = false, showBetaNote = fal
             placeholder="you@example.com"
             type="email"
             value={email}
+          />
+        </label>
+
+        <label>
+          <span className="text-sm font-semibold text-[#172033]">Password</span>
+          <input
+            autoComplete={mode === "signin" ? "current-password" : "new-password"}
+            className="mt-1.5 w-full rounded-xl border border-[#0d1b2a]/15 bg-[#FFFDF7] px-4 py-3 outline-none focus:border-[#1D809F]"
+            minLength={8}
+            onChange={(event) => setPassword(event.target.value)}
+            placeholder="At least 8 characters"
+            type="password"
+            value={password}
           />
         </label>
 
@@ -91,9 +118,43 @@ export function AuthGate({ userEmail, requireConsent = false, showBetaNote = fal
         {message ? <p className="text-sm font-medium text-[#1D809F]">{message}</p> : null}
 
         <button className="wik-button wik-button-sun w-full" disabled={isPending} type="submit">
-          {isPending ? "Sending link…" : "Email me a magic link"}
+          {isPending ? "Working…" : mode === "signin" ? "Sign in" : "Create password & continue"}
         </button>
       </form>
+
+      <p className="mt-4 text-center text-sm text-[#697386]">
+        {mode === "signin" ? (
+          <>
+            First visit?{" "}
+            <button
+              className="font-semibold text-[#1D809F] underline-offset-2 hover:underline"
+              onClick={() => {
+                setMode("signup");
+                setError(null);
+                setMessage(null);
+              }}
+              type="button"
+            >
+              Create a password
+            </button>
+          </>
+        ) : (
+          <>
+            Already set a password?{" "}
+            <button
+              className="font-semibold text-[#1D809F] underline-offset-2 hover:underline"
+              onClick={() => {
+                setMode("signin");
+                setError(null);
+                setMessage(null);
+              }}
+              type="button"
+            >
+              Sign in
+            </button>
+          </>
+        )}
+      </p>
     </section>
   );
 }
