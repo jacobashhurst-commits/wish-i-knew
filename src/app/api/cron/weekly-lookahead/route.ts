@@ -5,6 +5,7 @@ import { sendEmail } from "@/lib/email/resend";
 import { signPauseToken } from "@/lib/email/tokens";
 import { mapTimelineCard, type TimelineCardRow } from "@/lib/data/map-card";
 import { createServiceClient } from "@/lib/supabase/service";
+import { getSiteUrl } from "@/lib/supabase/config";
 import { buildTimeline } from "@/lib/timeline/matching";
 import { calculateAgeInDays, calculatePregnancyWeek } from "@/lib/timeline/dates";
 import type { UserCardState } from "@/types/content";
