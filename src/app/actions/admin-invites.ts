@@ -88,7 +88,7 @@ async function findAuthUserIdByEmail(email: string): Promise<string | null> {
   for (let page = 1; page <= 5; page += 1) {
     const { data, error } = await service.auth.admin.listUsers({ page, perPage: 200 });
     if (error) throw error;
-    const match = data.users.find((user) => user.email?.toLowerCase() === email);
+    const match = data.users.find((user) => user.email?.trim().toLowerCase() === email);
     if (match) return match.id;
     if (data.users.length < 200) break;
   }
@@ -158,20 +158,24 @@ export async function removeAlphaInvite(email: string): Promise<InviteActionResu
   if (!admin) return { error: "Admin sign-in required." };
 
   const normalized = email.trim().toLowerCase();
-  if (admin.email?.toLowerCase() === normalized) {
+  if (admin.email?.trim().toLowerCase() === normalized) {
     return { error: "You can't remove your own admin account from here." };
   }
 
   try {
     const supabase = createServiceClient();
 
-    const { data: profile, error: profileError } = await supabase
+    // Match by trimmed email — legacy invite rows may have trailing whitespace,
+    // and `.eq("email", normalized)` would silently delete 0 rows.
+    const { data: profiles, error: profileError } = await supabase
       .from("profiles")
-      .select("id, auth_user_id, role, email")
-      .eq("email", normalized)
-      .maybeSingle();
+      .select("id, auth_user_id, role, email");
 
     if (profileError) return { error: profileError.message };
+
+    const profile =
+      profiles?.find((row) => row.email?.trim().toLowerCase() === normalized) ?? null;
+
     if (profile?.role === "admin") {
       return { error: "Refusing to delete an admin account via invite remove." };
     }
@@ -187,8 +191,19 @@ export async function removeAlphaInvite(email: string): Promise<InviteActionResu
       if (deleteAuthError) return { error: deleteAuthError.message };
     }
 
-    const { error } = await supabase.from("beta_invites").delete().eq("email", normalized);
-    if (error) return { error: error.message };
+    const { data: inviteRows, error: inviteListError } = await supabase
+      .from("beta_invites")
+      .select("email");
+    if (inviteListError) return { error: inviteListError.message };
+
+    const inviteEmails = (inviteRows ?? [])
+      .map((row) => row.email)
+      .filter((value): value is string => value.trim().toLowerCase() === normalized);
+
+    if (inviteEmails.length > 0) {
+      const { error } = await supabase.from("beta_invites").delete().in("email", inviteEmails);
+      if (error) return { error: error.message };
+    }
 
     revalidatePath("/admin/invites");
     return {

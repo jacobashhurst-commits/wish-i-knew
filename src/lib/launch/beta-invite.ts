@@ -13,15 +13,12 @@ export async function isEmailInvited(email: string): Promise<boolean> {
   }
 
   const supabase = createServiceClient();
-  const { data, error } = await supabase
-    .from("beta_invites")
-    .select("email")
-    .eq("email", normalized)
-    .maybeSingle();
+  // Alpha lists are tiny; scan so legacy rows with stray whitespace still match.
+  const { data, error } = await supabase.from("beta_invites").select("email");
 
   if (error) {
     throw new Error(`Could not verify beta invite: ${error.message}`);
   }
 
-  return Boolean(data);
+  return (data ?? []).some((row) => row.email?.trim().toLowerCase() === normalized);
 }
