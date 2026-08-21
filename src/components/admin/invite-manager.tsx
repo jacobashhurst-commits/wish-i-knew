@@ -64,6 +64,7 @@ export function InviteManager({ initialInvites }: { initialInvites: AlphaInvite[
         <h2 className="font-display text-lg font-semibold">Add tester</h2>
         <p className="mt-1 text-sm text-[#697386]">
           Saves them to the allowlist and emails a signup link (they choose their own password).
+          Remove deletes their account and all app data so they can re-onboard cleanly.
         </p>
         <div className="mt-4 grid gap-3 sm:grid-cols-[2fr_1fr_auto]">
           <label className="text-sm font-semibold">
@@ -112,7 +113,7 @@ export function InviteManager({ initialInvites }: { initialInvites: AlphaInvite[
                 <div>
                   <p className="text-sm font-semibold">{invite.email}</p>
                   <p className="text-xs text-[#172033]/50">
-                    {invite.note || "—"} · added{" "}
+                    {invite.note || "No note"} · added{" "}
                     {new Date(invite.invited_at).toLocaleDateString("en-AU")}
                   </p>
                 </div>
@@ -126,12 +127,21 @@ export function InviteManager({ initialInvites }: { initialInvites: AlphaInvite[
                     Resend email
                   </button>
                   <button
-                    className="rounded-xl border border-[#0d1b2a]/15 px-3 py-1.5 text-xs font-semibold hover:bg-[#F7F4EC] disabled:opacity-40"
+                    className="rounded-xl border border-[#B4423C]/30 px-3 py-1.5 text-xs font-semibold text-[#B4423C] hover:bg-[#FFF5F5] disabled:opacity-40"
                     disabled={isPending}
-                    onClick={() => handleRemove(invite.email)}
+                    onClick={() => {
+                      if (
+                        !window.confirm(
+                          `Remove ${invite.email} and permanently delete their account and all app data?`,
+                        )
+                      ) {
+                        return;
+                      }
+                      handleRemove(invite.email);
+                    }}
                     type="button"
                   >
-                    Remove
+                    Remove & wipe
                   </button>
                 </div>
               </li>

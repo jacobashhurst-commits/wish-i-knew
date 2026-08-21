@@ -46,7 +46,7 @@ export function AuthGate({ userEmail, requireConsent = false, showBetaNote = fal
         {mode === "signin" ? "Sign in" : "Create alpha password"}
       </h2>
       <p className="mt-2 text-sm leading-6 text-[#697386]">
-        Friends-and-family alpha uses email + password (no magic link). Invited emails only — then your
+        Friends-and-family alpha uses email + password (no magic link). Invited emails only, then your
         timeline saves across devices.
       </p>
 

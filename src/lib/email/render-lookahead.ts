@@ -197,7 +197,7 @@ function glanceSummaryHtml(cards: MatchedCard[], siteUrl: string): string {
             Your cards this week
           </p>
           <p style="margin:6px 0 0 0;font-size:14px;line-height:1.5;color:${colors.muted};">
-            A quick map — tap any one to open it in Wish I Knew.
+            A quick map. Tap any one to open it in Wish I Knew.
           </p>
         </td>
       </tr>
@@ -278,21 +278,21 @@ function buildSubject(input: LookaheadEmailInput): string {
   const weekPart = weekContext ? `${weekContext} with ${namePart}` : `Your week ahead with ${namePart}`;
 
   if (anchor) {
-    return `${weekPart} — ${anchor.card.title}`;
+    return `${weekPart}: ${anchor.card.title}`;
   }
 
   const onlyFun =
     cards.length > 0 &&
     cards.every(({ card }) => card.card_type === "quiet_week" || card.card_type === "Fun First");
   if (onlyFun) {
-    return `${weekPart} — a gentle one for the week`;
+    return `${weekPart}: a gentle one for the week`;
   }
 
   if (cards.length === 1) {
-    return `${weekPart} — ${cards[0].card.title}`;
+    return `${weekPart}: ${cards[0].card.title}`;
   }
 
-  return `${weekPart} — ${cards.length} things worth knowing`;
+  return `${weekPart}: ${cards.length} things worth knowing`;
 }
 
 export function renderLookaheadEmail(input: LookaheadEmailInput): {
@@ -335,7 +335,7 @@ export function renderLookaheadEmail(input: LookaheadEmailInput): {
                 ${escapeHtml(heading)}
               </h1>
               <p style="margin:12px 0 0 0;font-size:15px;line-height:1.55;color:rgba(255,246,230,0.82);">
-                A little window into what’s new — then hop into the app for the full story.
+                A little window into what’s new, then hop into the app for the full story.
               </p>
             </td></tr>
             <tr><td style="padding:14px 24px 22px 24px;">
@@ -402,7 +402,7 @@ export function renderLookaheadEmail(input: LookaheadEmailInput): {
               <p style="margin:0;font-size:13px;line-height:1.65;color:${colors.muted};">
                 You chose one calm email a week. Life busy?
                 <a href="${pauseUrl}" style="color:${colors.ocean};font-weight:600;">Pause these emails</a>
-                anytime — your account and timeline stay put.
+                anytime. Your account and timeline stay put.
               </p>
               <p style="margin:14px 0 0 0;font-size:11px;line-height:1.6;color:#9aa1ad;">
                 Practical guidance for Australian parents, not medical advice.
@@ -425,7 +425,7 @@ export function renderLookaheadEmail(input: LookaheadEmailInput): {
     heading,
     cardCountLabel,
     "",
-    "A little window into what’s new — open the app for the full story.",
+    "A little window into what’s new. Open the app for the full story.",
     `Open your timeline: ${openTimeline}`,
     "",
     featured

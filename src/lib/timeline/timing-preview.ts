@@ -33,13 +33,13 @@ export function describeCardTiming(card: Pick<
       windowLabel: card.card_type === "quiet_week" ? "Quiet week (fun filler)" : "Fun filler",
       firstAppears: null,
       repeatBehavior: "Rotates in as a digest filler when the week is thin.",
-      notes: ["Not tied to a timing window — picked by weekly rotation in the email digest."],
+      notes: ["Not tied to a timing window; picked by weekly rotation in the email digest."],
     };
   }
 
   if (isWeeklyAnchorCard(card)) {
     notes.push("Leads the weekly email when this week matches.");
-    notes.push("Designed for a single week — set pregnancy start and end to the same number.");
+    notes.push("Designed for a single week. Set pregnancy start and end to the same number.");
   }
 
   const hasAge =
@@ -73,7 +73,7 @@ export function describeCardTiming(card: Pick<
 
   let repeatBehavior: string;
   if (isWeeklyAnchorCard(card) || (hasPregnancy && card.pregnancy_week_start === card.pregnancy_week_end)) {
-    repeatBehavior = "Shows once when that week arrives — next week's anchor takes over.";
+    repeatBehavior = "Shows once when that week arrives. Next week's anchor takes over.";
   } else {
     repeatBehavior = "Stays active every week in the window until the parent marks it done or dismisses it.";
     notes.push("Can appear in multiple weekly emails until actioned.");

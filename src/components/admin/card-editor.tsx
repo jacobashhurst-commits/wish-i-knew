@@ -174,7 +174,7 @@ export function CardEditor({ card }: { card: AdminCardRow | null }) {
           next === "published"
             ? "Published (final). Live for matching users."
             : next === "approved"
-              ? "Provisionally approved — live for friends; wife still has final say before beta."
+              ? "Provisionally approved: live for friends; wife still has final say before beta."
               : `Status changed to ${next}.`,
         );
       },
@@ -393,7 +393,7 @@ export function CardEditor({ card }: { card: AdminCardRow | null }) {
           <label className={labelClass}>
             What to do now
             <p className="mt-0.5 text-xs font-normal text-[#172033]/50">
-              Suggestive prep — “start thinking about…”, not hard medical instructions.
+              Suggestive prep: “start thinking about…”, not hard medical instructions.
             </p>
             <textarea
               className={inputClass}

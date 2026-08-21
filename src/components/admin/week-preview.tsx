@@ -249,7 +249,7 @@ export function WeekPreview({ cards }: { cards: AdminCardRow[] }) {
         <p className="mt-3 text-sm font-semibold text-[#1D809F]">{formatWeekContext(profile)}</p>
         {anchorGap ? (
           <p className="mt-2 rounded-xl bg-[#FFF3DB] px-3 py-2 text-sm text-[#9A6B15]">
-            No weekly anchor card for this pregnancy week — add a &ldquo;This week with bub&rdquo; card with start
+            No weekly anchor card for this pregnancy week. Add a &ldquo;This week with bub&rdquo; card with start
             and end set to week {weekNumber}.
           </p>
         ) : null}
@@ -322,7 +322,7 @@ export function WeekPreview({ cards }: { cards: AdminCardRow[] }) {
           cards={timeline.currentCards}
           empty="Nothing in This week."
           highlightSlugs={digestSlugs}
-          title="Timeline — This week"
+          title="Timeline: This week"
         />
         <CardList cards={timeline.comingSoonCards} empty="Nothing coming soon." title="Coming soon" />
         <CardList cards={timeline.overdueCards} empty="Nothing overdue." title="Overdue" />

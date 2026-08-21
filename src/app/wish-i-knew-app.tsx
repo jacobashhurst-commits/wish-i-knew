@@ -419,26 +419,26 @@ function WelcomeDialog({ onContinue }: { onContinue: () => void }) {
             Wish I Knew, in a nutshell
           </h2>
           <p className="mt-3 text-sm leading-6 text-[#697386]">
-            A simple parenting timeline with a bit of fun — practical cards for what&apos;s happening now,
+            A simple parenting timeline with a bit of fun: practical cards for what&apos;s happening now,
             what&apos;s coming up, and what you can leave for later. Built by a forgetful lazy dad who
             figured an app might be easier than remembering everything himself.
           </p>
           <ul className="mt-4 space-y-2 text-sm leading-6 text-[#172033]">
             <li className="rounded-xl bg-white px-4 py-3 ring-1 ring-[#0d1b2a]/5">
-              <span className="font-semibold">Add the basics</span> — nickname, dates, and a couple of
+              <span className="font-semibold">Add the basics</span>: nickname, dates, and a couple of
               preferences.
             </li>
             <li className="rounded-xl bg-white px-4 py-3 ring-1 ring-[#0d1b2a]/5">
-              <span className="font-semibold">Browse your timeline</span> — open cards, save the useful
+              <span className="font-semibold">Browse your timeline</span>: open cards, save the useful
               ones, mark done when you&apos;re past them.
             </li>
             <li className="rounded-xl bg-white px-4 py-3 ring-1 ring-[#0d1b2a]/5">
-              <span className="font-semibold">Optional weekly email</span> — pick a day for a calm
+              <span className="font-semibold">Optional weekly email</span>: pick a day for a calm
               Lookahead around 8am, not a guilt trip.
             </li>
           </ul>
           <button className="wik-button wik-button-sun mt-6 w-full text-base" onClick={onContinue} type="button">
-            Got it — set up my timeline
+            Got it, set up my timeline
           </button>
         </div>
       </section>
@@ -502,7 +502,7 @@ function Onboarding({
             <div className="mt-6 rounded-2xl bg-white/10 p-4">
               <p className="text-sm font-semibold text-white">Your weekly Lookahead is the ritual.</p>
               <p className="mt-1 text-sm leading-6 text-white/75">
-                A calm check-in on the day you choose (around 8am Sydney) — practical cards, not a
+                A calm check-in on the day you choose (around 8am Sydney): practical cards, not a
                 guilt machine.
               </p>
             </div>

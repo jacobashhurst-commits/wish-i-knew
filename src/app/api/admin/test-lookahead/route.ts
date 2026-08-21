@@ -96,7 +96,7 @@ export async function POST(request: Request) {
 
   if (digest.length === 0) {
     return NextResponse.json(
-      { error: "Nothing in the digest for this week — nothing to send." },
+      { error: "Nothing in the digest for this week, so nothing to send." },
       { status: 400 },
     );
   }
@@ -129,7 +129,7 @@ export async function POST(request: Request) {
     to: admin.email,
     subject,
     html: rendered.html,
-    text: `${rendered.text}\n\n—\nThis was a Content Studio test send to ${admin.email}.`,
+    text: `${rendered.text}\n\n-\nThis was a Content Studio test send to ${admin.email}.`,
   });
 
   if (result.error) {

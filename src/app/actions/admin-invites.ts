@@ -56,7 +56,7 @@ function renderInviteEmail(input: { email: string; siteUrl: string }): {
 </body>
 </html>`;
   const text = [
-    "Wish I Knew — you're on the alpha list",
+    "Wish I Knew: you're on the alpha list",
     "",
     `Create your account with ${input.email}.`,
     "1. Open the link",
@@ -80,6 +80,19 @@ async function sendInviteEmail(email: string): Promise<string | null> {
     text: message.text,
   });
   return result.error ?? null;
+}
+
+/** Alpha lists are tiny; paginate a few pages of Auth Admin users. */
+async function findAuthUserIdByEmail(email: string): Promise<string | null> {
+  const service = createServiceClient();
+  for (let page = 1; page <= 5; page += 1) {
+    const { data, error } = await service.auth.admin.listUsers({ page, perPage: 200 });
+    if (error) throw error;
+    const match = data.users.find((user) => user.email?.toLowerCase() === email);
+    if (match) return match.id;
+    if (data.users.length < 200) break;
+  }
+  return null;
 }
 
 export async function addAlphaInvite(
@@ -135,16 +148,54 @@ export async function resendAlphaInvite(email: string): Promise<InviteActionResu
   return { success: `Resent invite email to ${normalized}.` };
 }
 
+/**
+ * Alpha reset: remove invite AND fully wipe that person's account + app data.
+ * Deleting auth.users cascades to profiles, then to children, card states,
+ * lookahead prefs, reminders, suggestions, digest sends, entitlements.
+ */
 export async function removeAlphaInvite(email: string): Promise<InviteActionResult> {
   const admin = await getAdminProfile();
   if (!admin) return { error: "Admin sign-in required." };
 
   const normalized = email.trim().toLowerCase();
+  if (admin.email?.toLowerCase() === normalized) {
+    return { error: "You can't remove your own admin account from here." };
+  }
 
   try {
     const supabase = createServiceClient();
+
+    const { data: profile, error: profileError } = await supabase
+      .from("profiles")
+      .select("id, auth_user_id, role, email")
+      .eq("email", normalized)
+      .maybeSingle();
+
+    if (profileError) return { error: profileError.message };
+    if (profile?.role === "admin") {
+      return { error: "Refusing to delete an admin account via invite remove." };
+    }
+
+    let authUserId = profile?.auth_user_id ?? null;
+    if (!authUserId) {
+      authUserId = await findAuthUserIdByEmail(normalized);
+    }
+
+    if (authUserId) {
+      // Revokes sessions and cascades: auth.users → profiles → user-owned rows.
+      const { error: deleteAuthError } = await supabase.auth.admin.deleteUser(authUserId);
+      if (deleteAuthError) return { error: deleteAuthError.message };
+    }
+
     const { error } = await supabase.from("beta_invites").delete().eq("email", normalized);
     if (error) return { error: error.message };
+
+    revalidatePath("/admin/invites");
+    return {
+      success: authUserId
+        ? `Removed ${normalized}, deleted their auth account, and wiped their app data.`
+        : `Removed invite for ${normalized} (no account existed).`,
+    };
   } catch (error) {
     return {
       error:
@@ -153,9 +204,6 @@ export async function removeAlphaInvite(email: string): Promise<InviteActionResu
           : "Could not remove invite (is SUPABASE_SERVICE_ROLE_KEY set?).",
     };
   }
-
-  revalidatePath("/admin/invites");
-  return { success: `Removed ${normalized}.` };
 }
 
 export async function listAlphaInvites(): Promise<AlphaInvite[]> {
