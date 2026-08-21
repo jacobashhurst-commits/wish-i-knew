@@ -25,7 +25,7 @@ export default async function LoginPage({ searchParams }: LoginPageProps) {
           <p className="font-semibold text-[#0d1b2a]">How it works</p>
           <ul className="mt-2 list-disc space-y-1.5 pl-5 text-[#697386]">
             <li>Tell us a nickname and date, and we build a calm stage-by-stage timeline.</li>
-            <li>Browse Current, Coming, Saved, and Done cards. Open any card for the full &ldquo;wish I knew&rdquo; tip.</li>
+            <li>Browse Current, Coming, Saved, and Read cards. Open any card for the full &ldquo;wish I knew&rdquo; tip.</li>
             <li>Optional weekly Lookahead email on the day you pick (around 8am Sydney time).</li>
           </ul>
           <p className="mt-3 text-[#697386]">

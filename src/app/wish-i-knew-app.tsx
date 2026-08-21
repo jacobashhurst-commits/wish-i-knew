@@ -8,7 +8,7 @@ import {
   saveOnboarding,
   updateLookaheadSettings,
 } from "@/app/actions/onboarding";
-import { upsertCardState } from "@/app/actions/card-states";
+import { upsertCardState, upsertCardStates } from "@/app/actions/card-states";
 import { signOut } from "@/app/actions/auth";
 import { updateChildJourneyStatus } from "@/app/actions/journey";
 import { AuthGate } from "@/components/auth-gate";
@@ -102,6 +102,12 @@ function addDays(date: string, days: number): string {
 
 function sentenceCase(value: string): string {
   return value.charAt(0).toUpperCase() + value.slice(1);
+}
+
+/** UI labels for card statuses. Storage keeps `done`; parents see "read". */
+function cardStatusLabel(status: UserCardStatus): string {
+  if (status === "done") return "read";
+  return status.replaceAll("_", " ");
 }
 
 function describeStage(profile: TimelineProfile, childName: string): string {
@@ -230,7 +236,7 @@ function TimelineCardItem({
         <div className="mt-3 flex flex-wrap gap-2 px-1">
           <StatusPill tone={typeTone}>{card.card_type}</StatusPill>
           {state?.status && state.status !== "unseen" ? (
-            <StatusPill tone="bg-[#E2F0E8] text-[#234B38]">{state.status.replace("_", " ")}</StatusPill>
+            <StatusPill tone="bg-[#E2F0E8] text-[#234B38]">{cardStatusLabel(state.status)}</StatusPill>
           ) : null}
         </div>
         <h3 className="font-display mt-2 px-1 text-xl font-semibold leading-tight text-[#0d1b2a]">
@@ -250,7 +256,7 @@ function TimelineCardItem({
           Save
         </ActionButton>
         <ActionButton active={state?.status === "done"} onClick={() => onAction(card.id, "done")}>
-          Done
+          Read
         </ActionButton>
         <ActionButton active={state?.status === "snoozed"} onClick={() => onAction(card.id, "snoozed")}>
           Snooze
@@ -294,7 +300,7 @@ function CardDetail({
 
   return (
     <div
-      className="fixed inset-0 z-50 flex justify-end bg-[#0d1b2a]/40 p-3 backdrop-blur-sm sm:p-6"
+      className="fixed inset-0 z-[70] flex justify-end bg-[#0d1b2a]/40 p-3 backdrop-blur-sm sm:p-6"
       onClick={onClose}
       role="presentation"
     >
@@ -374,7 +380,7 @@ function CardDetail({
                 onClose();
               }}
             >
-              Mark done
+              Mark as read
             </ActionButton>
             <ActionButton active={state?.status === "snoozed"} onClick={() => onAction(card.id, "snoozed")}>
               Snooze 7 days
@@ -481,7 +487,7 @@ function HomeTourDialog({ onContinue }: { onContinue: () => void }) {
           </h2>
           <p className="mt-3 text-sm leading-6 text-[#697386]">
             The four squares are your map. Tap around, open a card when something rings a bell, save
-            the keepers, mark done when you&apos;re past it. No guilt, no inbox mountain.
+            the keepers, mark as read when you&apos;re past it. No guilt, no inbox mountain.
           </p>
           <ul className="mt-4 space-y-2 text-sm leading-6 text-[#172033]">
             <li className="rounded-xl bg-white px-4 py-3 ring-1 ring-[#0d1b2a]/5">
@@ -491,7 +497,7 @@ function HomeTourDialog({ onContinue }: { onContinue: () => void }) {
               <span className="font-semibold">Coming</span> is the friendly heads-up pile.
             </li>
             <li className="rounded-xl bg-white px-4 py-3 ring-1 ring-[#0d1b2a]/5">
-              <span className="font-semibold">Saved / Done</span> keep the useful stuff without the
+              <span className="font-semibold">Saved / Read</span> keep the useful stuff without the
               clutter.
             </li>
           </ul>
@@ -956,6 +962,39 @@ export default function WishIKnewApp({ initialData }: { initialData: AppInitialD
     });
   }
 
+  function handleMarkAllAsRead(cardIds: string[]) {
+    const unreadIds = cardIds.filter((cardId) => cardStates[cardId]?.status !== "done");
+    if (!unreadIds.length) return;
+
+    setCardStates((current) => {
+      const next = { ...current };
+      for (const cardId of unreadIds) {
+        next[cardId] = {
+          card_id: cardId,
+          status: "done",
+          snoozed_until: null,
+        };
+      }
+      return next;
+    });
+
+    if (mode !== "authenticated" || !childId) return;
+
+    startActionTransition(async () => {
+      const result = await upsertCardStates({
+        childId,
+        updates: unreadIds.map((cardId) => ({
+          cardId,
+          status: "done" as const,
+        })),
+      });
+
+      if (result.error) {
+        router.refresh();
+      }
+    });
+  }
+
   function resetPreview() {
     window.localStorage.removeItem(demoStorageKey);
     setForm(defaultOnboarding);
@@ -1034,6 +1073,7 @@ export default function WishIKnewApp({ initialData }: { initialData: AppInitialD
             doneCards={doneCards}
             form={form}
             lookaheadCards={lookaheadCards}
+            onMarkAllAsRead={handleMarkAllAsRead}
             onOpen={setSelectedCard}
             savedCards={savedCards}
             timeline={timeline}
@@ -1146,6 +1186,7 @@ function HomeView({
   doneCards,
   form,
   lookaheadCards,
+  onMarkAllAsRead,
   onOpen,
   savedCards,
   timeline,
@@ -1153,12 +1194,43 @@ function HomeView({
   doneCards: TimelineCard[];
   form: OnboardingState;
   lookaheadCards: TimelineCard[];
+  onMarkAllAsRead: (cardIds: string[]) => void;
   onOpen: (card: TimelineCard) => void;
   savedCards: TimelineCard[];
   timeline: TimelineResult;
 }) {
   const currentCards = timeline.currentCards.map(({ card }) => card);
   const comingCards = timeline.comingSoonCards.map(({ card }) => card);
+  const [openBucket, setOpenBucket] = useState<"current" | "coming" | "saved" | "read" | null>(null);
+
+  const bucketConfig = {
+    current: {
+      label: "Current",
+      empty: "Nothing current right now.",
+      cards: currentCards,
+      markAllAsRead: true,
+    },
+    coming: {
+      label: "Coming",
+      empty: "Nothing coming up in this window.",
+      cards: comingCards,
+      markAllAsRead: true,
+    },
+    saved: {
+      label: "Saved",
+      empty: "No saved cards yet.",
+      cards: savedCards,
+      markAllAsRead: false,
+    },
+    read: {
+      label: "Read",
+      empty: "Nothing marked as read yet.",
+      cards: doneCards,
+      markAllAsRead: false,
+    },
+  } as const;
+
+  const openConfig = openBucket ? bucketConfig[openBucket] : null;
 
   return (
     <div className="mt-5 space-y-5">
@@ -1199,21 +1271,39 @@ function HomeView({
       </section>
 
       <section className="grid grid-cols-2 gap-3 lg:grid-cols-4">
-        <HomeQuadrant
-          empty="Nothing current right now."
-          cards={currentCards}
-          label="Current"
-          onOpen={onOpen}
-        />
-        <HomeQuadrant
-          empty="Nothing coming up in this window."
-          cards={comingCards}
-          label="Coming"
-          onOpen={onOpen}
-        />
-        <HomeQuadrant empty="No saved cards yet." cards={savedCards} label="Saved" onOpen={onOpen} />
-        <HomeQuadrant empty="Nothing marked done yet." cards={doneCards} label="Done" onOpen={onOpen} />
+        {(Object.keys(bucketConfig) as Array<keyof typeof bucketConfig>).map((key) => {
+          const bucket = bucketConfig[key];
+          return (
+            <HomeQuadrant
+              empty={bucket.empty}
+              cards={bucket.cards}
+              key={key}
+              label={bucket.label}
+              onOpen={onOpen}
+              onOpenList={() => setOpenBucket(key)}
+            />
+          );
+        })}
       </section>
+
+      {openConfig ? (
+        <QuadrantListDialog
+          cards={openConfig.cards}
+          empty={openConfig.empty}
+          label={openConfig.label}
+          markAllAsRead={openConfig.markAllAsRead}
+          onClose={() => setOpenBucket(null)}
+          onMarkAllAsRead={
+            openConfig.markAllAsRead
+              ? () => {
+                  onMarkAllAsRead(openConfig.cards.map((card) => card.id));
+                  setOpenBucket(null);
+                }
+              : undefined
+          }
+          onOpen={onOpen}
+        />
+      ) : null}
     </div>
   );
 }
@@ -1223,21 +1313,27 @@ function HomeQuadrant({
   empty,
   label,
   onOpen,
+  onOpenList,
 }: {
   cards: TimelineCard[];
   empty: string;
   label: string;
   onOpen: (card: TimelineCard) => void;
+  onOpenList: () => void;
 }) {
   const visible = cards.slice(0, 4);
   const overflow = cards.length - visible.length;
 
   return (
     <div className="wik-shell-card flex min-h-[11rem] flex-col p-3 sm:p-4">
-      <div className="flex items-baseline justify-between gap-2">
+      <button
+        className="-mx-1 flex items-baseline justify-between gap-2 rounded-xl px-1 py-0.5 text-left transition hover:bg-[#FFF6E6]"
+        onClick={onOpenList}
+        type="button"
+      >
         <p className="text-xs font-bold uppercase tracking-[0.16em] text-[#FF6B6B]">{label}</p>
         <p className="font-display text-lg font-semibold text-[#1D809F]">{cards.length}</p>
-      </div>
+      </button>
       <div className="mt-2 flex-1 space-y-1.5">
         {visible.length ? (
           visible.map((card) => (
@@ -1257,9 +1353,108 @@ function HomeQuadrant({
           <p className="px-1 py-3 text-xs leading-5 text-[#697386]">{empty}</p>
         )}
         {overflow > 0 ? (
-          <p className="px-1 text-[11px] font-medium text-[#697386]">+{overflow} more</p>
+          <button
+            className="px-1 text-left text-[11px] font-medium text-[#1D809F] underline-offset-2 hover:underline"
+            onClick={onOpenList}
+            type="button"
+          >
+            +{overflow} more
+          </button>
         ) : null}
       </div>
+    </div>
+  );
+}
+
+function QuadrantListDialog({
+  cards,
+  empty,
+  label,
+  markAllAsRead,
+  onClose,
+  onMarkAllAsRead,
+  onOpen,
+}: {
+  cards: TimelineCard[];
+  empty: string;
+  label: string;
+  markAllAsRead?: boolean;
+  onClose: () => void;
+  onMarkAllAsRead?: () => void;
+  onOpen: (card: TimelineCard) => void;
+}) {
+  useEscapeToContinue(onClose);
+
+  return (
+    <div
+      className="fixed inset-0 z-50 flex items-end justify-center bg-[#0d1b2a]/45 p-3 backdrop-blur-sm sm:items-center sm:p-6"
+      onClick={onClose}
+      role="presentation"
+    >
+      <section
+        aria-labelledby="quadrant-list-title"
+        aria-modal="true"
+        className="flex max-h-[85vh] w-full max-w-lg flex-col overflow-hidden rounded-[2rem] bg-[#FFF6E6] shadow-2xl"
+        onClick={(event) => event.stopPropagation()}
+        role="dialog"
+      >
+        <div className="flex items-start justify-between gap-3 border-b border-[#0d1b2a]/8 px-5 py-4 sm:px-6">
+          <div>
+            <p className="text-xs font-bold uppercase tracking-[0.18em] text-[#FF6B6B]">{label}</p>
+            <h2
+              className="font-display mt-1 text-2xl font-semibold text-[#0d1b2a]"
+              id="quadrant-list-title"
+            >
+              {cards.length} {cards.length === 1 ? "card" : "cards"}
+            </h2>
+          </div>
+          <button
+            className="rounded-full bg-white px-4 py-2 text-sm font-bold text-[#172033] shadow-sm"
+            onClick={onClose}
+            type="button"
+          >
+            Close
+          </button>
+        </div>
+
+        <div className="flex-1 space-y-2 overflow-y-auto px-5 py-4 sm:px-6">
+          {cards.length ? (
+            cards.map((card) => (
+              <button
+                className="flex w-full items-center gap-3 rounded-2xl border border-[#0d1b2a]/8 bg-white p-3 text-left transition hover:border-[#0d1b2a]/25"
+                key={card.id}
+                onClick={() => onOpen(card)}
+                type="button"
+              >
+                <CardThumb card={card} className="h-14 w-14 shrink-0" />
+                <div className="min-w-0 flex-1">
+                  <p className="truncate font-semibold text-[#0d1b2a]">{card.title}</p>
+                  {card.subtitle ? (
+                    <p className="mt-0.5 truncate text-sm text-[#697386]">{card.subtitle}</p>
+                  ) : null}
+                </div>
+                <span className="shrink-0 text-[#697386]" aria-hidden>
+                  →
+                </span>
+              </button>
+            ))
+          ) : (
+            <p className="py-8 text-center text-sm text-[#697386]">{empty}</p>
+          )}
+        </div>
+
+        {markAllAsRead && cards.length > 0 && onMarkAllAsRead ? (
+          <div className="border-t border-[#0d1b2a]/8 px-5 py-4 sm:px-6">
+            <button
+              className="wik-button wik-button-sun w-full text-base"
+              onClick={onMarkAllAsRead}
+              type="button"
+            >
+              Mark all as read
+            </button>
+          </div>
+        ) : null}
+      </section>
     </div>
   );
 }
@@ -1332,7 +1527,7 @@ function TimelineRow({
           <div className="flex flex-wrap items-center gap-2">
             <span className={clsx("wik-chip", toneStyle.chip)}>{card.card_type}</span>
             {state?.status === "done" ? (
-              <span className="wik-chip bg-[#E2F0E8] text-[#234B38]">done</span>
+              <span className="wik-chip bg-[#E2F0E8] text-[#234B38]">read</span>
             ) : null}
           </div>
           <h3 className="font-display mt-1 text-lg font-semibold leading-tight text-[#0d1b2a]">{card.title}</h3>

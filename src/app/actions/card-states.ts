@@ -8,19 +8,14 @@ export type ActionResult = {
   error?: string;
 };
 
-export async function upsertCardState(input: {
-  childId: string;
-  cardId: string;
-  status: UserCardStatus;
-  snoozedUntil?: string | null;
-}): Promise<ActionResult> {
+async function resolveProfileId() {
   const supabase = await createClient();
   const {
     data: { user },
   } = await supabase.auth.getUser();
 
   if (!user) {
-    return { error: "You need to sign in to save card actions." };
+    return { error: "You need to sign in to save card actions." as const };
   }
 
   const { data: profile, error: profileError } = await supabase
@@ -33,14 +28,52 @@ export async function upsertCardState(input: {
     return { error: profileError?.message ?? "Profile not found." };
   }
 
+  return { supabase, profileId: profile.id as string };
+}
+
+export async function upsertCardState(input: {
+  childId: string;
+  cardId: string;
+  status: UserCardStatus;
+  snoozedUntil?: string | null;
+}): Promise<ActionResult> {
+  return upsertCardStates({
+    childId: input.childId,
+    updates: [
+      {
+        cardId: input.cardId,
+        status: input.status,
+        snoozedUntil: input.snoozedUntil,
+      },
+    ],
+  });
+}
+
+export async function upsertCardStates(input: {
+  childId: string;
+  updates: Array<{
+    cardId: string;
+    status: UserCardStatus;
+    snoozedUntil?: string | null;
+  }>;
+}): Promise<ActionResult> {
+  if (!input.updates.length) return {};
+
+  const resolved = await resolveProfileId();
+  if ("error" in resolved) {
+    return { error: resolved.error };
+  }
+
+  const { supabase, profileId } = resolved;
+
   const { error } = await supabase.from("user_card_states").upsert(
-    {
-      user_id: profile.id,
+    input.updates.map((update) => ({
+      user_id: profileId,
       child_id: input.childId,
-      card_id: input.cardId,
-      status: input.status,
-      snoozed_until: input.status === "snoozed" ? (input.snoozedUntil ?? null) : null,
-    },
+      card_id: update.cardId,
+      status: update.status,
+      snoozed_until: update.status === "snoozed" ? (update.snoozedUntil ?? null) : null,
+    })),
     { onConflict: "user_id,child_id,card_id" },
   );
 

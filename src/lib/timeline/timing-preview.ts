@@ -75,7 +75,7 @@ export function describeCardTiming(card: Pick<
   if (isWeeklyAnchorCard(card) || (hasPregnancy && card.pregnancy_week_start === card.pregnancy_week_end)) {
     repeatBehavior = "Shows once when that week arrives. Next week's anchor takes over.";
   } else {
-    repeatBehavior = "Stays active every week in the window until the parent marks it done or dismisses it.";
+    repeatBehavior = "Stays active every week in the window until the parent marks it as read or dismisses it.";
     notes.push("Can appear in multiple weekly emails until actioned.");
   }
 
