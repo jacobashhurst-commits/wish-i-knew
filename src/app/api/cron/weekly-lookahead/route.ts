@@ -67,7 +67,7 @@ export async function GET(request: Request) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  const siteUrl = (process.env.NEXT_PUBLIC_SITE_URL ?? "http://127.0.0.1:3000").replace(/\/$/, "");
+  const siteUrl = getSiteUrl().replace(/\/$/, "");
   const supabase = createServiceClient();
 
   const { data: preferences, error: prefError } = await supabase
