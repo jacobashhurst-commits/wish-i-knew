@@ -35,11 +35,17 @@ export type AppInitialData = {
   mode: AppMode;
   requireAuth: boolean;
   userEmail: string | null;
+  /** Auth user id when signed in; used to scope client welcome caches across wipe/re-invite. */
+  authUserId: string | null;
   profileId: string | null;
   childId: string | null;
   childStatus: ChildJourneyStatus;
   form: OnboardingState;
   hasOnboarded: boolean;
+  /** Pre-onboarding product welcome dismissed (profile-backed when signed in). */
+  seenProductWelcome: boolean;
+  /** First home-page tour dismissed (profile-backed when signed in). */
+  seenHomeTour: boolean;
   cardStates: Record<string, UserCardState>;
   cards: TimelineCard[];
   isAdmin: boolean;

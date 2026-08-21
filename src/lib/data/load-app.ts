@@ -31,11 +31,14 @@ function previewInitialData(): AppInitialData {
     mode: "preview",
     requireAuth: isAuthRequired(),
     userEmail: null,
+    authUserId: null,
     profileId: null,
     childId: null,
     childStatus: "active",
     form: defaultOnboarding,
     hasOnboarded: false,
+    seenProductWelcome: false,
+    seenHomeTour: false,
     cardStates: emptyCardStates(),
     cards: mergePublishedCards([]),
     isAdmin: false,
@@ -104,7 +107,7 @@ async function loadAuthenticatedAppData(): Promise<AppInitialData> {
 
   const { data: profile, error: profileError } = await supabase
     .from("profiles")
-    .select("id, email, role, state")
+    .select("id, email, role, state, seen_product_welcome, seen_home_tour")
     .eq("auth_user_id", user.id)
     .maybeSingle();
 
@@ -117,16 +120,22 @@ async function loadAuthenticatedAppData(): Promise<AppInitialData> {
       mode: "authenticated",
       requireAuth,
       userEmail: user.email ?? null,
+      authUserId: user.id,
       profileId: null,
       childId: null,
       childStatus: "active",
       form: defaultOnboarding,
       hasOnboarded: false,
+      seenProductWelcome: false,
+      seenHomeTour: false,
       cardStates: emptyCardStates(),
       cards: mappedCards,
       isAdmin: false,
     };
   }
+
+  const seenProductWelcome = Boolean(profile.seen_product_welcome);
+  const seenHomeTour = Boolean(profile.seen_home_tour);
 
   const { data: child, error: childError } = await supabase
     .from("children")
@@ -145,6 +154,7 @@ async function loadAuthenticatedAppData(): Promise<AppInitialData> {
       mode: "authenticated",
       requireAuth,
       userEmail: user.email ?? profile.email,
+      authUserId: user.id,
       profileId: profile.id,
       childId: null,
       childStatus: "active",
@@ -153,6 +163,8 @@ async function loadAuthenticatedAppData(): Promise<AppInitialData> {
         state: profile.state ?? defaultOnboarding.state,
       },
       hasOnboarded: false,
+      seenProductWelcome,
+      seenHomeTour,
       cardStates: emptyCardStates(),
       cards: mappedCards,
       isAdmin: profile.role === "admin",
@@ -207,11 +219,14 @@ async function loadAuthenticatedAppData(): Promise<AppInitialData> {
     mode: "authenticated",
     requireAuth,
     userEmail: user.email ?? profile.email,
+    authUserId: user.id,
     profileId: profile.id,
     childId: child.id,
     childStatus: (child.status ?? "active") as ChildJourneyStatus,
     form,
     hasOnboarded: true,
+    seenProductWelcome,
+    seenHomeTour,
     cardStates,
     cards: mappedCards,
     isAdmin: profile.role === "admin",

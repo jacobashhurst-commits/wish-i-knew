@@ -3,7 +3,11 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useMemo, useState, useTransition } from "react";
-import { saveOnboarding, updateLookaheadSettings } from "@/app/actions/onboarding";
+import {
+  markWelcomeFlagSeen,
+  saveOnboarding,
+  updateLookaheadSettings,
+} from "@/app/actions/onboarding";
 import { upsertCardState } from "@/app/actions/card-states";
 import { signOut } from "@/app/actions/auth";
 import { updateChildJourneyStatus } from "@/app/actions/journey";
@@ -36,7 +40,16 @@ import type {
 type AppView = "home" | "timeline" | "library" | "saved" | "settings" | "admin";
 
 const demoStorageKey = "wish-i-knew-demo-state";
-const welcomeStorageKey = "wish-i-knew-welcome-seen";
+/** Legacy global key from early testing; migrated away so wipe/re-invite works. */
+const legacyWelcomeStorageKey = "wish-i-knew-welcome-seen";
+
+function productWelcomeStorageKey(scope: string) {
+  return `wish-i-knew-product-welcome:${scope}`;
+}
+
+function homeTourStorageKey(scope: string) {
+  return `wish-i-knew-home-tour:${scope}`;
+}
 
 const cardTypeStyles: Record<string, string> = {
   "Big Milestone": "bg-[#FFE3C2] text-[#5A3A14]",
@@ -384,7 +397,7 @@ function DetailSection({ title, value }: { title: string; value: string | null }
   );
 }
 
-function WelcomeDialog({ onContinue }: { onContinue: () => void }) {
+function useEscapeToContinue(onContinue: () => void) {
   useEffect(() => {
     function onKeyDown(event: KeyboardEvent) {
       if (event.key === "Escape") onContinue();
@@ -393,15 +406,19 @@ function WelcomeDialog({ onContinue }: { onContinue: () => void }) {
     window.addEventListener("keydown", onKeyDown);
     return () => window.removeEventListener("keydown", onKeyDown);
   }, [onContinue]);
+}
+
+function ProductWelcomeDialog({ onContinue }: { onContinue: () => void }) {
+  useEscapeToContinue(onContinue);
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-[#0d1b2a]/45 p-4 backdrop-blur-sm sm:p-6"
+      className="fixed inset-0 z-[60] flex items-center justify-center bg-[#0d1b2a]/45 p-4 backdrop-blur-sm sm:p-6"
       onClick={onContinue}
       role="presentation"
     >
       <section
-        aria-labelledby="welcome-dialog-title"
+        aria-labelledby="product-welcome-title"
         aria-modal="true"
         className="w-full max-w-lg overflow-hidden rounded-[2rem] bg-[#FFF6E6] shadow-2xl"
         onClick={(event) => event.stopPropagation()}
@@ -415,30 +432,71 @@ function WelcomeDialog({ onContinue }: { onContinue: () => void }) {
         />
         <div className="p-5 sm:p-7">
           <p className="wik-chip bg-white text-[#1D809F]">Welcome</p>
-          <h2 className="font-display mt-3 text-3xl font-semibold leading-tight text-[#0d1b2a]" id="welcome-dialog-title">
-            Wish I Knew, in a nutshell
+          <h2
+            className="font-display mt-3 text-3xl font-semibold leading-tight text-[#0d1b2a]"
+            id="product-welcome-title"
+          >
+            So, what is Wish I Knew?
           </h2>
           <p className="mt-3 text-sm leading-6 text-[#697386]">
-            A simple parenting timeline with a bit of fun: practical cards for what&apos;s happening now,
-            what&apos;s coming up, and what you can leave for later. Built by a forgetful lazy dad who
-            figured an app might be easier than remembering everything himself.
+            A calm, slightly cheeky timeline for Australian parents. Practical cards for what&apos;s
+            happening now, what&apos;s coming up, and what can happily wait. Built by a forgetful lazy
+            dad who figured an app might beat relying on his own memory.
+          </p>
+          <p className="mt-3 text-sm leading-6 text-[#172033]">
+            Next you&apos;ll add a nickname and a date. We&apos;ll build your baby timeline from there.
+          </p>
+          <button className="wik-button wik-button-sun mt-6 w-full text-base" onClick={onContinue} type="button">
+            Got it, set up my timeline
+          </button>
+        </div>
+      </section>
+    </div>
+  );
+}
+
+function HomeTourDialog({ onContinue }: { onContinue: () => void }) {
+  useEscapeToContinue(onContinue);
+
+  return (
+    <div
+      className="fixed inset-0 z-[60] flex items-center justify-center bg-[#0d1b2a]/45 p-4 backdrop-blur-sm sm:p-6"
+      onClick={onContinue}
+      role="presentation"
+    >
+      <section
+        aria-labelledby="home-tour-title"
+        aria-modal="true"
+        className="w-full max-w-lg overflow-hidden rounded-[2rem] bg-[#FFF6E6] shadow-2xl"
+        onClick={(event) => event.stopPropagation()}
+        role="dialog"
+      >
+        <div className="p-5 sm:p-7">
+          <p className="wik-chip bg-white text-[#1D809F]">Quick tour</p>
+          <h2
+            className="font-display mt-3 text-3xl font-semibold leading-tight text-[#0d1b2a]"
+            id="home-tour-title"
+          >
+            Your home base, dad-brain edition
+          </h2>
+          <p className="mt-3 text-sm leading-6 text-[#697386]">
+            The four squares are your map. Tap around, open a card when something rings a bell, save
+            the keepers, mark done when you&apos;re past it. No guilt, no inbox mountain.
           </p>
           <ul className="mt-4 space-y-2 text-sm leading-6 text-[#172033]">
             <li className="rounded-xl bg-white px-4 py-3 ring-1 ring-[#0d1b2a]/5">
-              <span className="font-semibold">Add the basics</span>: nickname, dates, and a couple of
-              preferences.
+              <span className="font-semibold">Current</span> is what matters this week.
             </li>
             <li className="rounded-xl bg-white px-4 py-3 ring-1 ring-[#0d1b2a]/5">
-              <span className="font-semibold">Browse your timeline</span>: open cards, save the useful
-              ones, mark done when you&apos;re past them.
+              <span className="font-semibold">Coming</span> is the friendly heads-up pile.
             </li>
             <li className="rounded-xl bg-white px-4 py-3 ring-1 ring-[#0d1b2a]/5">
-              <span className="font-semibold">Optional weekly email</span>: pick a day for a calm
-              Lookahead around 8am, not a guilt trip.
+              <span className="font-semibold">Saved / Done</span> keep the useful stuff without the
+              clutter.
             </li>
           </ul>
           <button className="wik-button wik-button-sun mt-6 w-full text-base" onClick={onContinue} type="button">
-            Got it, set up my timeline
+            Let&apos;s go
           </button>
         </div>
       </section>
@@ -455,8 +513,8 @@ function Onboarding({
   isSubmitting,
   submitError,
   requireAuth,
-  showWelcome,
-  onDismissWelcome,
+  showProductWelcome,
+  onDismissProductWelcome,
 }: {
   form: OnboardingState;
   setForm: (form: OnboardingState) => void;
@@ -466,8 +524,8 @@ function Onboarding({
   isSubmitting?: boolean;
   submitError?: string | null;
   requireAuth?: boolean;
-  showWelcome: boolean;
-  onDismissWelcome: () => void;
+  showProductWelcome: boolean;
+  onDismissProductWelcome: () => void;
 }) {
   useEffect(() => {
     if (!form.timezone || form.timezone === "Australia/Sydney") {
@@ -481,7 +539,7 @@ function Onboarding({
 
   return (
     <main className="px-4 py-6 text-[#172033] sm:py-10">
-      {showWelcome ? <WelcomeDialog onContinue={onDismissWelcome} /> : null}
+      {showProductWelcome ? <ProductWelcomeDialog onContinue={onDismissProductWelcome} /> : null}
       <section className="mx-auto grid max-w-6xl gap-6 lg:grid-cols-[1fr_1fr]">
         <div className="relative isolate overflow-hidden rounded-[2rem] bg-[#0d1b2a] text-white shadow-[0_24px_60px_rgba(13,27,42,0.25)]">
           {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -721,24 +779,65 @@ export default function WishIKnewApp({ initialData }: { initialData: AppInitialD
   const [isSubmitting, startSubmitTransition] = useTransition();
   const [, startActionTransition] = useTransition();
   const requireAuth = initialData.requireAuth;
-  const [showWelcome, setShowWelcome] = useState(false);
+  const welcomeScope = initialData.authUserId ?? initialData.profileId ?? "preview";
+  const [showProductWelcome, setShowProductWelcome] = useState(
+    () => !hasOnboarded && !initialData.seenProductWelcome,
+  );
+  const [showHomeTour, setShowHomeTour] = useState(
+    () => hasOnboarded && !initialData.seenHomeTour,
+  );
 
   useEffect(() => {
-    if (hasOnboarded) return;
+    // Drop the old global key so prior browser testing does not permanently hide popups.
     try {
-      setShowWelcome(window.localStorage.getItem(welcomeStorageKey) !== "1");
+      window.localStorage.removeItem(legacyWelcomeStorageKey);
     } catch {
-      setShowWelcome(true);
+      // Ignore private mode.
     }
-  }, [hasOnboarded]);
 
-  function dismissWelcome() {
     try {
-      window.localStorage.setItem(welcomeStorageKey, "1");
+      const localProductSeen =
+        window.localStorage.getItem(productWelcomeStorageKey(welcomeScope)) === "1";
+      const localHomeSeen = window.localStorage.getItem(homeTourStorageKey(welcomeScope)) === "1";
+      const productSeen = initialData.seenProductWelcome || localProductSeen;
+      const homeSeen = initialData.seenHomeTour || localHomeSeen;
+
+      setShowProductWelcome(!hasOnboarded && !productSeen);
+      setShowHomeTour(hasOnboarded && !homeSeen);
     } catch {
-      // Ignore quota / private mode — still continue to baby setup.
+      setShowProductWelcome(!hasOnboarded && !initialData.seenProductWelcome);
+      setShowHomeTour(hasOnboarded && !initialData.seenHomeTour);
     }
-    setShowWelcome(false);
+  }, [hasOnboarded, initialData.seenHomeTour, initialData.seenProductWelcome, welcomeScope]);
+
+  function persistWelcomeFlag(kind: "product" | "home") {
+    try {
+      const key =
+        kind === "product"
+          ? productWelcomeStorageKey(welcomeScope)
+          : homeTourStorageKey(welcomeScope);
+      window.localStorage.setItem(key, "1");
+    } catch {
+      // Ignore quota / private mode.
+    }
+  }
+
+  function dismissProductWelcome() {
+    setShowProductWelcome(false);
+    persistWelcomeFlag("product");
+
+    if (mode === "authenticated") {
+      void markWelcomeFlagSeen("product_welcome");
+    }
+  }
+
+  function dismissHomeTour() {
+    setShowHomeTour(false);
+    persistWelcomeFlag("home");
+
+    if (mode === "authenticated") {
+      void markWelcomeFlagSeen("home_tour");
+    }
   }
 
   useEffect(() => {
@@ -871,11 +970,11 @@ export default function WishIKnewApp({ initialData }: { initialData: AppInitialD
         form={form}
         isSubmitting={isSubmitting}
         mode={mode}
-        onDismissWelcome={dismissWelcome}
+        onDismissProductWelcome={dismissProductWelcome}
         onSubmit={handleOnboardingSubmit}
         requireAuth={requireAuth}
         setForm={setForm}
-        showWelcome={showWelcome}
+        showProductWelcome={showProductWelcome}
         submitError={submitError}
         userEmail={userEmail}
       />
@@ -894,6 +993,7 @@ export default function WishIKnewApp({ initialData }: { initialData: AppInitialD
 
   return (
     <main className="min-h-screen text-[#172033]">
+      {showHomeTour ? <HomeTourDialog onContinue={dismissHomeTour} /> : null}
       <div className="mx-auto max-w-6xl px-4 py-5 sm:px-6 sm:py-7">
         <header className="relative isolate overflow-hidden rounded-[2rem] bg-[#0d1b2a] text-white shadow-[0_22px_55px_rgba(13,27,42,0.25)]">
           <div className="grid sm:grid-cols-[1.1fr_1fr]">

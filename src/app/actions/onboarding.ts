@@ -51,6 +51,29 @@ async function requireProfileId(): Promise<{ profileId: string; error?: string }
   return { profileId: created.id };
 }
 
+export type WelcomeFlag = "product_welcome" | "home_tour";
+
+export async function markWelcomeFlagSeen(flag: WelcomeFlag): Promise<ActionResult> {
+  const { profileId, error: profileError } = await requireProfileId();
+
+  if (profileError || !profileId) {
+    return { error: profileError ?? "Not signed in." };
+  }
+
+  const column = flag === "product_welcome" ? "seen_product_welcome" : "seen_home_tour";
+  const supabase = await createClient();
+  const { error } = await supabase
+    .from("profiles")
+    .update({ [column]: true })
+    .eq("id", profileId);
+
+  if (error) {
+    return { error: error.message };
+  }
+
+  return {};
+}
+
 export async function saveOnboarding(form: OnboardingState, childId?: string | null): Promise<ActionResult> {
   const { profileId, error: profileError } = await requireProfileId();
 
