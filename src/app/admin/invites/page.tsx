@@ -8,10 +8,9 @@ export default async function AdminInvitesPage() {
     <section>
       <h1 className="font-display mb-1 text-2xl font-semibold">Alpha testers</h1>
       <p className="mb-5 text-sm text-[#172033]/70">
-        Add each friend&apos;s email here first. They sign up themselves at{" "}
-        <code className="rounded bg-[#F0EEE9] px-1">/login</code> with that same email and a password
-        they choose (invite-only when{" "}
-        <code className="rounded bg-[#F0EEE9] px-1">WIK_BETA_INVITE_ONLY=true</code>). No magic link.
+        Add a friend&apos;s email → we save them on the allowlist and email a signup link. They open{" "}
+        <code className="rounded bg-[#F0EEE9] px-1">/login</code>, tap{" "}
+        <strong>Create a password</strong>, use that same email, then finish onboarding. No magic link.
       </p>
       <InviteManager initialInvites={invites} />
     </section>

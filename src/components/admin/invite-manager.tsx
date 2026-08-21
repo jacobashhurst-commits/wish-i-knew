@@ -1,11 +1,16 @@
 "use client";
 
+import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
-import { addAlphaInvite, removeAlphaInvite } from "@/app/actions/admin-invites";
+import {
+  addAlphaInvite,
+  removeAlphaInvite,
+  resendAlphaInvite,
+  type AlphaInvite,
+} from "@/app/actions/admin-invites";
 
-type Invite = { email: string; note: string | null; created_at: string };
-
-export function InviteManager({ initialInvites }: { initialInvites: Invite[] }) {
+export function InviteManager({ initialInvites }: { initialInvites: AlphaInvite[] }) {
+  const router = useRouter();
   const [email, setEmail] = useState("");
   const [note, setNote] = useState("Alpha tester");
   const [message, setMessage] = useState<string | null>(null);
@@ -22,6 +27,7 @@ export function InviteManager({ initialInvites }: { initialInvites: Invite[] }) 
       else {
         setMessage(result.success ?? "Added.");
         setEmail("");
+        router.refresh();
       }
     });
   }
@@ -32,7 +38,20 @@ export function InviteManager({ initialInvites }: { initialInvites: Invite[] }) 
     startTransition(async () => {
       const result = await removeAlphaInvite(target);
       if (result.error) setError(result.error);
-      else setMessage(result.success ?? "Removed.");
+      else {
+        setMessage(result.success ?? "Removed.");
+        router.refresh();
+      }
+    });
+  }
+
+  function handleResend(target: string) {
+    setMessage(null);
+    setError(null);
+    startTransition(async () => {
+      const result = await resendAlphaInvite(target);
+      if (result.error) setError(result.error);
+      else setMessage(result.success ?? "Sent.");
     });
   }
 
@@ -43,6 +62,9 @@ export function InviteManager({ initialInvites }: { initialInvites: Invite[] }) 
         onSubmit={handleAdd}
       >
         <h2 className="font-display text-lg font-semibold">Add tester</h2>
+        <p className="mt-1 text-sm text-[#697386]">
+          Saves them to the allowlist and emails a signup link (they choose their own password).
+        </p>
         <div className="mt-4 grid gap-3 sm:grid-cols-[2fr_1fr_auto]">
           <label className="text-sm font-semibold">
             Email
@@ -69,7 +91,7 @@ export function InviteManager({ initialInvites }: { initialInvites: Invite[] }) 
               disabled={isPending}
               type="submit"
             >
-              {isPending ? "Adding…" : "Add invite"}
+              {isPending ? "Sending…" : "Invite + email"}
             </button>
           </div>
         </div>
@@ -90,17 +112,28 @@ export function InviteManager({ initialInvites }: { initialInvites: Invite[] }) 
                 <div>
                   <p className="text-sm font-semibold">{invite.email}</p>
                   <p className="text-xs text-[#172033]/50">
-                    {invite.note || "—"} · added {new Date(invite.created_at).toLocaleDateString("en-AU")}
+                    {invite.note || "—"} · added{" "}
+                    {new Date(invite.invited_at).toLocaleDateString("en-AU")}
                   </p>
                 </div>
-                <button
-                  className="rounded-xl border border-[#0d1b2a]/15 px-3 py-1.5 text-xs font-semibold hover:bg-[#F7F4EC] disabled:opacity-40"
-                  disabled={isPending}
-                  onClick={() => handleRemove(invite.email)}
-                  type="button"
-                >
-                  Remove
-                </button>
+                <div className="flex gap-2">
+                  <button
+                    className="rounded-xl border border-[#0d1b2a]/15 px-3 py-1.5 text-xs font-semibold hover:bg-[#F7F4EC] disabled:opacity-40"
+                    disabled={isPending}
+                    onClick={() => handleResend(invite.email)}
+                    type="button"
+                  >
+                    Resend email
+                  </button>
+                  <button
+                    className="rounded-xl border border-[#0d1b2a]/15 px-3 py-1.5 text-xs font-semibold hover:bg-[#F7F4EC] disabled:opacity-40"
+                    disabled={isPending}
+                    onClick={() => handleRemove(invite.email)}
+                    type="button"
+                  >
+                    Remove
+                  </button>
+                </div>
               </li>
             ))}
           </ul>
