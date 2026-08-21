@@ -657,8 +657,8 @@ function Onboarding({
                 value={form.lookaheadTime}
               />
               <p className="mt-1 text-xs text-[#172033]/60">
-                We email on your chosen day during your preferred hour in {form.timezone} (within
-                that hour, not to the minute).
+                Emails go out around 8am Sydney time on your chosen day. Preferred time is saved
+                for later but does not change when it sends ({form.timezone}).
               </p>
             </label>
 
@@ -1690,8 +1690,8 @@ function SettingsView({
                 value={form.lookaheadTime}
               />
               <p className="mt-1 text-xs text-[#172033]/60">
-                Saved with your profile ({form.timezone}). We send during that hour on your chosen day
-                (for example 12:00–12:59 if you pick 12:00).
+                Saved with your profile ({form.timezone}). Emails go out around 8am Sydney time on
+                your chosen day — preferred time is kept for later but is not binding yet.
               </p>
             </label>
 

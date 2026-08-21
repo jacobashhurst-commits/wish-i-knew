@@ -85,7 +85,7 @@ Import the GitHub repo and set environment variables from `.env.example`:
 Deploy from `main`. `vercel.json` schedules:
 
 - **Daily keepalive** (`/api/cron/keepalive` at 12:00 UTC) — pings Supabase so free-tier projects do not pause
-- **Weekly email** (`/api/cron/weekly-lookahead` at each UTC hour via 24 once-daily schedules) — Hobby cannot use a single `0 * * * *` expression; Pro can
+- **Weekly email** (`/api/cron/weekly-lookahead` at `0 22 * * *` UTC, ~8am Australia/Sydney)
 
 Both stay Hobby-safe (each cron expression runs at most once per day). Keepalive needs `SUPABASE_SERVICE_ROLE_KEY` + `CRON_SECRET` only.
 
@@ -107,7 +107,7 @@ Weekly email only sends when **all** of these are true:
 
 - User opted in (`delivery_channel = email`, `enabled = true`)
 - Child journey is `active`
-- Local weekday **and** preferred hour match (times normalised to the hour; send lands within that hour)
+- Local weekday matches the user's chosen day (preferred clock time is stored but not used for gating; send is ~8am Sydney)
 - Not already sent that local day (idempotency via `reminders`)
 
 Users can pause from the email link or turn email back on in **Settings → Weekly email**.

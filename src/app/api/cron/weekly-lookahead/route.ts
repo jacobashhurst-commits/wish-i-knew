@@ -37,14 +37,12 @@ type PreferenceRow = {
   } | null;
 };
 
-/** Local weekday name (lowercase) and hour for "now" in the preference's timezone. */
-function localNow(timezone: string): { weekday: string; hour: number; date: string } {
+/** Local weekday name (lowercase) and calendar date for "now" in the preference's timezone. */
+function localNow(timezone: string): { weekday: string; date: string } {
   const now = new Date();
   const formatter = new Intl.DateTimeFormat("en-AU", {
     timeZone: timezone,
     weekday: "long",
-    hour: "numeric",
-    hour12: false,
     year: "numeric",
     month: "2-digit",
     day: "2-digit",
@@ -56,7 +54,6 @@ function localNow(timezone: string): { weekday: string; hour: number; date: stri
 
   return {
     weekday: (parts.weekday ?? "").toLowerCase(),
-    hour: Number(parts.hour ?? "-1") % 24,
     date: `${parts.year}-${parts.month}-${parts.day}`,
   };
 }
@@ -112,25 +109,10 @@ export async function GET(request: Request) {
 
     const now = localNow(pref.timezone || "Australia/Sydney");
 
-    // Match chosen weekday + preferred hour in the user's timezone. Times are
-    // normalised to the hour in the UI; cron runs every UTC hour (24 Hobby-safe
-    // once-daily schedules, or a single `0 * * * *` on Pro).
+    // Match chosen weekday only. Cron runs once daily at 22:00 UTC (~8am
+    // Australia/Sydney); preferred clock time is stored but not used for gating.
     if (now.weekday !== pref.day_of_week) {
       results.push({ preference: pref.id, outcome: "skipped: not their chosen day" });
-      continue;
-    }
-
-    const preferredHour = Number(String(pref.time_of_day).slice(0, 2));
-    if (!Number.isFinite(preferredHour) || preferredHour < 0 || preferredHour > 23) {
-      results.push({ preference: pref.id, outcome: "skipped: invalid preferred hour" });
-      continue;
-    }
-
-    if (preferredHour !== now.hour) {
-      results.push({
-        preference: pref.id,
-        outcome: `skipped: not their preferred hour (want ${String(preferredHour).padStart(2, "0")}:00, now ${String(now.hour).padStart(2, "0")}:00 local)`,
-      });
       continue;
     }
 
@@ -189,7 +171,7 @@ export async function GET(request: Request) {
     });
 
     if (digest.length === 0) {
-      // Nothing to send today - keep the claim so we do not retry every hour.
+      // Nothing to send today — keep the claim so we do not retry the same day.
       await supabase
         .from("reminders")
         .update({ status: "dismissed" })
@@ -233,7 +215,7 @@ export async function GET(request: Request) {
 
     if (sendError) {
       // One in-run retry for transient Resend blips; claim is released below so a
-      // later hourly run (or manual curl) can try again the same local day.
+      // manual curl can try again the same local day.
       await new Promise((resolve) => setTimeout(resolve, 2000));
       ({ error: sendError } = await sendEmail({
         to: email,
@@ -245,7 +227,7 @@ export async function GET(request: Request) {
     }
 
     if (sendError) {
-      // Release the claim so a later hourly run (or manual re-run) can retry.
+      // Release the claim so a manual re-run can retry the same local day.
       await supabase
         .from("reminders")
         .delete()
@@ -282,7 +264,7 @@ export async function GET(request: Request) {
     sent += 1;
     results.push({
       preference: pref.id,
-      outcome: `sent ${digest.length} cards at ${String(preferredHour).padStart(2, "0")}:00 local`,
+      outcome: `sent ${digest.length} cards`,
     });
   }
 

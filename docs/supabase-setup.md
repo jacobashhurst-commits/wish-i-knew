@@ -97,7 +97,7 @@ Policies are defined in `001_initial_schema.sql`. The trigger in `002_auth_profi
 
 ## 6. Weekly Lookahead email (Milestone 6)
 
-The weekly email is sent by a Vercel Cron job (`vercel.json` schedules `/api/cron/weekly-lookahead` once per UTC hour via 24 Hobby-safe once-daily expressions — a single `0 * * * *` needs Pro). Each run only emails users whose chosen local weekday **and** preferred hour match.
+The weekly email is sent by a Vercel Cron job (`vercel.json` schedules `/api/cron/weekly-lookahead` daily at `0 22 * * *` UTC, ~8am Australia/Sydney). Each run only emails users whose chosen local weekday matches.
 
 Extra environment variables (server-side only  -  set in Vercel, never exposed to the browser):
 
@@ -121,7 +121,7 @@ To test locally:
 curl -H "Authorization: Bearer $CRON_SECRET" http://127.0.0.1:3000/api/cron/weekly-lookahead
 ```
 
-(Your lookahead preference day/time must match the current local hour to trigger a send.)
+(Your lookahead preference day must match the current local weekday to trigger a send.)
 
 ## 7. Full-stack smoke test (after loading content)
 
@@ -136,6 +136,6 @@ Once migrations 001–004 and the content seed files are applied:
 | **Suggestions** | Settings → submit a suggestion; as admin, `/admin/suggestions` → Promote to draft |
 | **Content Studio** | `/admin` → filter cards → edit → publish (validation blocks bad cards) |
 | **Match debugger** | `/admin/debugger` → change profile → see bucket + match reasons |
-| **Weekly email** | Set `CRON_SECRET` + Resend keys, curl the cron route at your chosen lookahead hour |
+| **Weekly email** | Set `CRON_SECRET` + Resend keys, curl the cron route on your chosen lookahead day |
 
 Card count after full seed: **~86 published cards** (6 from `seed.sql` + 30 from batch 1 + 50 from batch 2, merged by slug).

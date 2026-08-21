@@ -14,7 +14,7 @@ flowchart TB
     MW[middleware.ts<br/>session refresh + auth wall]
     App[App pages<br/>src/app]
     AdminUI[Content Studio<br/>/admin - role gated]
-    CronLA[api/cron/weekly-lookahead<br/>each UTC hour / day+hour match]
+    CronLA[api/cron/weekly-lookahead<br/>daily 22:00 UTC / weekday match]
     CronKA[api/cron/keepalive<br/>daily 12:00 UTC]
     Pause[api/lookahead/pause<br/>HMAC-signed one-tap pause]
   end
@@ -159,14 +159,14 @@ the app UI and the weekly email digest (max 4 cards, current before soon).
 
 ```mermaid
 sequenceDiagram
-  participant V as Vercel cron (each UTC hour)
+  participant V as Vercel cron (daily 22:00 UTC)
   participant R as weekly-lookahead route
   participant DB as Supabase (service role)
   participant Re as Resend
   V->>R: GET + Bearer CRON_SECRET
   R->>DB: enabled email preferences + published cards
   loop each preference
-    R->>R: local weekday == chosen day AND local hour == preferred hour?
+    R->>R: local weekday == chosen day?
     R->>DB: claim reminder row (unique index = idempotent)
     R->>R: build timeline -> digest (skip if empty)
     R->>Re: send (retry once in-run on failure)
@@ -177,14 +177,13 @@ sequenceDiagram
 
 Design decisions that matter:
 
-- **Hourly checks, day + hour matching.** Hobby rejects a single `0 * * * *`
-  expression, so `vercel.json` lists 24 once-daily schedules (`0 0` … `0 23`
-  UTC) against the same path. Pro can collapse that to one hourly cron. The
-  route matches the user's chosen *day* and *hour* in their *timezone*
-  (minutes are floored to the hour in the UI).
+- **Daily cron, weekday matching.** `vercel.json` schedules `/api/cron/weekly-lookahead`
+  once per day at `0 22 * * *` UTC (~8am Australia/Sydney). The route matches the
+  user's chosen *weekday* in their *timezone*; preferred clock time is stored but
+  not used for send gating.
 - The `reminders` unique index `(user, child, type, date)` makes sends
-  idempotent across the 24 hourly triggers; a failed send releases the claim
-  so a later run the same local day can retry.
+  idempotent; a failed send releases the claim so a manual re-run the same local
+  day can retry.
 - The pause link is HMAC-signed (`WIK_EMAIL_TOKEN_SECRET`, falls back to
   `CRON_SECRET`). GET shows a confirm page (mail scanners prefetch GETs);
   POST pauses - and doubles as the RFC 8058 one-click unsubscribe endpoint.

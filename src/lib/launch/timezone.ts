@@ -8,7 +8,7 @@ export function resolveBrowserTimezone(): string {
   }
 }
 
-/** Store lookahead times on the hour so they match hourly cron runs. */
+/** Store lookahead times on the hour (preferred clock time; send gating is day-only). */
 export function normalizeLookaheadTime(value: string): string {
   const match = value.match(/^(\d{1,2})/);
 
