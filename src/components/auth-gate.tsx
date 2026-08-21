@@ -1,7 +1,6 @@
 "use client";
 
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
 import { signInWithPassword, signUpWithPassword } from "@/app/actions/auth";
 
@@ -12,18 +11,15 @@ type AuthGateProps = {
 };
 
 export function AuthGate({ userEmail, requireConsent = false, showBetaNote = false }: AuthGateProps) {
-  const router = useRouter();
   const [mode, setMode] = useState<"signin" | "signup">("signin");
   const [email, setEmail] = useState(userEmail ?? "");
   const [password, setPassword] = useState("");
   const [consent, setConsent] = useState(false);
-  const [message, setMessage] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
 
   function handleSubmit(event: React.FormEvent) {
     event.preventDefault();
-    setMessage(null);
     setError(null);
 
     if (requireConsent && !consent) {
@@ -37,17 +33,10 @@ export function AuthGate({ userEmail, requireConsent = false, showBetaNote = fal
           ? await signInWithPassword(email, password)
           : await signUpWithPassword(email, password);
 
-      if (result.error) {
+      // Successful auth redirects from the server action — no client refresh needed.
+      if (result?.error) {
         setError(result.error);
-        return;
       }
-
-      if (mode === "signup") {
-        setMessage("Account ready — you are signed in. If nothing loads, refresh once.");
-      }
-
-      router.replace("/");
-      router.refresh();
     });
   }
 
@@ -115,10 +104,13 @@ export function AuthGate({ userEmail, requireConsent = false, showBetaNote = fal
         ) : null}
 
         {error ? <p className="text-sm font-medium text-[#FF6B6B]">{error}</p> : null}
-        {message ? <p className="text-sm font-medium text-[#1D809F]">{message}</p> : null}
 
         <button className="wik-button wik-button-sun w-full" disabled={isPending} type="submit">
-          {isPending ? "Working…" : mode === "signin" ? "Sign in" : "Create password & continue"}
+          {isPending
+            ? "Working…"
+            : mode === "signin"
+              ? "Sign in"
+              : "Create password & continue"}
         </button>
       </form>
 
@@ -131,7 +123,6 @@ export function AuthGate({ userEmail, requireConsent = false, showBetaNote = fal
               onClick={() => {
                 setMode("signup");
                 setError(null);
-                setMessage(null);
               }}
               type="button"
             >
@@ -146,7 +137,6 @@ export function AuthGate({ userEmail, requireConsent = false, showBetaNote = fal
               onClick={() => {
                 setMode("signin");
                 setError(null);
-                setMessage(null);
               }}
               type="button"
             >
