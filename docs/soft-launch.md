@@ -20,7 +20,7 @@ Your sequence is sound:
 | Anyone can sign up | Keep `WIK_BETA_INVITE_ONLY=true` and add emails to `beta_invites` |
 | Preview mode bypass | Set `WIK_REQUIRE_AUTH=true` in production |
 | Emails land in spam | Configure Resend SPF/DKIM before relying on weekly email |
-| Vercel Hobby cron | Hourly cron needs Vercel Pro, or trigger manually / use external cron |
+| Vercel Hobby cron | Native `0 * * * *` needs Pro; Hobby uses 24 once-daily UTC-hour slots for the same effect |
 | Medical trust | Sensitive cards show in-app disclaimer; `/disclaimer` is linked |
 | No monitoring yet | Acceptable for tiny beta; add Sentry before wider launch |
 
@@ -85,9 +85,9 @@ Import the GitHub repo and set environment variables from `.env.example`:
 Deploy from `main`. `vercel.json` schedules:
 
 - **Daily keepalive** (`/api/cron/keepalive` at 12:00 UTC) — pings Supabase so free-tier projects do not pause
-- **Weekly email** (`/api/cron/weekly-lookahead` Friday 22:00 UTC ≈ Saturday morning Sydney)
+- **Weekly email** (`/api/cron/weekly-lookahead` at each UTC hour via 24 once-daily schedules) — Hobby cannot use a single `0 * * * *` expression; Pro can
 
-Both are Hobby-safe (at most once per day). Keepalive needs `SUPABASE_SERVICE_ROLE_KEY` + `CRON_SECRET` only.
+Both stay Hobby-safe (each cron expression runs at most once per day). Keepalive needs `SUPABASE_SERVICE_ROLE_KEY` + `CRON_SECRET` only.
 
 **Manual test:**
 
@@ -107,7 +107,7 @@ Weekly email only sends when **all** of these are true:
 
 - User opted in (`delivery_channel = email`, `enabled = true`)
 - Child journey is `active`
-- Local day + hour matches preference (hourly cron, on the hour)
+- Local weekday **and** preferred hour match (times normalised to the hour; send lands within that hour)
 - Not already sent that local day (idempotency via `reminders`)
 
 Users can pause from the email link or turn email back on in **Settings → Weekly email**.

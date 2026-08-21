@@ -112,21 +112,27 @@ export async function GET(request: Request) {
 
     const now = localNow(pref.timezone || "Australia/Sydney");
 
-    // Match the user's chosen weekday in their timezone. Preferred time_of_day is
-    // stored end-to-end (onboarding/settings → weekly_lookahead_preferences) and
-    // surfaced in the app UI; Vercel Hobby only allows one daily cron run, so we
-    // cannot reliably honor exact local hour yet without an hourly scheduler.
+    // Match chosen weekday + preferred hour in the user's timezone. Times are
+    // normalised to the hour in the UI; cron runs every UTC hour (24 Hobby-safe
+    // once-daily schedules, or a single `0 * * * *` on Pro).
     if (now.weekday !== pref.day_of_week) {
       results.push({ preference: pref.id, outcome: "skipped: not their chosen day" });
       continue;
     }
 
     const preferredHour = Number(String(pref.time_of_day).slice(0, 2));
-    // Soft signal for ops: preferred hour is recorded even though this run is daily.
-    const scheduleNote =
-      Number.isFinite(preferredHour) && preferredHour !== now.hour
-        ? ` (preferred ${String(preferredHour).padStart(2, "0")}:00 local; cron hour ${String(now.hour).padStart(2, "0")})`
-        : "";
+    if (!Number.isFinite(preferredHour) || preferredHour < 0 || preferredHour > 23) {
+      results.push({ preference: pref.id, outcome: "skipped: invalid preferred hour" });
+      continue;
+    }
+
+    if (preferredHour !== now.hour) {
+      results.push({
+        preference: pref.id,
+        outcome: `skipped: not their preferred hour (want ${String(preferredHour).padStart(2, "0")}:00, now ${String(now.hour).padStart(2, "0")}:00 local)`,
+      });
+      continue;
+    }
 
     const { error: claimError } = await supabase.from("reminders").insert({
       user_id: pref.user_id,
@@ -226,8 +232,8 @@ export async function GET(request: Request) {
     });
 
     if (sendError) {
-      // One in-run retry: with a single daily cron there is no later run today,
-      // so a transient Resend blip would otherwise cost the whole week.
+      // One in-run retry for transient Resend blips; claim is released below so a
+      // later hourly run (or manual curl) can try again the same local day.
       await new Promise((resolve) => setTimeout(resolve, 2000));
       ({ error: sendError } = await sendEmail({
         to: email,
@@ -239,7 +245,7 @@ export async function GET(request: Request) {
     }
 
     if (sendError) {
-      // Release the claim so a manual re-run of this endpoint (same day) can retry.
+      // Release the claim so a later hourly run (or manual re-run) can retry.
       await supabase
         .from("reminders")
         .delete()
@@ -274,7 +280,10 @@ export async function GET(request: Request) {
     }
 
     sent += 1;
-    results.push({ preference: pref.id, outcome: `sent ${digest.length} cards${scheduleNote}` });
+    results.push({
+      preference: pref.id,
+      outcome: `sent ${digest.length} cards at ${String(preferredHour).padStart(2, "0")}:00 local`,
+    });
   }
 
   return NextResponse.json({ checked: preferences?.length ?? 0, sent, results });

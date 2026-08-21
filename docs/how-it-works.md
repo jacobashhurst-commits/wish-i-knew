@@ -14,7 +14,7 @@ flowchart TB
     MW[middleware.ts<br/>session refresh + auth wall]
     App[App pages<br/>src/app]
     AdminUI[Content Studio<br/>/admin - role gated]
-    CronLA[api/cron/weekly-lookahead<br/>daily 22:00 UTC]
+    CronLA[api/cron/weekly-lookahead<br/>each UTC hour / day+hour match]
     CronKA[api/cron/keepalive<br/>daily 12:00 UTC]
     Pause[api/lookahead/pause<br/>HMAC-signed one-tap pause]
   end
@@ -155,18 +155,18 @@ Only `time_critical` cards may nag from the past; everything else quietly drops
 away. Paused/ended journeys return an empty timeline. The same engine powers
 the app UI and the weekly email digest (max 4 cards, current before soon).
 
-## Weekly email (Hobby-plan design)
+## Weekly email (day + hour matching)
 
 ```mermaid
 sequenceDiagram
-  participant V as Vercel cron (daily 22:00 UTC)
+  participant V as Vercel cron (each UTC hour)
   participant R as weekly-lookahead route
   participant DB as Supabase (service role)
   participant Re as Resend
   V->>R: GET + Bearer CRON_SECRET
   R->>DB: enabled email preferences + published cards
   loop each preference
-    R->>R: local weekday == chosen day? (user's timezone)
+    R->>R: local weekday == chosen day AND local hour == preferred hour?
     R->>DB: claim reminder row (unique index = idempotent)
     R->>R: build timeline -> digest (skip if empty)
     R->>Re: send (retry once in-run on failure)
@@ -177,14 +177,14 @@ sequenceDiagram
 
 Design decisions that matter:
 
-- **Daily cron, weekday-only matching.** Hobby crons run once a day, so the
-  route matches the user's chosen *day* in their *timezone* and ignores the
-  chosen hour (kept in the schema for a future hourly scheduler). Exact-hour
-  matching breaks on daylight saving and for WA.
-- 22:00 UTC ≈ 8-9am Sydney/Melbourne/Brisbane, 6am Perth.
+- **Hourly checks, day + hour matching.** Hobby rejects a single `0 * * * *`
+  expression, so `vercel.json` lists 24 once-daily schedules (`0 0` … `0 23`
+  UTC) against the same path. Pro can collapse that to one hourly cron. The
+  route matches the user's chosen *day* and *hour* in their *timezone*
+  (minutes are floored to the hour in the UI).
 - The `reminders` unique index `(user, child, type, date)` makes sends
-  idempotent; a failed send releases the claim so a manual same-day re-run
-  retries it.
+  idempotent across the 24 hourly triggers; a failed send releases the claim
+  so a later run the same local day can retry.
 - The pause link is HMAC-signed (`WIK_EMAIL_TOKEN_SECRET`, falls back to
   `CRON_SECRET`). GET shows a confirm page (mail scanners prefetch GETs);
   POST pauses - and doubles as the RFC 8058 one-click unsubscribe endpoint.

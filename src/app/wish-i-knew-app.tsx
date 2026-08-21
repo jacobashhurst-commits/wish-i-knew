@@ -657,8 +657,8 @@ function Onboarding({
                 value={form.lookaheadTime}
               />
               <p className="mt-1 text-xs text-[#172033]/60">
-                We email on your chosen day in {form.timezone}. Preferred time is saved; delivery currently
-                runs once daily on that day.
+                We email on your chosen day during your preferred hour in {form.timezone} (within
+                that hour, not to the minute).
               </p>
             </label>
 
@@ -1650,7 +1650,7 @@ function SettingsView({
           <SectionHeading
             eyebrow="Weekly email"
             title="Lookahead reminders"
-            subtitle="Pick any day and preferred time. We send on your chosen day in your timezone."
+            subtitle="Pick any day and hour. We email once that hour in your timezone (minute precision is within the hour)."
           />
           <div className="mt-5 space-y-4">
             <label className="flex items-start gap-3 rounded-xl bg-[#FFF6E6] px-4 py-3">
@@ -1690,8 +1690,8 @@ function SettingsView({
                 value={form.lookaheadTime}
               />
               <p className="mt-1 text-xs text-[#172033]/60">
-                Saved with your profile ({form.timezone}). Exact hour matching needs an hourly scheduler —
-                today we deliver once on your chosen day.
+                Saved with your profile ({form.timezone}). We send during that hour on your chosen day
+                (for example 12:00–12:59 if you pick 12:00).
               </p>
             </label>
 

@@ -97,7 +97,7 @@ Policies are defined in `001_initial_schema.sql`. The trigger in `002_auth_profi
 
 ## 6. Weekly Lookahead email (Milestone 6)
 
-The weekly email is sent by a Vercel Cron job (`vercel.json` schedules `/api/cron/weekly-lookahead` hourly; each run only emails users whose chosen local day + hour matches).
+The weekly email is sent by a Vercel Cron job (`vercel.json` schedules `/api/cron/weekly-lookahead` once per UTC hour via 24 Hobby-safe once-daily expressions — a single `0 * * * *` needs Pro). Each run only emails users whose chosen local weekday **and** preferred hour match.
 
 Extra environment variables (server-side only  -  set in Vercel, never exposed to the browser):
 
