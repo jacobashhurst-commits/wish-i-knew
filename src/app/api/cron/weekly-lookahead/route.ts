@@ -112,15 +112,21 @@ export async function GET(request: Request) {
 
     const now = localNow(pref.timezone || "Australia/Sydney");
 
-    // Hobby-plan design: one daily run (see vercel.json), so we match on the
-    // user's chosen weekday only. Exact-hour matching breaks whenever the
-    // cron's UTC hour maps to a different local hour (daylight saving, WA)
-    // and would silently skip everyone. time_of_day is kept for a future
-    // hourly scheduler; the reminders unique index already prevents doubles.
+    // Match the user's chosen weekday in their timezone. Preferred time_of_day is
+    // stored end-to-end (onboarding/settings → weekly_lookahead_preferences) and
+    // surfaced in the app UI; Vercel Hobby only allows one daily cron run, so we
+    // cannot reliably honor exact local hour yet without an hourly scheduler.
     if (now.weekday !== pref.day_of_week) {
       results.push({ preference: pref.id, outcome: "skipped: not their chosen day" });
       continue;
     }
+
+    const preferredHour = Number(String(pref.time_of_day).slice(0, 2));
+    // Soft signal for ops: preferred hour is recorded even though this run is daily.
+    const scheduleNote =
+      Number.isFinite(preferredHour) && preferredHour !== now.hour
+        ? ` (preferred ${String(preferredHour).padStart(2, "0")}:00 local; cron hour ${String(now.hour).padStart(2, "0")})`
+        : "";
 
     const { error: claimError } = await supabase.from("reminders").insert({
       user_id: pref.user_id,
@@ -268,7 +274,7 @@ export async function GET(request: Request) {
     }
 
     sent += 1;
-    results.push({ preference: pref.id, outcome: `sent ${digest.length} cards` });
+    results.push({ preference: pref.id, outcome: `sent ${digest.length} cards${scheduleNote}` });
   }
 
   return NextResponse.json({ checked: preferences?.length ?? 0, sent, results });

@@ -46,12 +46,14 @@ export function AuthGate({ userEmail, requireConsent = false, showBetaNote = fal
         {mode === "signin" ? "Sign in" : "Create alpha password"}
       </h2>
       <p className="mt-2 text-sm leading-6 text-[#697386]">
-        Friends-and-family alpha uses email + password (no magic link). Invited emails only.
+        Friends-and-family alpha uses email + password (no magic link). Invited emails only — then your
+        timeline saves across devices.
       </p>
 
       {showBetaNote ? (
         <p className="mt-3 rounded-xl bg-[#FFF6E6] px-4 py-3 text-sm leading-6 text-[#172033]">
-          This is a private friends-and-family beta. Only invited emails can create an account right now.
+          Private beta for invited emails. Sign in, meet the product in a quick welcome, then add baby
+          details and start poking around the timeline.
         </p>
       ) : null}
 

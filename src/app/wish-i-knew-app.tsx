@@ -36,6 +36,7 @@ import type {
 type AppView = "home" | "timeline" | "library" | "saved" | "settings" | "admin";
 
 const demoStorageKey = "wish-i-knew-demo-state";
+const welcomeStorageKey = "wish-i-knew-welcome-seen";
 
 const cardTypeStyles: Record<string, string> = {
   "Big Milestone": "bg-[#FFE3C2] text-[#5A3A14]",
@@ -345,11 +346,21 @@ function CardDetail({
           <div className="mt-5 flex flex-wrap gap-2">
             <ActionButton
               active={state?.status === "saved"}
-              onClick={() => onAction(card.id, state?.status === "saved" ? "unseen" : "saved")}
+              onClick={() => {
+                const next = state?.status === "saved" ? "unseen" : "saved";
+                onAction(card.id, next);
+                if (next === "saved") onClose();
+              }}
             >
               Save card
             </ActionButton>
-            <ActionButton active={state?.status === "done"} onClick={() => onAction(card.id, "done")}>
+            <ActionButton
+              active={state?.status === "done"}
+              onClick={() => {
+                onAction(card.id, "done");
+                onClose();
+              }}
+            >
               Mark done
             </ActionButton>
             <ActionButton active={state?.status === "snoozed"} onClick={() => onAction(card.id, "snoozed")}>
@@ -373,6 +384,68 @@ function DetailSection({ title, value }: { title: string; value: string | null }
   );
 }
 
+function WelcomeDialog({ onContinue }: { onContinue: () => void }) {
+  useEffect(() => {
+    function onKeyDown(event: KeyboardEvent) {
+      if (event.key === "Escape") onContinue();
+    }
+
+    window.addEventListener("keydown", onKeyDown);
+    return () => window.removeEventListener("keydown", onKeyDown);
+  }, [onContinue]);
+
+  return (
+    <div
+      className="fixed inset-0 z-50 flex items-center justify-center bg-[#0d1b2a]/45 p-4 backdrop-blur-sm sm:p-6"
+      onClick={onContinue}
+      role="presentation"
+    >
+      <section
+        aria-labelledby="welcome-dialog-title"
+        aria-modal="true"
+        className="w-full max-w-lg overflow-hidden rounded-[2rem] bg-[#FFF6E6] shadow-2xl"
+        onClick={(event) => event.stopPropagation()}
+        role="dialog"
+      >
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
+          alt=""
+          className="h-40 w-full object-cover sm:h-48"
+          src="/illustrations/hero-coastal.png"
+        />
+        <div className="p-5 sm:p-7">
+          <p className="wik-chip bg-white text-[#1D809F]">Welcome</p>
+          <h2 className="font-display mt-3 text-3xl font-semibold leading-tight text-[#0d1b2a]" id="welcome-dialog-title">
+            Wish I Knew, in a nutshell
+          </h2>
+          <p className="mt-3 text-sm leading-6 text-[#697386]">
+            A simple parenting timeline with a bit of fun — practical cards for what&apos;s happening now,
+            what&apos;s coming up, and what you can leave for later. Built by a forgetful lazy dad who
+            figured an app might be easier than remembering everything himself.
+          </p>
+          <ul className="mt-4 space-y-2 text-sm leading-6 text-[#172033]">
+            <li className="rounded-xl bg-white px-4 py-3 ring-1 ring-[#0d1b2a]/5">
+              <span className="font-semibold">Add the basics</span> — nickname, dates, and a couple of
+              preferences.
+            </li>
+            <li className="rounded-xl bg-white px-4 py-3 ring-1 ring-[#0d1b2a]/5">
+              <span className="font-semibold">Browse your timeline</span> — open cards, save the useful
+              ones, mark done when you&apos;re past them.
+            </li>
+            <li className="rounded-xl bg-white px-4 py-3 ring-1 ring-[#0d1b2a]/5">
+              <span className="font-semibold">Optional weekly email</span> — pick a day and time for a
+              calm Lookahead, not a guilt trip.
+            </li>
+          </ul>
+          <button className="wik-button wik-button-sun mt-6 w-full text-base" onClick={onContinue} type="button">
+            Got it — set up my timeline
+          </button>
+        </div>
+      </section>
+    </div>
+  );
+}
+
 function Onboarding({
   form,
   setForm,
@@ -382,6 +455,8 @@ function Onboarding({
   isSubmitting,
   submitError,
   requireAuth,
+  showWelcome,
+  onDismissWelcome,
 }: {
   form: OnboardingState;
   setForm: (form: OnboardingState) => void;
@@ -391,6 +466,8 @@ function Onboarding({
   isSubmitting?: boolean;
   submitError?: string | null;
   requireAuth?: boolean;
+  showWelcome: boolean;
+  onDismissWelcome: () => void;
 }) {
   useEffect(() => {
     if (!form.timezone || form.timezone === "Australia/Sydney") {
@@ -404,6 +481,7 @@ function Onboarding({
 
   return (
     <main className="px-4 py-6 text-[#172033] sm:py-10">
+      {showWelcome ? <WelcomeDialog onContinue={onDismissWelcome} /> : null}
       <section className="mx-auto grid max-w-6xl gap-6 lg:grid-cols-[1fr_1fr]">
         <div className="relative isolate overflow-hidden rounded-[2rem] bg-[#0d1b2a] text-white shadow-[0_24px_60px_rgba(13,27,42,0.25)]">
           {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -424,7 +502,7 @@ function Onboarding({
             <div className="mt-6 rounded-2xl bg-white/10 p-4">
               <p className="text-sm font-semibold text-white">Your weekly Lookahead is the ritual.</p>
               <p className="mt-1 text-sm leading-6 text-white/75">
-                A calm Saturday-morning check-in with practical cards  -  not a guilt machine.
+                A calm check-in on the day and time you choose — practical cards, not a guilt machine.
               </p>
             </div>
           </div>
@@ -561,7 +639,7 @@ function Onboarding({
                 onChange={(event) => setForm({ ...form, lookaheadDay: event.target.value as LookaheadDay })}
                 value={form.lookaheadDay}
               >
-                {["saturday", "sunday", "monday", "tuesday", "wednesday", "thursday", "friday"].map((day) => (
+                {["monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday"].map((day) => (
                   <option key={day} value={day}>
                     {sentenceCase(day)}
                   </option>
@@ -570,15 +648,17 @@ function Onboarding({
             </label>
 
             <label>
-              <span className="text-sm font-semibold text-[#172033]">Weekly email time</span>
+              <span className="text-sm font-semibold text-[#172033]">Preferred email time</span>
               <input
                 className="mt-1.5 w-full rounded-xl border border-[#0d1b2a]/15 bg-[#FFFDF7] px-4 py-3 outline-none focus:border-[#1D809F]"
                 onChange={(event) => setForm({ ...form, lookaheadTime: event.target.value })}
+                step={3600}
                 type="time"
                 value={form.lookaheadTime}
               />
               <p className="mt-1 text-xs text-[#172033]/60">
-                Emails send on the hour in your local timezone ({form.timezone}).
+                We email on your chosen day in {form.timezone}. Preferred time is saved; delivery currently
+                runs once daily on that day.
               </p>
             </label>
 
@@ -652,6 +732,25 @@ export default function WishIKnewApp({ initialData }: { initialData: AppInitialD
   const [isSubmitting, startSubmitTransition] = useTransition();
   const [, startActionTransition] = useTransition();
   const requireAuth = initialData.requireAuth;
+  const [showWelcome, setShowWelcome] = useState(false);
+
+  useEffect(() => {
+    if (hasOnboarded) return;
+    try {
+      setShowWelcome(window.localStorage.getItem(welcomeStorageKey) !== "1");
+    } catch {
+      setShowWelcome(true);
+    }
+  }, [hasOnboarded]);
+
+  function dismissWelcome() {
+    try {
+      window.localStorage.setItem(welcomeStorageKey, "1");
+    } catch {
+      // Ignore quota / private mode — still continue to baby setup.
+    }
+    setShowWelcome(false);
+  }
 
   useEffect(() => {
     if (requireAuth && mode === "preview") {
@@ -709,9 +808,9 @@ export default function WishIKnewApp({ initialData }: { initialData: AppInitialD
     () => cards.filter((card) => cardStates[card.id]?.status === "saved"),
     [cards, cardStates],
   );
-  const doneCount = useMemo(
-    () => Object.values(cardStates).filter((state) => state.status === "done").length,
-    [cardStates],
+  const doneCards = useMemo(
+    () => cards.filter((card) => cardStates[card.id]?.status === "done"),
+    [cards, cardStates],
   );
   const contentHealth = useMemo(
     () => cards.map((card) => ({ card, errors: validateCardForPublish(card) })),
@@ -783,9 +882,11 @@ export default function WishIKnewApp({ initialData }: { initialData: AppInitialD
         form={form}
         isSubmitting={isSubmitting}
         mode={mode}
+        onDismissWelcome={dismissWelcome}
         onSubmit={handleOnboardingSubmit}
         requireAuth={requireAuth}
         setForm={setForm}
+        showWelcome={showWelcome}
         submitError={submitError}
         userEmail={userEmail}
       />
@@ -841,13 +942,11 @@ export default function WishIKnewApp({ initialData }: { initialData: AppInitialD
 
         {activeView === "home" ? (
           <HomeView
-            cardStates={cardStates}
-            doneCount={doneCount}
+            doneCards={doneCards}
             form={form}
             lookaheadCards={lookaheadCards}
-            onAction={handleAction}
             onOpen={setSelectedCard}
-            savedCount={savedCards.length}
+            savedCards={savedCards}
             timeline={timeline}
           />
         ) : null}
@@ -955,118 +1054,124 @@ function AppNav({
 }
 
 function HomeView({
-  cardStates,
-  doneCount,
+  doneCards,
   form,
   lookaheadCards,
-  onAction,
   onOpen,
-  savedCount,
+  savedCards,
   timeline,
 }: {
-  cardStates: Record<string, UserCardState>;
-  doneCount: number;
+  doneCards: TimelineCard[];
   form: OnboardingState;
   lookaheadCards: TimelineCard[];
-  onAction: (cardId: string, status: UserCardStatus) => void;
   onOpen: (card: TimelineCard) => void;
-  savedCount: number;
+  savedCards: TimelineCard[];
   timeline: TimelineResult;
 }) {
+  const currentCards = timeline.currentCards.map(({ card }) => card);
+  const comingCards = timeline.comingSoonCards.map(({ card }) => card);
+
   return (
-    <>
-      <div className="mt-5 grid gap-5 lg:grid-cols-[1.05fr_0.95fr]">
-        <section className="wik-shell-card p-5 sm:p-6">
-          <div className="flex items-start justify-between gap-4">
-            <div>
-              <p className="text-xs font-bold uppercase tracking-[0.2em] text-[#FF6B6B]">
-                {sentenceCase(form.lookaheadDay)} Lookahead
-              </p>
-              <h2 className="font-display mt-2 text-2xl font-semibold text-[#0d1b2a]">
-                {lookaheadCards.length} things worth knowing
-              </h2>
-            </div>
-            <span className="rounded-xl bg-[#FFF0C7] px-3 py-2 text-xs font-bold text-[#6A4E12]">
-              {form.lookaheadTime}
-            </span>
+    <div className="mt-5 space-y-5">
+      <section className="wik-shell-card p-5 sm:p-6">
+        <div className="flex items-start justify-between gap-4">
+          <div>
+            <p className="text-xs font-bold uppercase tracking-[0.2em] text-[#FF6B6B]">
+              {sentenceCase(form.lookaheadDay)} Lookahead
+            </p>
+            <h2 className="font-display mt-2 text-2xl font-semibold text-[#0d1b2a]">
+              {lookaheadCards.length} things worth knowing
+            </h2>
           </div>
-          <p className="mt-2 text-sm leading-6 text-[#697386]">
-            Calm, practical, Australia-specific. No panic, no perfect-parent energy.
-          </p>
+          <span className="rounded-xl bg-[#FFF0C7] px-3 py-2 text-xs font-bold text-[#6A4E12]">
+            {form.lookaheadTime}
+          </span>
+        </div>
+        <p className="mt-2 text-sm leading-6 text-[#697386]">
+          Calm, practical, Australia-specific. No panic, no perfect-parent energy.
+        </p>
 
-          <div className="mt-4 space-y-2.5">
-            {lookaheadCards.map((card) => (
-              <button
-                className="flex w-full items-center gap-3 rounded-2xl border border-[#0d1b2a]/8 bg-[#FFFDF7] p-2.5 text-left transition hover:border-[#0d1b2a]/25"
-                key={card.id}
-                onClick={() => onOpen(card)}
-                type="button"
-              >
-                <CardThumb card={card} className="h-14 w-14 shrink-0" />
-                <div className="min-w-0">
-                  <p className="truncate font-semibold text-[#0d1b2a]">{card.title}</p>
-                  <p className="mt-0.5 truncate text-xs text-[#697386]">{card.subtitle}</p>
-                </div>
-              </button>
-            ))}
-          </div>
-        </section>
+        <div className="mt-4 grid gap-2.5 sm:grid-cols-2">
+          {lookaheadCards.map((card) => (
+            <button
+              className="flex w-full items-center gap-3 rounded-2xl border border-[#0d1b2a]/8 bg-[#FFFDF7] p-2.5 text-left transition hover:border-[#0d1b2a]/25"
+              key={card.id}
+              onClick={() => onOpen(card)}
+              type="button"
+            >
+              <CardThumb card={card} className="h-14 w-14 shrink-0" />
+              <div className="min-w-0">
+                <p className="truncate font-semibold text-[#0d1b2a]">{card.title}</p>
+                <p className="mt-0.5 truncate text-xs text-[#697386]">{card.subtitle}</p>
+              </div>
+            </button>
+          ))}
+        </div>
+      </section>
 
-        <section className="grid grid-cols-2 gap-3 sm:grid-cols-2">
-          <Metric label="Current cards" value={timeline.currentCards.length} />
-          <Metric label="Coming soon" value={timeline.comingSoonCards.length} />
-          <Metric label="Saved" value={savedCount} />
-          <Metric label="Done" value={doneCount} />
-        </section>
+      <section className="grid grid-cols-2 gap-3 lg:grid-cols-4">
+        <HomeQuadrant
+          empty="Nothing current right now."
+          cards={currentCards}
+          label="Current"
+          onOpen={onOpen}
+        />
+        <HomeQuadrant
+          empty="Nothing coming up in this window."
+          cards={comingCards}
+          label="Coming"
+          onOpen={onOpen}
+        />
+        <HomeQuadrant empty="No saved cards yet." cards={savedCards} label="Saved" onOpen={onOpen} />
+        <HomeQuadrant empty="Nothing marked done yet." cards={doneCards} label="Done" onOpen={onOpen} />
+      </section>
+    </div>
+  );
+}
+
+function HomeQuadrant({
+  cards,
+  empty,
+  label,
+  onOpen,
+}: {
+  cards: TimelineCard[];
+  empty: string;
+  label: string;
+  onOpen: (card: TimelineCard) => void;
+}) {
+  const visible = cards.slice(0, 4);
+  const overflow = cards.length - visible.length;
+
+  return (
+    <div className="wik-shell-card flex min-h-[11rem] flex-col p-3 sm:p-4">
+      <div className="flex items-baseline justify-between gap-2">
+        <p className="text-xs font-bold uppercase tracking-[0.16em] text-[#FF6B6B]">{label}</p>
+        <p className="font-display text-lg font-semibold text-[#1D809F]">{cards.length}</p>
       </div>
-
-      <div className="mt-7 grid gap-6 lg:grid-cols-[1.1fr_0.9fr]">
-        <section>
-          <SectionHeading
-            eyebrow="Right now"
-            title="Cards for this stage"
-            subtitle="The things most likely to matter around now."
-          />
-          <div className="mt-4 grid gap-4 sm:grid-cols-2">
-            {timeline.currentCards.length ? (
-              timeline.currentCards.map(({ card }) => (
-                <TimelineCardItem
-                  card={card}
-                  key={card.id}
-                  onAction={onAction}
-                  onOpen={onOpen}
-                  state={cardStates[card.id]}
-                />
-              ))
-            ) : (
-              <EmptyState message="Nothing urgent right now. That is allowed." />
-            )}
-          </div>
-        </section>
-
-        <aside>
-          <SectionHeading
-            eyebrow="Next up"
-            title="Coming soon"
-            subtitle="Useful things to know before they become annoying."
-          />
-          <div className="mt-4 space-y-4">
-            {timeline.comingSoonCards.map(({ card }) => (
-              <TimelineCardItem
-                card={card}
-                key={card.id}
-                onAction={onAction}
-                onOpen={onOpen}
-                state={cardStates[card.id]}
-              />
-            ))}
-            {!timeline.comingSoonCards.length ? (
-              <EmptyState message="No coming-soon cards in this window." />
-            ) : null}
-          </div>
-        </aside>
+      <div className="mt-2 flex-1 space-y-1.5">
+        {visible.length ? (
+          visible.map((card) => (
+            <button
+              className="flex w-full items-center gap-2 rounded-xl border border-[#0d1b2a]/8 bg-[#FFFDF7] p-1.5 text-left transition hover:border-[#0d1b2a]/25"
+              key={card.id}
+              onClick={() => onOpen(card)}
+              type="button"
+            >
+              <CardThumb card={card} className="h-10 w-10 shrink-0 rounded-xl" />
+              <span className="min-w-0 truncate text-xs font-semibold text-[#0d1b2a] sm:text-sm">
+                {card.title}
+              </span>
+            </button>
+          ))
+        ) : (
+          <p className="px-1 py-3 text-xs leading-5 text-[#697386]">{empty}</p>
+        )}
+        {overflow > 0 ? (
+          <p className="px-1 text-[11px] font-medium text-[#697386]">+{overflow} more</p>
+        ) : null}
       </div>
-    </>
+    </div>
   );
 }
 
@@ -1545,7 +1650,7 @@ function SettingsView({
           <SectionHeading
             eyebrow="Weekly email"
             title="Lookahead reminders"
-            subtitle="One calm email each week with your cards. Sends on the hour in your timezone."
+            subtitle="Pick any day and preferred time. We send on your chosen day in your timezone."
           />
           <div className="mt-5 space-y-4">
             <label className="flex items-start gap-3 rounded-xl bg-[#FFF6E6] px-4 py-3">
@@ -1559,7 +1664,7 @@ function SettingsView({
             </label>
 
             <label>
-              <span className="text-sm font-semibold text-[#172033]">Day</span>
+              <span className="text-sm font-semibold text-[#172033]">Day of week</span>
               <select
                 className="mt-1.5 w-full rounded-xl border border-[#0d1b2a]/15 bg-[#FFFDF7] px-4 py-3 outline-none focus:border-[#1D809F]"
                 onChange={(event) =>
@@ -1567,7 +1672,7 @@ function SettingsView({
                 }
                 value={form.lookaheadDay}
               >
-                {["saturday", "sunday", "monday", "tuesday", "wednesday", "thursday", "friday"].map((day) => (
+                {["monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday"].map((day) => (
                   <option key={day} value={day}>
                     {sentenceCase(day)}
                   </option>
@@ -1576,13 +1681,18 @@ function SettingsView({
             </label>
 
             <label>
-              <span className="text-sm font-semibold text-[#172033]">Time (on the hour)</span>
+              <span className="text-sm font-semibold text-[#172033]">Preferred time</span>
               <input
                 className="mt-1.5 w-full rounded-xl border border-[#0d1b2a]/15 bg-[#FFFDF7] px-4 py-3 outline-none focus:border-[#1D809F]"
                 onChange={(event) => onFormChange({ ...form, lookaheadTime: event.target.value })}
+                step={3600}
                 type="time"
                 value={form.lookaheadTime}
               />
+              <p className="mt-1 text-xs text-[#172033]/60">
+                Saved with your profile ({form.timezone}). Exact hour matching needs an hourly scheduler —
+                today we deliver once on your chosen day.
+              </p>
             </label>
 
             <button
