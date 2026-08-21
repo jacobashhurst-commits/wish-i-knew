@@ -26,7 +26,7 @@ export default async function LoginPage({ searchParams }: LoginPageProps) {
           <ul className="mt-2 list-disc space-y-1.5 pl-5 text-[#697386]">
             <li>Tell us a nickname and date — we build a calm stage-by-stage timeline.</li>
             <li>Browse Current, Coming, Saved, and Done cards. Open any card for the full &ldquo;wish I knew&rdquo; tip.</li>
-            <li>Optional weekly Lookahead email on the day and time you pick.</li>
+            <li>Optional weekly Lookahead email on the day you pick (around 8am Sydney time).</li>
           </ul>
           <p className="mt-3 text-[#697386]">
             Built by a forgetful, lazy dad who somehow decided making an app would be easier than being

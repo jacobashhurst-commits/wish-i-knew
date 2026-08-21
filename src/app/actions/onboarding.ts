@@ -1,7 +1,7 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import { normalizeLookaheadTime } from "@/lib/launch/timezone";
+import { LOOKAHEAD_SEND_TIME } from "@/lib/launch/timezone";
 import { createClient } from "@/lib/supabase/server";
 import type { LookaheadDay, OnboardingState } from "@/types/app";
 
@@ -125,7 +125,7 @@ export async function saveOnboarding(form: OnboardingState, childId?: string | n
       user_id: profileId,
       child_id: savedChildId,
       day_of_week: form.lookaheadDay,
-      time_of_day: normalizeLookaheadTime(form.lookaheadTime),
+      time_of_day: LOOKAHEAD_SEND_TIME,
       timezone: form.timezone || "Australia/Sydney",
       delivery_channel: weeklyEmailEnabled ? "email" : "manual_only",
       enabled: weeklyEmailEnabled ? enabled : false,
@@ -146,7 +146,6 @@ export type LookaheadSettingsInput = {
   childId: string;
   weeklyEmailEnabled: boolean;
   lookaheadDay: LookaheadDay;
-  lookaheadTime: string;
   timezone: string;
 };
 
@@ -179,7 +178,7 @@ export async function updateLookaheadSettings(input: LookaheadSettingsInput): Pr
       user_id: profileId,
       child_id: input.childId,
       day_of_week: input.lookaheadDay,
-      time_of_day: normalizeLookaheadTime(input.lookaheadTime),
+      time_of_day: LOOKAHEAD_SEND_TIME,
       timezone: input.timezone || "Australia/Sydney",
       delivery_channel: input.weeklyEmailEnabled ? "email" : "manual_only",
       enabled: input.weeklyEmailEnabled,

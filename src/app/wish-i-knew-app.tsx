@@ -433,8 +433,8 @@ function WelcomeDialog({ onContinue }: { onContinue: () => void }) {
               ones, mark done when you&apos;re past them.
             </li>
             <li className="rounded-xl bg-white px-4 py-3 ring-1 ring-[#0d1b2a]/5">
-              <span className="font-semibold">Optional weekly email</span> — pick a day and time for a
-              calm Lookahead, not a guilt trip.
+              <span className="font-semibold">Optional weekly email</span> — pick a day for a calm
+              Lookahead around 8am, not a guilt trip.
             </li>
           </ul>
           <button className="wik-button wik-button-sun mt-6 w-full text-base" onClick={onContinue} type="button">
@@ -502,7 +502,8 @@ function Onboarding({
             <div className="mt-6 rounded-2xl bg-white/10 p-4">
               <p className="text-sm font-semibold text-white">Your weekly Lookahead is the ritual.</p>
               <p className="mt-1 text-sm leading-6 text-white/75">
-                A calm check-in on the day and time you choose — practical cards, not a guilt machine.
+                A calm check-in on the day you choose (around 8am Sydney) — practical cards, not a
+                guilt machine.
               </p>
             </div>
           </div>
@@ -645,20 +646,8 @@ function Onboarding({
                   </option>
                 ))}
               </select>
-            </label>
-
-            <label>
-              <span className="text-sm font-semibold text-[#172033]">Preferred email time</span>
-              <input
-                className="mt-1.5 w-full rounded-xl border border-[#0d1b2a]/15 bg-[#FFFDF7] px-4 py-3 outline-none focus:border-[#1D809F]"
-                onChange={(event) => setForm({ ...form, lookaheadTime: event.target.value })}
-                step={3600}
-                type="time"
-                value={form.lookaheadTime}
-              />
               <p className="mt-1 text-xs text-[#172033]/60">
-                Emails go out around 8am Sydney time on your chosen day. Preferred time is saved
-                for later but does not change when it sends ({form.timezone}).
+                We&apos;ll email you around 8am Sydney time on that day ({form.timezone}).
               </p>
             </label>
 
@@ -1084,7 +1073,7 @@ function HomeView({
             </h2>
           </div>
           <span className="rounded-xl bg-[#FFF0C7] px-3 py-2 text-xs font-bold text-[#6A4E12]">
-            {form.lookaheadTime}
+            ~8am
           </span>
         </div>
         <p className="mt-2 text-sm leading-6 text-[#697386]">
@@ -1598,7 +1587,6 @@ function SettingsView({
         childId,
         weeklyEmailEnabled: form.weeklyEmailEnabled,
         lookaheadDay: form.lookaheadDay,
-        lookaheadTime: form.lookaheadTime,
         timezone: form.timezone || resolveBrowserTimezone(),
       });
 
@@ -1630,7 +1618,10 @@ function SettingsView({
           <SettingRow label="State" value={form.state} />
           <SettingRow label="First child" value={form.firstChild ? "Yes" : "No"} />
           <SettingRow label="Childcare" value={sentenceCase(form.childcareIntention)} />
-          <SettingRow label="Lookahead" value={`${sentenceCase(form.lookaheadDay)} at ${form.lookaheadTime}`} />
+          <SettingRow
+            label="Lookahead"
+            value={`${sentenceCase(form.lookaheadDay)} around 8am Sydney`}
+          />
           <SettingRow
             label="Weekly email"
             value={
@@ -1650,7 +1641,7 @@ function SettingsView({
           <SectionHeading
             eyebrow="Weekly email"
             title="Lookahead reminders"
-            subtitle="Pick any day and hour. We email once that hour in your timezone (minute precision is within the hour)."
+            subtitle="Pick a day. We'll email you around 8am Sydney time on that day."
           />
           <div className="mt-5 space-y-4">
             <label className="flex items-start gap-3 rounded-xl bg-[#FFF6E6] px-4 py-3">
@@ -1678,20 +1669,8 @@ function SettingsView({
                   </option>
                 ))}
               </select>
-            </label>
-
-            <label>
-              <span className="text-sm font-semibold text-[#172033]">Preferred time</span>
-              <input
-                className="mt-1.5 w-full rounded-xl border border-[#0d1b2a]/15 bg-[#FFFDF7] px-4 py-3 outline-none focus:border-[#1D809F]"
-                onChange={(event) => onFormChange({ ...form, lookaheadTime: event.target.value })}
-                step={3600}
-                type="time"
-                value={form.lookaheadTime}
-              />
               <p className="mt-1 text-xs text-[#172033]/60">
-                Saved with your profile ({form.timezone}). Emails go out around 8am Sydney time on
-                your chosen day — preferred time is kept for later but is not binding yet.
+                Around 8am Sydney time on your chosen day ({form.timezone}).
               </p>
             </label>
 
